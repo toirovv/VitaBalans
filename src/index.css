@@ -66,6 +66,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* Slightly smaller responsive root font so content fits better on small screens */
+  font-size: clamp(13px, 0.85rem + 0.45vw, 16px);
 }
 
 body {
@@ -118,15 +120,15 @@ h6 {
 }
 
 h1 {
-  font-size: 2.5rem;
+  font-size: clamp(1.4rem, 1.7rem + 1vw, 2.2rem);
 }
 
 h2 {
-  font-size: 2rem;
+  font-size: clamp(1.2rem, 1.3rem + 0.8vw, 1.8rem);
 }
 
 h3 {
-  font-size: 1.5rem;
+  font-size: clamp(1rem, 1.05rem + 0.6vw, 1.4rem);
 }
 
 h4 {
@@ -139,6 +141,21 @@ h4 {
 
 .text-secondary {
   color: var(--text-secondary);
+}
+
+/* ===== Responsive text utilities ===== */
+/* Use these to make text smaller on tight screens */
+.text-sm {
+  font-size: clamp(0.75rem, 0.9rem, 0.95rem);
+}
+
+.text-xs {
+  font-size: clamp(0.65rem, 0.78rem, 0.85rem);
+}
+
+.lead-sm {
+  font-size: clamp(0.9rem, 1rem, 1.05rem);
+  line-height: 1.4;
 }
 
 /* ===== Header ===== */
@@ -155,8 +172,9 @@ h4 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 0;
-  gap: 24px;
+  /* Increased vertical padding for an open header */
+  padding: 28px 0;
+  gap: 20px;
 }
 
 .brand {
@@ -168,15 +186,17 @@ h4 {
 }
 
 .logo {
-  height: 48px;
-  width: 48px;
+  /* Make logo smaller and neat in the header */
+  height: 36px;
+  width: 36px;
   object-fit: contain;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
 }
 
 .brand-text {
-  font-size: 1.5rem;
+  /* Slightly smaller, aligned with nav sizing */
+  font-size: 1rem;
   font-weight: 700;
   background: var(--gradient-primary);
   -webkit-background-clip: text;
@@ -192,10 +212,11 @@ h4 {
 }
 
 .main-nav a {
-  padding: 10px 18px;
+  /* Unified nav/link sizing in header */
+  padding: 10px 16px;
   border-radius: var(--radius-full);
   color: var(--text-secondary);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.95rem;
   transition: all var(--transition-base);
 }
@@ -276,14 +297,15 @@ h4 {
 }
 
 .icon {
-  width: 44px;
-  height: 44px;
+  /* Larger header action buttons for easier tapping */
+  width: 52px;
+  height: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-md);
   color: var(--text-secondary);
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   transition: all var(--transition-base);
   position: relative;
 }
@@ -318,7 +340,7 @@ h4 {
 @media (max-width: 900px) {
   .header-inner {
     gap: 12px;
-    padding: 12px 0;
+    padding: 16px 0;
   }
 
   .brand-text {
@@ -376,8 +398,8 @@ h4 {
   }
 
   .icon {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
   }
 }
 
@@ -387,8 +409,8 @@ h4 {
   }
 
   .logo {
-    height: 40px;
-    width: 40px;
+    height: 32px;
+    width: 32px;
   }
 
   .brand-text {
@@ -498,10 +520,10 @@ h4 {
 }
 
 .hero-content h1 {
-  font-size: 3.2rem;
+  font-size: clamp(1.6rem, 2.2rem + 1.2vw, 2.6rem);
   font-weight: 800;
   line-height: 1.1;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
   background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary-700) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -583,6 +605,18 @@ h4 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
+}
+
+/* Add horizontal breathing room so cards don't touch viewport edges */
+.grid {
+  padding-inline: 12px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 900px) {
+  .grid {
+    padding-inline: 0;
+  }
 }
 
 .card {
@@ -772,30 +806,46 @@ h4 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 12px 24px;
+  gap: 6px;
+  padding: clamp(6px, 1.0vw, 10px) clamp(10px, 2.0vw, 16px);
   border-radius: var(--radius-md);
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: clamp(0.72rem, 0.85rem + 0.3vw, 0.92rem);
   transition: all var(--transition-base);
   border: 2px solid transparent;
+  line-height: 1;
 }
 
 .btn.primary {
   background: var(--gradient-primary);
   color: white;
-  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.28);
 }
 
 .btn.primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.38);
 }
 
 .btn.secondary {
   background: white;
   color: var(--primary-600);
   border-color: var(--primary-200);
+}
+
+/* Ensure native button elements also scale */
+button,
+.btn {
+  font-family: inherit;
+}
+
+/* Tighter button sizing on small screens to ensure everything fits */
+@media (max-width: 600px) {
+  .btn,
+  button {
+    padding: 6px 10px !important;
+    font-size: 0.72rem !important;
+  }
 }
 
 .btn.secondary:hover {
@@ -1030,7 +1080,8 @@ h4 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 60px;
+  /* responsive padding so logo/content fits on narrower screens */
+  padding: clamp(20px, 6vw, 60px);
   position: relative;
   overflow: hidden;
 }
@@ -1047,13 +1098,23 @@ h4 {
 }
 
 .auth-logo {
-  width: 120px;
-  height: 120px;
+  width: clamp(64px, 12vw, 140px);
+  height: auto;
+  max-height: 160px;
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-xl);
-  margin-bottom: 32px;
+  margin-bottom: 24px;
+  object-fit: cover;
   position: relative;
   z-index: 1;
+}
+
+/* mobile logo used inside forms (right column) */
+.mobile-logo {
+  display: none;
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
 }
 
 .auth-left h2 {
@@ -1413,6 +1474,13 @@ h4 {
   grid-template-columns: 2fr 1fr 1fr 1fr;
   gap: 48px;
   margin-bottom: 40px;
+  /* keep footer content aligned with main container */
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 24px;
+  box-sizing: border-box;
+  align-items: start;
 }
 
 .footer-brand {
@@ -1455,6 +1523,10 @@ h4 {
   border-top: 1px solid var(--border);
   color: var(--text-muted);
   font-size: 0.9rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
 }
 
 /* ===== Responsive ===== */
@@ -1514,6 +1586,14 @@ h4 {
   .footer-section {
     text-align: left;
   }
+
+  /* show mobile social icons in contact area and hide brand social */
+  .footer-social {
+    display: none !important;
+  }
+  .footer-social-mobile {
+    display: flex !important;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1528,6 +1608,14 @@ h4 {
 
   .footer-brand {
     text-align: center;
+  }
+
+  /* On small screens align contact/social center */
+  .footer-contact .footer-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
   }
 }
 
@@ -1709,4 +1797,9 @@ label {
   .hero-content h1 {
     font-size: 1.4rem;
   }
+}
+
+/* show mobile logo on small screens */
+@media (max-width: 768px) {
+  .mobile-logo { display: block !important; }
 }

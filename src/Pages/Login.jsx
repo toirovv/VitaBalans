@@ -12,6 +12,21 @@ function Login() {
   const { login } = useContext(AuthContext)
   const navigate = useNavigate()
 
+  const formatPhone = (value) => {
+    const digits = value.replace(/\D/g, '')
+    if (digits.length <= 2) return digits
+    if (digits.length <= 5) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`
+    if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2, 5)} ${digits.slice(5)}`
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 5)} ${digits.slice(5, 7)} ${digits.slice(7, 9)}`
+  }
+
+  const handlePhoneChange = (e) => {
+    const formatted = formatPhone(e.target.value)
+    setPhone(formatted)
+  }
+
+  const allowedPrefixes = ['90','93','99','98','91','97','95','94']
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
@@ -19,14 +34,33 @@ function Login() {
       setError("Iltimos, barcha maydonlarni to'ldiring")
       return
     }
-
     const digits = phone.replace(/\D/g, '')
-    if (!digits.startsWith('1232')) {
-      setError('Faqat UZ raqamlari (1232 bilan boshlanadigan) ruxsat etiladi')
+    // expect 9 digits after the +998 country code
+    if (digits.length !== 9) {
+      setError("Iltimos, to'liq telefon raqamini kiriting (+998 (XX) XXX XX XX)")
+      return
+    }
+
+    // validate operator prefix
+    if (!allowedPrefixes.includes(digits.slice(0,2))) {
+      setError('Iltimos, Oʻzbekiston operator raqamlarini kiriting (90,93,99,98,91,97,95,94)')
       return
     }
 
     const phoneNorm = '+998 ' + digits
+    // If phone isn't registered, show clear notification
+    const users = JSON.parse(localStorage.getItem('vb_users') || '[]')
+    const exists = users.find(u => u.phone === phoneNorm)
+    if (!exists) {
+      setError("Bu telefon ro'yxatdan o'tmagan")
+      return
+    }
+
+    // enforce exact 8-char password
+    if (password.length !== 8) {
+      setError("Parol aniq 8 ta belgidan iborat bo'lishi kerak")
+      return
+    }
     try {
       const res = await login({ phone: phoneNorm, password })
       if (!res || !res.ok) {
@@ -60,18 +94,7 @@ function Login() {
       {/* Left Side - Branding */}
       <div className="auth-left">
         <Link to="/" style={{ display: 'block' }}>
-          <img
-            src={logo}
-            alt="VitaBalans"
-            style={{
-              width: '140px',
-              height: '140px',
-              borderRadius: '24px',
-              boxShadow: '0 20px 50px rgba(16, 185, 129, 0.2)',
-              marginBottom: '32px',
-              objectFit: 'cover'
-            }}
-          />
+          <img src={logo} alt="VitaBalans" className="auth-logo" />
         </Link>
         <h2 style={{ fontSize: '2rem', marginBottom: '16px' }}>VitaBalans ga xush kelibsiz!</h2>
         <p style={{ color: '#64748b', maxWidth: '400px', lineHeight: 1.7 }}>
@@ -123,38 +146,44 @@ function Login() {
               }}>
                 Telefon raqami
               </label>
-              <div style={{ position: 'relative' }}>
-                <FaEnvelope style={{
-                  position: 'absolute',
-                  left: '16px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  color: '#9ca3af',
-                  fontSize: '1rem'
-                }} />
-                <input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  placeholder="(XX) XXX XX XX"
-                  value={phone}
-                  onChange={e => setPhone(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '16px 16px 16px 48px',
+                <div style={{ display: 'flex', gap: '0' }}>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '0 12px',
+                    background: '#f3f4f6',
+                    borderRadius: '12px 0 0 12px',
                     border: '2px solid #e5e7eb',
-                    borderRadius: '12px',
-                    fontSize: '1rem',
-                    outline: 'none',
-                    transition: 'border-color 0.2s',
-                    boxSizing: 'border-box'
-                  }}
-                  onFocus={e => e.target.style.borderColor = '#10b981'}
-                  onBlur={e => e.target.style.borderColor = '#e5e7eb'}
-                  autoComplete="tel"
-                  required
-                />
-              </div>
+                    borderRight: 'none'
+                  }}>
+                   <img style={{width:18,height:12,objectFit:'cover'}} src="https://img.freepik.com/premium-photo/republic-uzbekistan-national-fabric-flag-textile-background-symbol-world-asian-country_113767-2072.jpg?semt=ais_hybrid&w=740&q=80" alt="uz" />
+                    <span style={{ fontWeight: '500', color: '#374151' }}>+998</span>
+                  </div>
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    placeholder="(XX) XXX XX XX"
+                    value={phone}
+                    onChange={handlePhoneChange}
+                    maxLength={14}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '0 12px 12px 0',
+                      fontSize: '1rem',
+                      outline: 'none',
+                      transition: 'border-color 0.2s',
+                      boxSizing: 'border-box'
+                    }}
+                    onFocus={e => e.target.style.borderColor = '#10b981'}
+                    onBlur={e => e.target.style.borderColor = '#e5e7eb'}
+                    autoComplete="tel"
+                    required
+                  />
+                </div>
             </div>
 
             <div style={{ marginBottom: '20px' }}>
@@ -195,6 +224,7 @@ function Login() {
                   onFocus={e => e.target.style.borderColor = '#10b981'}
                   onBlur={e => e.target.style.borderColor = '#e5e7eb'}
                   autoComplete="current-password"
+                  maxLength={8}
                   required
                 />
                 <button
@@ -217,28 +247,7 @@ function Login() {
               </div>
             </div>
 
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '24px'
-            }}>
-              <label style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                cursor: 'pointer'
-              }}>
-                <input
-                  type="checkbox"
-                  style={{
-                    width: '18px',
-                    height: '18px',
-                    accentColor: '#10b981'
-                  }}
-                />
-                <span style={{ fontSize: '0.9rem', color: '#6b7280' }}>Meni eslab qol</span>
-              </label>
+            <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'flex-end' }}>
               <Link to="/forgot" style={{ fontSize: '0.9rem', color: '#10b981', fontWeight: '500' }}>
                 Parolni unutdingizmi?
               </Link>

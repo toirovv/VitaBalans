@@ -182,7 +182,7 @@ function Checkout() {
     <div className="container" style={{ padding: '24px' }}>
       <h2 style={{ marginBottom: 16 }}>Checkout</h2>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 24, alignItems: 'start' }}>
+      <div className="checkout-grid" style={{ alignItems: 'start' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div style={{ background: 'white', borderRadius: 12, padding: 16, boxShadow: '0 6px 18px rgba(15,23,42,0.06)' }}>
             <h3 style={{ margin: '0 0 12px' }}>Sizning savatingiz</h3>

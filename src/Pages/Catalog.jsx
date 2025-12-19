@@ -126,7 +126,7 @@ function Catalog() {
               />
               <button
                 className="btn primary"
-                style={{ padding: '14px 28px', borderRadius: '12px' }}
+                style={{ padding: '10px 16px', borderRadius: '10px' }}
               >
                 Qidirish
               </button>
@@ -171,16 +171,16 @@ function Catalog() {
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '12px',
-                      padding: '12px 16px',
-                      borderRadius: '12px',
+                      gap: '10px',
+                      padding: '10px 14px',
+                      borderRadius: '10px',
                       border: 'none',
                       background: selectedCategory === cat.id
                         ? 'linear-gradient(135deg, #ecfdf5, #f0fdfa)'
                         : 'transparent',
                       color: selectedCategory === cat.id ? '#059669' : '#475569',
                       fontWeight: selectedCategory === cat.id ? '600' : '500',
-                      fontSize: '0.95rem',
+                      fontSize: '0.92rem',
                       cursor: 'pointer',
                       textAlign: 'left',
                       transition: 'all 0.2s',

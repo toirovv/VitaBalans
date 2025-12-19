@@ -4,6 +4,13 @@ import { FaFacebookF, FaInstagram, FaTelegram, FaYoutube, FaPhone, FaEnvelope, F
 import logo from '../assets/images/VitaBalansLogo.jpg'
 
 function Footer() {
+  const socials = [
+    { icon: <FaFacebookF />, href: '#', color: '#1877f2' },
+    { icon: <FaInstagram />, href: '#', color: '#e4405f' },
+    { icon: <FaTelegram />, href: '#', color: '#0088cc' },
+    { icon: <FaYoutube />, href: '#', color: '#ff0000' }
+  ]
+
   return (
     <footer className="site-footer">
       <div className="container footer-inner">
@@ -18,17 +25,12 @@ function Footer() {
             Sog'lig'ingizni biz bilan birga mustahkamlang.
           </p>
 
-          {/* Social Icons */}
-          <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
-            {[
-              { icon: <FaFacebookF />, href: '#', color: '#1877f2' },
-              { icon: <FaInstagram />, href: '#', color: '#e4405f' },
-              { icon: <FaTelegram />, href: '#', color: '#0088cc' },
-              { icon: <FaYoutube />, href: '#', color: '#ff0000' }
-            ].map((social, i) => (
+          <div className="footer-social" style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+            {socials.map((social, i) => (
               <a
                 key={i}
                 href={social.href}
+                aria-label={`social-${i}`}
                 style={{
                   width: '40px',
                   height: '40px',
@@ -78,7 +80,7 @@ function Footer() {
         </div>
 
         {/* Contact */}
-        <div className="footer-section">
+        <div className="footer-section footer-contact">
           <h4>Aloqa</h4>
           <div className="footer-links">
             <a href="tel:+998901234567" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -90,6 +92,14 @@ function Footer() {
             <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <FaMapMarkerAlt /> Toshkent, O'zbekiston
             </span>
+
+            <div className="footer-social-mobile" style={{ display: 'none', gap: '12px', marginTop: '12px' }}>
+              {socials.map((s, i) => (
+                <a key={i} href={s.href} style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>
+                  {s.icon}
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </div>

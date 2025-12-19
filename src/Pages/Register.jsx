@@ -58,8 +58,9 @@ function Register() {
       return
     }
 
-    if (password.length < 6) {
-      setError("Parol kamida 6 ta belgidan iborat bo'lishi kerak")
+    // enforce exactly 8 characters for password
+    if (password.length !== 8) {
+      setError("Parol aniq 8 ta belgidan iborat bo'lishi kerak")
       return
     }
 
@@ -74,6 +75,11 @@ function Register() {
     }
 
     const digits = phone.replace(/\D/g, '')
+    // require 9 digits (after +998)
+    if (digits.length !== 9) {
+      setError("Iltimos, telefon raqamini to'liq kiriting (masalan: +998 XX XXX XX XX)")
+      return
+    }
     const allowed = ['90','93','99','98','91','97','95','94']
     if (!allowed.includes(digits.slice(0,2))) {
       setError('Iltimos, amaldagi Oʻzbekiston operator raqamlarini kiriting (90,93,99,98...)')
@@ -226,13 +232,13 @@ function Register() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
-                  padding: '0 16px',
+                  padding: '0 12px',
                   background: '#f3f4f6',
                   borderRadius: '12px 0 0 12px',
                   border: '2px solid #e5e7eb',
                   borderRight: 'none'
                 }}>
-                 <img style={{width:"23px"}} src="https://img.freepik.com/premium-photo/republic-uzbekistan-national-fabric-flag-textile-background-symbol-world-asian-country_113767-2072.jpg?semt=ais_hybrid&w=740&q=80" alt="" />
+                 <img style={{width:18,height:12,objectFit:'cover'}} src="https://img.freepik.com/premium-photo/republic-uzbekistan-national-fabric-flag-textile-background-symbol-world-asian-country_113767-2072.jpg?semt=ais_hybrid&w=740&q=80" alt="uz" />
                   <span style={{ fontWeight: '500', color: '#374151' }}>+998</span>
                 </div>
                 <input
@@ -241,7 +247,7 @@ function Register() {
                   placeholder="(XX) XXX XX XX"
                   value={formData.phone}
                   onChange={handlePhoneChange}
-                  maxLength={15}
+                  maxLength={14}
                   style={{
                     ...inputStyle,
                     paddingLeft: '16px',
@@ -261,12 +267,13 @@ function Register() {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   name="password"
-                  placeholder="Kamida 6 ta belgi"
+                  placeholder="8 ta belgi"
                   value={formData.password}
                   onChange={handleChange}
                   style={{ ...inputStyle, paddingRight: '48px' }}
                   onFocus={e => e.target.style.borderColor = '#10b981'}
                   onBlur={e => e.target.style.borderColor = '#e5e7eb'}
+                  maxLength={8}
                 />
                 <button
                   type="button"
@@ -323,6 +330,7 @@ function Register() {
                   style={{ ...inputStyle, paddingRight: '48px' }}
                   onFocus={e => e.target.style.borderColor = '#10b981'}
                   onBlur={e => e.target.style.borderColor = '#e5e7eb'}
+                  maxLength={8}
                 />
                 {formData.confirmPassword && formData.password === formData.confirmPassword && (
                   <FaCheck style={{
