@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { CartContext } from '../contexts/CartContext'
 import { AuthContext } from '../contexts/AuthContext'
 import { FaTrash, FaPlus, FaMinus, FaTag, FaArrowRight, FaShoppingBag, FaTruck, FaShieldAlt, FaUndo } from 'react-icons/fa'
@@ -30,13 +30,16 @@ function Cart() {
     }
   }
 
+  const navigate = useNavigate()
+
   const handleCheckout = () => {
     if (!user) {
       setShowNotification(true)
       setTimeout(() => setShowNotification(false), 3000)
       return
     }
-    window.location.href = '/checkout'
+    // Use SPA navigation and pass current items so Checkout can receive them
+    navigate('/checkout', { state: { items } })
   }
 
   if (items.length === 0) {
@@ -101,7 +104,7 @@ function Cart() {
       <h1 style={{ marginBottom: '8px' }}>Savat</h1>
       <p style={{ color: '#64748b', marginBottom: '32px' }}>{items.length} ta mahsulot</p>
 
-      <div style={{
+      <div className="cart-grid-layout" style={{
         display: 'grid',
         gridTemplateColumns: '1fr 400px',
         gap: '32px',
@@ -141,7 +144,7 @@ function Cart() {
           </div>
 
           {items.map(item => (
-            <div key={item.id} style={{
+            <div key={item.id} className="cart-item-row" style={{
               display: 'flex',
               alignItems: 'center',
               gap: '20px',
@@ -219,7 +222,7 @@ function Cart() {
                 </button>
               </div>
 
-              <div style={{
+              <div className="cart-item-total-price" style={{
                 fontWeight: '700',
                 fontSize: '1.1rem',
                 color: '#10b981',
@@ -408,8 +411,22 @@ function Cart() {
           to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
         @media (max-width: 900px) {
-          .container > div:last-of-type {
+          .cart-grid-layout {
             grid-template-columns: 1fr !important;
+          }
+        }
+        @media (max-width: 600px) {
+          .cart-item-row {
+            flex-wrap: wrap !important;
+            gap: 16px !important;
+          }
+          .cart-item-row img {
+            width: 80px !important;
+            height: 80px !important;
+          }
+          .cart-item-total-price {
+            width: 100% !important;
+            text-align: center !important;
           }
         }
       `}</style>

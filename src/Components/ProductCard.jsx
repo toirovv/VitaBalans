@@ -72,6 +72,14 @@ function ProductCard({ product }) {
 
         {/* Product Info */}
         <div className="card-body">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              {product.category && <span className="chip">{product.category}</span>}
+              {product.rating >= 4.8 && <span className="badge-top">Bestseller</span>}
+            </div>
+            <div style={{ color: 'var(--text-muted)', fontSize: 12 }}>{product.weight || ''}</div>
+          </div>
+
           <h3 className="card-title">{product.title}</h3>
           <p className="card-description">{product.description}</p>
           <p className="card-price">${product.price.toFixed(2)}</p>

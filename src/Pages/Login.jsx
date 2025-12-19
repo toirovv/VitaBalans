@@ -5,24 +5,54 @@ import logo from '../assets/images/VitaBalansLogo.jpg'
 import { AuthContext } from '../contexts/AuthContext'
 
 function Login() {
-  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const { login } = useContext(AuthContext)
   const navigate = useNavigate()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
-
-    if (!email || !password) {
-      setError('Iltimos, barcha maydonlarni to\'ldiring')
+    if (!phone || !password) {
+      setError("Iltimos, barcha maydonlarni to'ldiring")
       return
     }
 
-    login({ email, name: email.split('@')[0] })
-    navigate('/profile')
+    const digits = phone.replace(/\D/g, '')
+    if (!digits.startsWith('1232')) {
+      setError('Faqat UZ raqamlari (1232 bilan boshlanadigan) ruxsat etiladi')
+      return
+    }
+
+    const phoneNorm = '+998 ' + digits
+    try {
+      const res = await login({ phone: phoneNorm, password })
+      if (!res || !res.ok) {
+        setError(res?.message || 'Kirishda xatolik')
+        return
+      }
+      try { sessionStorage.setItem('justLoggedIn', '1') } catch (e) {}
+      // Notify server about login (non-blocking)
+      try {
+        fetch('http://localhost:3001/notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderId: `login-${Date.now()}`,
+            when: Date.now(),
+            customer: { firstName: res.user?.name || '', phone: phoneNorm },
+            items: [],
+            total: 0
+          })
+        }).catch(() => {})
+      } catch (e) {}
+
+      navigate('/profile')
+    } catch (err) {
+      setError('Tarmoqqa ulanishda xatolik')
+    }
   }
 
   return (
@@ -61,8 +91,7 @@ function Login() {
               style={{
                 width: '80px',
                 height: '80px',
-                borderRadius: '16px',
-                display: 'none'
+                borderRadius: '16px'
               }}
               className="mobile-logo"
             />
@@ -92,7 +121,7 @@ function Login() {
                 fontWeight: '500',
                 color: '#374151'
               }}>
-                Email
+                Telefon raqami
               </label>
               <div style={{ position: 'relative' }}>
                 <FaEnvelope style={{
@@ -104,10 +133,12 @@ function Login() {
                   fontSize: '1rem'
                 }} />
                 <input
-                  type="email"
-                  placeholder="email@example.com"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  placeholder="(XX) XXX XX XX"
+                  value={phone}
+                  onChange={e => setPhone(e.target.value)}
                   style={{
                     width: '100%',
                     padding: '16px 16px 16px 48px',
@@ -120,6 +151,8 @@ function Login() {
                   }}
                   onFocus={e => e.target.style.borderColor = '#10b981'}
                   onBlur={e => e.target.style.borderColor = '#e5e7eb'}
+                  autoComplete="tel"
+                  required
                 />
               </div>
             </div>
@@ -143,6 +176,8 @@ function Login() {
                   fontSize: '1rem'
                 }} />
                 <input
+                  id="password"
+                  name="password"
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   value={password}
@@ -159,6 +194,8 @@ function Login() {
                   }}
                   onFocus={e => e.target.style.borderColor = '#10b981'}
                   onBlur={e => e.target.style.borderColor = '#e5e7eb'}
+                  autoComplete="current-password"
+                  required
                 />
                 <button
                   type="button"
@@ -202,14 +239,15 @@ function Login() {
                 />
                 <span style={{ fontSize: '0.9rem', color: '#6b7280' }}>Meni eslab qol</span>
               </label>
-              <a href="#" style={{ fontSize: '0.9rem', color: '#10b981', fontWeight: '500' }}>
+              <Link to="/forgot" style={{ fontSize: '0.9rem', color: '#10b981', fontWeight: '500' }}>
                 Parolni unutdingizmi?
-              </a>
+              </Link>
             </div>
 
             <button
               type="submit"
               className="btn primary"
+              aria-label="Kirish"
               style={{
                 width: '100%',
                 padding: '16px',
@@ -234,6 +272,7 @@ function Login() {
           </div>
 
           <button
+            type="button"
             className="btn outline"
             style={{
               width: '100%',
@@ -244,6 +283,7 @@ function Login() {
               justifyContent: 'center',
               gap: '12px'
             }}
+            onClick={() => { /* TODO: implement social login */ }}
           >
             <svg width="20" height="20" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />

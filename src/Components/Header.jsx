@@ -32,7 +32,6 @@ function Header() {
         {/* Navigation */}
         <nav className={`main-nav ${open ? 'open' : ''}`}>
           <Link to="/" onClick={() => setOpen(false)}>Bosh sahifa</Link>
-          <Link to="/catalog" onClick={() => setOpen(false)}>Katalog</Link>
           <Link to="/brands" onClick={() => setOpen(false)}>Brendlar</Link>
           <Link to="/about" onClick={() => setOpen(false)}>Biz haqimizda</Link>
         </nav>
@@ -133,6 +132,15 @@ function Header() {
           </button>
         </div>
       </div>
+
+      {/* Nav backdrop for mobile when menu is open */}
+      {open && (
+        <div
+          className="nav-backdrop"
+          onClick={() => setOpen(false)}
+          aria-hidden
+        />
+      )}
 
       {/* Click outside to close user menu */}
       {showUserMenu && (

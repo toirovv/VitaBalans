@@ -1,10 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { CartContext } from '../contexts/CartContext'
 import { AuthContext } from '../contexts/AuthContext'
 
 function Checkout() {
-  const { items, clear } = useContext(CartContext)
+  const { items: ctxItems, clear } = useContext(CartContext)
   const { user } = useContext(AuthContext)
+  const location = useLocation()
+
+  // Prefer items passed via navigation state (from Cart) to avoid losing items
+  const navItems = (location && location.state && location.state.items) ? location.state.items : ctxItems
 
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -37,7 +42,7 @@ function Checkout() {
     }
   }, [])
 
-  const subtotal = items.reduce((s, it) => s + (it.price || 0) * (it.qty || 1), 0)
+  const subtotal = navItems.reduce((s, it) => s + (it.price || 0) * (it.qty || 1), 0)
 
   const maskCard = (num) => {
     const n = (num || '').replace(/\s+/g, '')
@@ -72,8 +77,19 @@ function Checkout() {
     const now = new Date()
     const exp = new Date(fullYear, month, 0, 23, 59, 59)
     if (exp < now) return 'Karta muddati o\'tgan'
-    if (!/^\d{3,4}$/.test(cardCvc)) return 'CVC noto\'g\'ri'
+    // CVC is optional in this flow
     return null
+  }
+
+  const formatCardInput = (v) => {
+    const digits = (v || '').replace(/\D/g, '').slice(0,19)
+    return digits.match(/.{1,4}/g)?.join(' ') || digits
+  }
+
+  const formatExpInput = (v) => {
+    const digits = (v || '').replace(/\D/g, '').slice(0,4)
+    if (digits.length <= 2) return digits
+    return digits.slice(0,2) + '/' + digits.slice(2)
   }
 
   const reverseGeocode = async (lat, lng) => {
@@ -110,7 +126,7 @@ function Checkout() {
   }
 
   const handlePlace = async () => {
-    if (items.length === 0) {
+    if (navItems.length === 0) {
       alert("Savatcha bo'sh")
       return
     }
@@ -130,7 +146,7 @@ function Checkout() {
     const orders = JSON.parse(localStorage.getItem('vb_orders') || '[]')
     const order = {
       id: Date.now(),
-      items,
+      items: navItems,
       customer: { firstName, lastName, phone, address },
       total: subtotal,
       payment: { method: 'card', card: maskCard(cardNumber) },
@@ -170,11 +186,11 @@ function Checkout() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div style={{ background: 'white', borderRadius: 12, padding: 16, boxShadow: '0 6px 18px rgba(15,23,42,0.06)' }}>
             <h3 style={{ margin: '0 0 12px' }}>Sizning savatingiz</h3>
-            {items.length === 0 ? (
+            {navItems.length === 0 ? (
               <div className="muted">Savatcha bo'sh</div>
             ) : (
               <div style={{ display: 'grid', gap: 12 }}>
-                {items.map((it) => (
+                {navItems.map((it) => (
                   <div key={it.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
                     <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                       <img src={it.image || ''} alt={it.title} style={{ width: 56, height: 56, objectFit: 'cover', borderRadius: 8 }} />
@@ -196,17 +212,17 @@ function Checkout() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               <div>
                 <label>Ism</label>
-                <input className="form-input" readOnly value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+                <input className="form-input" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
               </div>
               <div>
                 <label>Familiya</label>
-                <input className="form-input" readOnly value={lastName} onChange={(e) => setLastName(e.target.value)} />
+                <input className="form-input" value={lastName} onChange={(e) => setLastName(e.target.value)} />
               </div>
             </div>
 
             <div style={{ marginTop: 12 }}>
               <label>Telefon</label>
-              <input className="form-input" readOnly value={phone} onChange={(e) => setPhone(e.target.value)} />
+              <input className="form-input" value={phone} onChange={(e) => setPhone(e.target.value)} />
             </div>
 
             <div style={{ marginTop: 12 }}>
@@ -233,11 +249,11 @@ function Checkout() {
 
             <div style={{ marginTop: 12, display: 'grid', gap: 8 }}>
               <label>Karta raqami</label>
-              <input className="form-input" placeholder="1234 1234 1234 1234" value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} />
+              <input className="form-input" placeholder="1234 1234 1234 1234" value={cardNumber} onChange={(e) => setCardNumber(formatCardInput(e.target.value))} />
               <div style={{ display: 'flex', gap: 8 }}>
                 <div style={{ flex: 1 }}>
                   <label>MM/YY</label>
-                  <input className="form-input" placeholder="02/28" value={cardExp} onChange={(e) => setCardExp(e.target.value)} />
+                  <input className="form-input" placeholder="02/28" value={cardExp} onChange={(e) => setCardExp(formatExpInput(e.target.value))} />
                 </div>
                 <div style={{ width: 120 }}>
                   <label>CVC</label>
@@ -255,11 +271,11 @@ function Checkout() {
         <aside style={{ position: 'sticky', top: 20 }}>
           <div style={{ background: 'white', borderRadius: 12, padding: 16, boxShadow: '0 6px 18px rgba(15,23,42,0.06)' }}>
             <h4 style={{ margin: '0 0 12px' }}>Your order</h4>
-            {items.length === 0 ? (
+            {navItems.length === 0 ? (
               <div className="muted">Savatcha bo'sh</div>
             ) : (
               <div style={{ display: 'grid', gap: 12 }}>
-                {items.map((it) => (
+                {navItems.map((it) => (
                   <div key={it.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
                     <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                       <img src={it.image || ''} alt={it.title} style={{ width: 56, height: 56, objectFit: 'cover', borderRadius: 8 }} />

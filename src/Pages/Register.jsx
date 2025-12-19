@@ -15,7 +15,7 @@ function Register() {
   const [showPassword, setShowPassword] = useState(false)
   const [agreed, setAgreed] = useState(false)
   const [error, setError] = useState('')
-  const { login } = useContext(AuthContext)
+  const { register } = useContext(AuthContext)
   const navigate = useNavigate()
 
   const handleChange = (e) => {
@@ -47,7 +47,7 @@ function Register() {
     return { level: 3, text: 'Yaxshi', color: '#059669' }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
 
@@ -73,7 +73,38 @@ function Register() {
       return
     }
 
-    login({ name, email, phone: '+998 ' + phone })
+    const digits = phone.replace(/\D/g, '')
+    const allowed = ['90','93','99','98','91','97','95','94']
+    if (!allowed.includes(digits.slice(0,2))) {
+      setError('Iltimos, amaldagi Oʻzbekiston operator raqamlarini kiriting (90,93,99,98...)')
+      return
+    }
+
+    const userObj = { name, email, phone: '+998 ' + digits }
+    const res = register(userObj, password)
+    if (!res.ok) {
+      setError(res.message || 'Ro\'yxatdan o\'tishda xato')
+      return
+    }
+
+    // Mark session so Profile can show a welcome banner
+    try { sessionStorage.setItem('justLoggedIn', '1') } catch(e){}
+
+    // Notify server about new registration (best-effort)
+    try {
+      fetch('http://localhost:3001/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId: `register-${Date.now()}`,
+          when: Date.now(),
+          customer: { firstName: name, phone: userObj.phone },
+          items: [],
+          total: 0
+        })
+      }).catch(() => {})
+    } catch (e) {}
+
     navigate('/profile')
   }
 

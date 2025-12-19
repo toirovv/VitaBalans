@@ -9,6 +9,7 @@ function Profile() {
   const [isEditing, setIsEditing] = useState(false)
   const [editData, setEditData] = useState({})
   const [activeTab, setActiveTab] = useState('profile')
+  const [showWelcome, setShowWelcome] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -17,6 +18,14 @@ function Profile() {
     if (user) {
       setEditData({ name: user.name, phone: user.phone || '', address: user.address || '' })
     }
+    try {
+      const flag = sessionStorage.getItem('justLoggedIn')
+      if (flag) {
+        setShowWelcome(true)
+        sessionStorage.removeItem('justLoggedIn')
+        setTimeout(() => setShowWelcome(false), 4000)
+      }
+    } catch(e) {}
   }, [user])
 
   const handleLogout = () => {
@@ -153,6 +162,11 @@ function Profile() {
           padding: '32px',
           boxShadow: '0 4px 20px rgba(0,0,0,0.05)'
         }}>
+          {showWelcome && (
+            <div style={{ marginBottom: 20, padding: 16, borderRadius: 12, background: 'linear-gradient(135deg,#ecfdf5,#f0fdfa)', color: '#059669', fontWeight: 600 }}>
+              Xush kelibsiz, {user.name}! Siz muvaffaqiyatli kirdingiz.
+            </div>
+          )}
           {/* Profile Tab */}
           {activeTab === 'profile' && (
             <div>

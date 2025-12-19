@@ -137,14 +137,14 @@ function Catalog() {
 
       {/* Main Content */}
       <div className="container" style={{ padding: '40px 24px 80px' }}>
-        <div style={{
+        <div className="catalog-main-grid" style={{
           display: 'grid',
           gridTemplateColumns: '280px 1fr',
           gap: '32px',
           alignItems: 'start'
         }}>
           {/* Sidebar - Left */}
-          <aside style={{
+          <aside className="catalog-sidebar-box" style={{
             background: 'white',
             borderRadius: '20px',
             padding: '24px',
@@ -284,7 +284,7 @@ function Catalog() {
           </aside>
 
           {/* Products Grid - Right */}
-          <main>
+          <main className="catalog-products-area">
             <div style={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -332,8 +332,15 @@ function Catalog() {
 
       <style>{`
         @media (max-width: 900px) {
-          .container > div {
+          .catalog-main-grid {
             grid-template-columns: 1fr !important;
+          }
+          .catalog-sidebar-box {
+            position: static !important;
+            order: 2;
+          }
+          .catalog-products-area {
+            order: 1;
           }
         }
       `}</style>
