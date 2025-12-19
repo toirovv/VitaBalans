@@ -123,12 +123,12 @@ function Home() {
               to="/catalog"
               className="btn primary"
               style={{
-                padding: '16px 32px',
-                borderRadius: '14px',
-                fontSize: '1rem',
+                padding: '10px 16px',
+                borderRadius: '12px',
+                fontSize: '0.95rem',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '10px'
+                gap: '8px'
               }}
             >
               Katalog <FaArrowRight />

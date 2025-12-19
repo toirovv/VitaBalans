@@ -1,4 +1,4 @@
-const logo = '/src/assets/images/VitaBalansLogo.jpg'
+import logo from '../assets/images/VitaBalansLogo.jpg'
 
 const products = [
   {

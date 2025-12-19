@@ -19,7 +19,7 @@ function Checkout() {
 
   const [cardNumber, setCardNumber] = useState('')
   const [cardExp, setCardExp] = useState('')
-  const [cardCvc, setCardCvc] = useState('')
+  
   const [loading, setLoading] = useState(false)
   const [placedOrder, setPlacedOrder] = useState(null)
 
@@ -77,7 +77,7 @@ function Checkout() {
     const now = new Date()
     const exp = new Date(fullYear, month, 0, 23, 59, 59)
     if (exp < now) return 'Karta muddati o\'tgan'
-    // CVC is optional in this flow
+    // CVC is not required in this flow
     return null
   }
 
@@ -249,15 +249,22 @@ function Checkout() {
 
             <div style={{ marginTop: 12, display: 'grid', gap: 8 }}>
               <label>Karta raqami</label>
-              <input className="form-input" placeholder="1234 1234 1234 1234" value={cardNumber} onChange={(e) => setCardNumber(formatCardInput(e.target.value))} />
+              <input
+                className="form-input"
+                placeholder="1234 1234 1234 1234"
+                inputMode="numeric"
+                pattern="[0-9\s]*"
+                maxLength={23}
+                value={cardNumber}
+                onChange={(e) => setCardNumber(formatCardInput(e.target.value))}
+              />
               <div style={{ display: 'flex', gap: 8 }}>
                 <div style={{ flex: 1 }}>
                   <label>MM/YY</label>
                   <input className="form-input" placeholder="02/28" value={cardExp} onChange={(e) => setCardExp(formatExpInput(e.target.value))} />
                 </div>
-                <div style={{ width: 120 }}>
-                  <label>CVC</label>
-                  <input className="form-input" placeholder="123" value={cardCvc} onChange={(e) => setCardCvc(e.target.value)} />
+                <div style={{ width: 120, display: 'flex', alignItems: 'flex-end', color: '#64748b', fontSize: 13 }}>
+                  <div> CVC optional </div>
                 </div>
               </div>
             </div>
