@@ -87,14 +87,16 @@ a {
   text-decoration: none;
   color: inherit;
 }
-
-button {
-  cursor: pointer;
+      min-height: auto;
+      padding: 4px 6px; /* reduced padding */
+      border-radius: 10px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.04);
   border: none;
   background: none;
   font-family: inherit;
-}
-
+      height: 72px !important; /* even smaller image area for compact cards */
+      padding: 4px !important;
+ul,
 ul,
 ol {
   list-style: none;
@@ -619,7 +621,9 @@ h4 {
 /* ===== Product Grid & Card ===== */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 240px)); /* keep nice card sizing but allow flexibility */
+  /* Default to 2 columns for a clean responsive look (two cards per row)
+     Larger screens will override this to allow more columns. */
+  grid-template-columns: repeat(2, 1fr);
   gap: 28px; /* increased gap for more breathing room */
   justify-content: center; /* center columns when row isn't full */
 }
@@ -645,6 +649,18 @@ h4 {
 @media (min-width: 900px) {
   .grid {
     padding-inline: 0;
+    /* On wider screens allow auto-fit columns with fixed card width */
+    grid-template-columns: repeat(auto-fit, minmax(220px, 240px));
+  }
+
+  /* Slightly smaller images and tighter cards on medium screens */
+  .card-image-wrapper {
+    height: 110px;
+    padding: 6px;
+  }
+
+  .card {
+    padding: 8px 10px;
   }
 }
 
@@ -702,6 +718,19 @@ h4 {
   color: var(--text-primary);
 }
 
+/* Ensure long titles wrap nicely and don't overflow; clamp to 2 lines */
+.card-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  /* Force visible color in case of inheritance issues */
+  color: var(--text-primary) !important;
+  display: block !important;
+}
+
 /* make card body expand so footers align at the bottom */
 .card-body {
   display: flex;
@@ -731,8 +760,19 @@ h4 {
   margin-top: auto;
 }
 
+/* Make the footer responsive: rating keeps its intrinsic width, button grows to fill remaining space */
+.card-footer .rating {
+  flex: 0 0 auto;
+}
+.card-footer .btn {
+  flex: 1 1 auto;
+  min-width: 0; /* allow shrinking */
+  text-align: center;
+}
+
 @media (max-width: 900px) {
   .grid {
+    /* Keep two cards per row on tablets and small laptops */
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
   }
@@ -754,9 +794,9 @@ h4 {
 
   /* Smaller product cards on mobile */
   .card-image-wrapper {
-    padding: 8px;
+    padding: 6px;
     aspect-ratio: auto;
-    height: 140px;
+    height: 100px; /* smaller image area for compact cards */
   }
 
   .hero-image {
@@ -775,15 +815,38 @@ h4 {
     margin-bottom: 2px;
   }
 
+  /* Show descriptions on small screens but keep them compact (2 lines max) */
   .card-description {
-    font-size: 0.7rem;
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-muted);
     margin-bottom: 4px;
+    /* WebKit multi-line clamp */
     display: -webkit-box;
     -webkit-line-clamp: 2;
-    line-clamp: 2;
     -webkit-box-orient: vertical;
+    /* Fallback for non-webkit: limit height to 2 lines using line-height */
+    line-height: 1.1em;
+    max-height: calc(1.1em * 2);
     overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
     min-height: auto;
+  }
+
+  /* Ensure top-action (quick add) shows text and is tappable */
+  .top-action {
+    padding: 6px 8px;
+    font-size: 0.8rem;
+    right: 8px;
+    top: 8px;
+    white-space: nowrap;
+  }
+
+  /* Make primary buttons readable and fill remaining space */
+  .card-footer .btn {
+    padding: 8px 10px;
+    font-size: 0.85rem;
   }
 
   .card-price {
@@ -857,6 +920,60 @@ h4 {
   .card-footer .btn {
     padding: 4px 8px;
     font-size: 0.65rem;
+  }
+}
+
+/* Strong mobile override for small phones (Android / iOS): keep 2 compact cards per row */
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr) !important; /* force 2 columns */
+    gap: 10px !important;
+    padding-inline: 8px;
+  }
+
+  .card {
+    min-height: auto;
+    padding: 6px 8px;
+    border-radius: 10px;
+  }
+
+  .card-image-wrapper {
+    height: 88px !important; /* smaller image area for phones */
+    padding: 4px !important;
+  }
+
+  .card-title {
+    font-size: 0.78rem !important;
+    line-height: 1.1;
+    margin-bottom: 2px;
+  }
+
+  .card-description {
+    font-size: 0.72rem !important;
+    -webkit-line-clamp: 2;
+    margin-bottom: 2px;
+  }
+
+  .top-action {
+    padding: 6px 6px !important;
+    font-size: 0.72rem !important;
+  }
+
+  .card-footer {
+    gap: 6px;
+    align-items: center;
+  }
+
+  .card-footer .btn {
+    padding: 7px 8px !important;
+    font-size: 0.78rem !important;
+  }
+  /* Ensure buttons can wrap text and remain readable on iOS/Android */
+  .card-footer .btn,
+  .top-action,
+  .btn {
+    white-space: normal !important;
+    word-break: break-word !important;
   }
 }
 
