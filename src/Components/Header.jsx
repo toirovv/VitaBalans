@@ -33,6 +33,9 @@ function Header() {
         <nav className={`main-nav ${open ? 'open' : ''}`}>
           <Link to="/" onClick={() => setOpen(false)}>Bosh sahifa</Link>
           <Link to="/brands" onClick={() => setOpen(false)}>Brendlar</Link>
+          {/* Nav Kabinet hidden on mobile to avoid duplication with header action */}
+          <Link className="hide-mobile" to={user ? '/profile' : '/login'} onClick={() => setOpen(false)}>Kabinet</Link>
+          {/* Katalog link removed per request */}
           <Link to="/about" onClick={() => setOpen(false)}>Biz haqimizda</Link>
         </nav>
 
@@ -111,15 +114,22 @@ function Header() {
               )}
             </div>
           ) : (
-            <Link to="/login" className="btn primary" style={{ padding: '10px 20px' }}>
+            <Link to="/login" className="btn primary hide-mobile" style={{ padding: '10px 20px' }}>
               Kirish
             </Link>
           )}
+
+          {/* Catalog CTA removed per request */}
 
           {/* Cart */}
           <Link to="/cart" className="icon" title="Savat">
             <FaShoppingCart />
             {totalItems > 0 && <span className="badge">{totalItems}</span>}
+          </Link>
+
+          {/* Kabinet (user quick link) - visible only on mobile header actions */}
+          <Link to={user ? '/profile' : '/login'} className="icon show-mobile-only" title="Kabinet" aria-label="Kabinet">
+            <FaUser />
           </Link>
 
           {/* Mobile Menu Toggle */}

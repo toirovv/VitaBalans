@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import ProductCard from '../Components/ProductCard'
 import products from '../data/products'
@@ -7,17 +7,28 @@ import { FaArrowRight, FaLeaf, FaHeart, FaStar, FaShieldAlt, FaSearch } from 're
 function Home() {
   const [index, setIndex] = useState(0)
   const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState(null)
   const navigate = useNavigate()
-
-  useEffect(() => {
-    const t = setInterval(() => setIndex(i => (i + 1) % products.length), 5000)
-    return () => clearInterval(t)
-  }, [])
 
   const handleSearch = (e) => {
     e.preventDefault()
-    navigate('/catalog?q=' + encodeURIComponent(searchQuery))
+    const q = (searchQuery || '').trim()
+    const params = new URLSearchParams()
+    if (q) params.set('q', q)
+    navigate(`/catalog?${params.toString()}`)
   }
+
+  // live-first-letter search while typing (optional UX)
+  useEffect(() => {
+    const q = (searchQuery || '').trim()
+    if (!q) {
+      setSearchResults(null)
+      return
+    }
+    const first = q.charAt(0).toLowerCase()
+    const results = products.filter(p => p.title && p.title.trim().charAt(0).toLowerCase() === first)
+    setSearchResults(results)
+  }, [searchQuery])
 
   const features = [
     { icon: <FaLeaf />, title: "100% Tabiiy", desc: "Faqat tabiiy ingredientlar" },
@@ -26,42 +37,48 @@ function Home() {
     { icon: <FaShieldAlt />, title: "Sertifikatlangan", desc: "Xalqaro sertifikat" },
   ]
 
+  useEffect(() => {
+    const t = setInterval(() => setIndex(i => (i + 1) % products.length), 5000)
+    return () => clearInterval(t)
+  }, [])
+
   return (
     <div className="home">
       {/* Hero Section */}
       <section className="hero">
         <div className="hero-slider">
-          {products.map((p, i) => (
-            <div key={p.id} className={"slide" + (i === index ? ' active' : '')}>
-              <div className="hero-content">
-                <span style={{
-                  display: 'inline-block',
-                  background: 'linear-gradient(135deg, #10b981, #0ea5a3)',
-                  color: 'white',
-                  padding: '6px 16px',
-                  borderRadius: '20px',
-                  fontSize: '0.85rem',
-                  fontWeight: '600',
-                  marginBottom: '16px'
-                }}>
-                  🌿 Yangi kolleksiya
-                </span>
-                <h1>{p.title}</h1>
-                <p>{p.description}</p>
-                <div className="hero-actions">
-                  <Link to="/catalog" className="btn primary">
-                    Xarid qilish <FaArrowRight />
-                  </Link>
-                  <Link to="/about" className="btn secondary">
-                    Batafsil
-                  </Link>
+          <div className="slides-wrapper" style={{ transform: `translateX(-${index * 100}%)` }}>
+            {products.map((p) => (
+              <div className="slide" key={p.id}>
+                <div className="hero-content">
+                  <span style={{
+                    display: 'inline-block',
+                    background: 'linear-gradient(135deg, #10b981, #0ea5a3)',
+                    color: 'white',
+                    padding: '6px 16px',
+                    borderRadius: '20px',
+                    fontSize: '0.85rem',
+                    fontWeight: '600',
+                    marginBottom: '16px'
+                  }}>
+                    🌿 Yangi kolleksiya
+                  </span>
+                  <h1>{p.title}</h1>
+                  <p>{p.description}</p>
+                  <div className="hero-actions">
+                    <Link to="/catalog" className="btn primary">
+                      Xarid qilish <FaArrowRight />
+                    </Link>
+                    <Link to="/about" className="btn secondary">
+                      Batafsil
+                    </Link>
+                  </div>
                 </div>
+                <img src={p.image} className="hero-image" alt={p.title} />
               </div>
-              <img src={p.image} className="hero-image" alt={p.title} />
-            </div>
-          ))}
+            ))}
+          </div>
 
-          {/* Slider Dots */}
           <div className="hero-dots">
             {products.map((_, i) => (
               <button
@@ -81,44 +98,18 @@ function Home() {
         padding: '40px 0'
       }}>
         <div className="container">
-          <form onSubmit={handleSearch} style={{
-            display: 'flex',
-            gap: '16px',
-            maxWidth: '700px',
-            margin: '0 auto'
-          }}>
-            <div style={{
-              flex: 1,
-              position: 'relative',
-              display: 'flex',
-              alignItems: 'center',
-              background: 'white',
-              borderRadius: '16px',
-              boxShadow: '0 4px 20px rgba(16, 185, 129, 0.1)',
-              padding: '4px',
-              border: '2px solid #e2e8f0'
-            }}>
-              <FaSearch style={{
-                position: 'absolute',
-                left: '20px',
-                color: '#94a3b8',
-                fontSize: '1.1rem'
-              }} />
+          <form onSubmit={handleSearch} className="home-search" style={{ maxWidth: '900px', margin: '0 auto' }}>
+            <div className="search-form" style={{ flex: 1, background: 'white', borderRadius: 16, boxShadow: '0 4px 20px rgba(16, 185, 129, 0.06)', padding: 4 }}>
+              <FaSearch className="search-icon" />
               <input
                 type="text"
                 placeholder="Mahsulot qidirish..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                style={{
-                  flex: 1,
-                  padding: '16px 16px 16px 52px',
-                  border: 'none',
-                  background: 'transparent',
-                  fontSize: '1rem',
-                  outline: 'none'
-                }}
+                className="home-search-input"
               />
             </div>
+            
             <Link
               to="/catalog"
               className="btn primary"
@@ -134,6 +125,21 @@ function Home() {
               Katalog <FaArrowRight />
             </Link>
           </form>
+          {/* Search results on Home (first-letter matching) */}
+          {Array.isArray(searchResults) && (
+            <section style={{ marginTop: 18 }}>
+              <div className="container">
+                <h3>Qidiruv natijalari: "{searchQuery.charAt(0).toUpperCase()}"</h3>
+                <div className="grid" style={{ marginTop: 12 }}>
+                  {searchResults.length ? searchResults.map(p => (
+                    <ProductCard key={p.id} product={p} />
+                  )) : (
+                    <div style={{ padding: 24, color: '#64748b' }}>Hech qanday natija topilmadi.</div>
+                  )}
+                </div>
+              </div>
+            </section>
+          )}
         </div>
       </section>
 
@@ -178,57 +184,22 @@ function Home() {
         </div>
       </section>
 
-      {/* Featured Products */}
+      {/* All Products (newest first) */}
       <section className="products container">
-        <h2>Mashhur Mahsulotlar</h2>
+        <h2>Mahsulotlar</h2>
         <div className="grid">
-          {products.slice(0, 6).map(p => (
+          {products.slice().reverse().map(p => (
             <ProductCard key={p.id} product={p} />
           ))}
-        </div>
-        <div style={{ textAlign: 'center', marginTop: '40px' }}>
-          <Link to="/catalog" className="btn primary">
-            Barcha mahsulotlar <FaArrowRight />
-          </Link>
-        </div>
-      </section>
-
-      {/* New Arrivals - makes the homepage longer */}
-      <section className="products container" style={{ paddingTop: '40px' }}>
-        <h2>Yangi kelganlar</h2>
-        <div className="grid">
-          {products.slice(6, 12).map(p => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
-        <div style={{ textAlign: 'center', marginTop: '28px' }}>
-          <Link to="/catalog" className="btn secondary">
-            Barchasini ko'rish <FaArrowRight />
-          </Link>
         </div>
       </section>
 
       {/* CTA Banner */}
-      <section style={{
-        background: 'linear-gradient(135deg, #10b981, #0ea5a3)',
-        padding: '80px 0',
-        marginTop: '60px'
-      }}>
-        <div className="container" style={{ textAlign: 'center', color: 'white' }}>
-          <h2 style={{ fontSize: '2.5rem', marginBottom: '16px', color: 'white' }}>
-            Sog'lom hayot – sizning tanlovingiz!
-          </h2>
-          <p style={{ fontSize: '1.2rem', opacity: 0.9, marginBottom: '32px', maxWidth: '600px', margin: '0 auto 32px' }}>
-            VitaBalans bilan tabiiy vitaminlar va qo'shimchalar orqali sog'lig'ingizni mustahkamlang.
-          </p>
-          <Link to="/register" className="btn" style={{
-            background: 'white',
-            color: '#10b981',
-            padding: '16px 32px',
-            fontSize: '1.1rem'
-          }}>
-            Hoziroq boshlash
-          </Link>
+      <section className="cta-banner">
+        <div className="container cta-inner">
+          <h2>Sog'lom hayot – sizning tanlovingiz!</h2>
+          <p>VitaBalans bilan tabiiy vitaminlar va qo'shimchalar orqali sog'lig'ingizni mustahkamlang.</p>
+          <Link to="/register" className="btn cta-btn">Hoziroq boshlash</Link>
         </div>
       </section>
     </div>

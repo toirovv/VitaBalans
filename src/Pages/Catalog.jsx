@@ -7,11 +7,15 @@ import { FaSearch, FaArrowRight } from 'react-icons/fa'
 function Catalog() {
   const [searchParams] = useSearchParams()
   const initialQuery = searchParams.get('q') || ''
+  const paramMin = searchParams.get('min') || ''
+  const paramMax = searchParams.get('max') || ''
+  const paramCategory = searchParams.get('category') || 'all'
+  const paramSort = searchParams.get('sort') || 'default'
 
   const [query, setQuery] = useState(initialQuery)
-  const [selectedCategory, setSelectedCategory] = useState('all')
-  const [sortBy, setSortBy] = useState('default')
-  const [priceRange, setPriceRange] = useState({ min: '', max: '' })
+  const [selectedCategory, setSelectedCategory] = useState(paramCategory)
+  const [sortBy, setSortBy] = useState(paramSort)
+  const [priceRange, setPriceRange] = useState({ min: paramMin, max: paramMax })
 
   const filteredProducts = useMemo(() => {
     let result = [...products]
@@ -30,11 +34,13 @@ function Catalog() {
     }
 
     // Filter by price range
-    if (priceRange.min) {
-      result = result.filter(p => p.price >= Number(priceRange.min))
+    const minVal = priceRange.min !== '' ? Number(priceRange.min) : null
+    const maxVal = priceRange.max !== '' ? Number(priceRange.max) : null
+    if (minVal !== null && !Number.isNaN(minVal)) {
+      result = result.filter(p => p.price >= minVal)
     }
-    if (priceRange.max) {
-      result = result.filter(p => p.price <= Number(priceRange.max))
+    if (maxVal !== null && !Number.isNaN(maxVal)) {
+      result = result.filter(p => p.price <= maxVal)
     }
 
     // Sort

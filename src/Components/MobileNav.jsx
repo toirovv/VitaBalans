@@ -1,6 +1,6 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
-import { FaHome, FaSearch, FaShoppingCart, FaUser, FaInfoCircle } from 'react-icons/fa'
+import { FaHome, FaSearch, FaShoppingCart, FaInfoCircle, FaTh } from 'react-icons/fa'
 
 export default function MobileNav() {
     return (
@@ -25,9 +25,9 @@ export default function MobileNav() {
                 <span className="mobile-label">Savat</span>
             </NavLink>  
 
-            <NavLink to="/profile" className={({ isActive }) => "mobile-item" + (isActive ? ' active' : '')}>
-                <FaUser className="mobile-icon" />
-                <span className="mobile-label">Kabinet</span>
+            <NavLink to="/brands" className={({ isActive }) => "mobile-item" + (isActive ? ' active' : '')}>
+                <FaTh className="mobile-icon" />
+                <span className="mobile-label">Brands</span>
             </NavLink>
         </nav>
     )

@@ -6,6 +6,8 @@ import { AuthContext } from '../contexts/AuthContext'
 
 function ProductCard({ product }) {
   const [showNotification, setShowNotification] = useState(false)
+  const [notificationMsg, setNotificationMsg] = useState('')
+  const [notificationInCard, setNotificationInCard] = useState(false)
   const { add } = useContext(CartContext)
   const { user } = useContext(AuthContext)
   const nav = useNavigate()
@@ -17,82 +19,67 @@ function ProductCard({ product }) {
     e.stopPropagation()
 
     if (!user) {
+      setNotificationMsg('Xarid qilish uchun avval platformaga kiring!')
+      setNotificationInCard(true)
       setShowNotification(true)
       setTimeout(() => setShowNotification(false), 3000)
       return
     }
     add(product)
-    nav('/cart')
+    setNotificationMsg('Mahsulot savatga qo\'shildi')
+    setNotificationInCard(true)
+    setShowNotification(true)
+    setTimeout(() => setShowNotification(false), 1500)
   }
 
   const avgRating = product.rating || 4.8
 
   return (
     <>
-      {/* Notification */}
-      {showNotification && (
-        <div style={{
-          position: 'fixed',
-          top: '100px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-          color: 'white',
-          padding: '16px 32px',
-          borderRadius: '12px',
-          boxShadow: '0 10px 40px rgba(245, 158, 11, 0.3)',
-          zIndex: 1000,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '16px',
-          animation: 'slideDown 0.3s ease'
-        }}>
-          <span>⚠️ Xarid qilish uchun avval platformaga kiring!</span>
-          <Link to="/login" style={{
-            background: 'white',
-            color: '#d97706',
-            padding: '8px 16px',
-            borderRadius: '8px',
-            fontWeight: '600'
-          }}>
-            Kirish
-          </Link>
-        </div>
-      )}
+      <Link to={`/product/${product.id}`} className="card product-card" style={{ textDecoration: 'none' }}>
+        {/* Notification (in-card) */}
+        {showNotification && (
+          <div className={`vb-toast in-card`} role="status">
+            <span>{notificationMsg}</span>
+            {!user && (
+              <Link to="/login" className="vb-toast-cta">Kirish</Link>
+            )}
+          </div>
+        )}
+        {/* Sale badge (top-left) */}
+        {product.discountLabel || product.discount ? (
+          <div className="badge-sale">{product.discountLabel || `Chegirma ${product.discount} so'm`}</div>
+        ) : null}
 
-      <Link to={`/product/${product.id}`} className="card" style={{ textDecoration: 'none', background: '#e2e8f0', border: '1px solid rgba(15,23,42,0.06)', boxShadow: '0 6px 18px rgba(2,6,23,0.06)' }}>
-        {/* Quick Add Button */}
-        <button className="top-action" onClick={handleAdd} aria-label="Savatga qo'shish">
-          <FaShoppingCart style={{ marginRight: '6px' }} />
-          Savatga
-        </button>
-
-        {/* Product Image (use background with darker overlay) */}
-        <div className="card-image-wrapper" style={{ padding: 8 }}>
-          <img src={product.image} alt={product.title} style={{ width: '100%', height: 160, objectFit: 'cover', borderRadius: 12, display: 'block', boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.02)' }} />
+        {/* Product Image */}
+        <div className="card-image-wrapper product-image" style={{ padding: 8 }}>
+          <img src={product.image} alt={product.title} style={{ width: '100%', height: 140, objectFit: 'contain', borderRadius: 12, display: 'block' }} />
         </div>
 
         {/* Product Info */}
         <div className="card-body">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              {product.category && <span className="chip">{product.category}</span>}
-              {product.rating >= 4.8 && <span className="badge-top">Eng ko'p sotilgan</span>}
-            </div>
-            <div style={{ color: 'var(--text-muted)', fontSize: 12 }}>{product.weight || ''}</div>
+          <h3 className="card-title">{product.title}</h3>
+
+          <p className="card-description">{product.description}</p>
+
+          <div className="rating" aria-hidden style={{ margin: '8px 0' }}>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <FaStar key={i} color="#f5b50a" style={{ width: 16, height: 16 }} />
+            ))}
           </div>
 
-          <h3 className="card-title">{product.title}</h3>
-          <p className="card-description">{product.description}</p>
-          {/** Convert USD price to UZS and display without $ sign */}
-          <p className="card-price">{Math.round(product.price * EXCHANGE_RATE).toLocaleString('uz-UZ')} so'm</p>
+          <div className="old-price">
+            {product.oldPrice ? (
+              <span style={{ textDecoration: 'line-through', color: 'var(--text-muted)' }}>{Math.round(product.oldPrice * EXCHANGE_RATE).toLocaleString('uz-UZ')} so'm</span>
+            ) : null}
+            {product.available && <span className="availability">Mavjud</span>}
+          </div>
+
+          <div className="price">{Math.round(product.price * EXCHANGE_RATE).toLocaleString('uz-UZ')} so'm</div>
+
           <div className="card-footer">
-            <div className="rating">
-              <FaStar color="#f5b50a" />
-              <span>{avgRating}</span>
-            </div>
-            <button className="btn primary" onClick={handleAdd} style={{ padding: '8px 16px' }}>
-              Sotib olish
+            <button className="btn primary full-width" onClick={handleAdd} style={{ padding: '10px 14px' }}>
+              Savatga qo'shish
             </button>
           </div>
         </div>

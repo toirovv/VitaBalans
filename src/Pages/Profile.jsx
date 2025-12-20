@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AuthContext } from '../contexts/AuthContext'
-import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaEdit, FaShoppingBag, FaTag, FaSignOutAlt, FaHeart, FaCog } from 'react-icons/fa'
+import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaEdit, FaShoppingBag, FaTag, FaSignOutAlt, FaCog } from 'react-icons/fa'
 
 function Profile() {
   const { user, logout, updateUser } = useContext(AuthContext)
@@ -67,26 +67,13 @@ function Profile() {
     { id: 'profile', label: 'Profil', icon: <FaUser /> },
     { id: 'orders', label: 'Buyurtmalar', icon: <FaShoppingBag /> },
     { id: 'promos', label: 'Promo kodlar', icon: <FaTag /> },
-    { id: 'wishlist', label: 'Sevimlilar', icon: <FaHeart /> },
   ]
 
   return (
-    <div className="container" style={{ padding: '40px 24px 80px' }}>
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '280px 1fr',
-        gap: '32px',
-        alignItems: 'start'
-      }}>
+    <div className="profile-page container">
+      <div className="profile-grid">
         {/* Sidebar */}
-        <div style={{
-          background: 'white',
-          borderRadius: '20px',
-          padding: '24px',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
-          position: 'sticky',
-          top: '100px'
-        }}>
+        <div className="profile-sidebar">
           {/* User Info */}
           <div style={{ textAlign: 'center', marginBottom: '24px', paddingBottom: '24px', borderBottom: '1px solid #e2e8f0' }}>
             <div style={{
@@ -156,12 +143,7 @@ function Profile() {
         </div>
 
         {/* Content */}
-        <div style={{
-          background: 'white',
-          borderRadius: '20px',
-          padding: '32px',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.05)'
-        }}>
+        <div className="profile-content">
           {showWelcome && (
             <div style={{ marginBottom: 20, padding: 16, borderRadius: 12, background: 'linear-gradient(135deg,#ecfdf5,#f0fdfa)', color: '#059669', fontWeight: 600 }}>
               Xush kelibsiz, {user.name}! Siz muvaffaqiyatli kirdingiz.
@@ -170,14 +152,15 @@ function Profile() {
           {/* Profile Tab */}
           {activeTab === 'profile' && (
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                 <h2 style={{ margin: 0 }}>Profil ma'lumotlari</h2>
                 <button
-                  className="btn outline"
+                  className="btn outline small"
                   onClick={() => setIsEditing(!isEditing)}
+                  aria-pressed={isEditing}
                 >
                   <FaEdit style={{ marginRight: '8px' }} />
-                  {isEditing ? 'Bekor qilish' : 'Tahrirlash'}
+                  <span style={{ fontSize: '0.9rem' }}>{isEditing ? 'Bekor qilish' : 'Tahrirlash'}</span>
                 </button>
               </div>
 
@@ -364,31 +347,12 @@ function Profile() {
             </div>
           )}
 
-          {/* Wishlist Tab */}
-          {activeTab === 'wishlist' && (
-            <div>
-              <h2 style={{ marginBottom: '32px' }}>Sevimlilar</h2>
-              <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-                <div style={{ fontSize: '3rem', marginBottom: '16px' }}>❤️</div>
-                <h3>Sevimlilar ro'yxati bo'sh</h3>
-                <p style={{ color: '#64748b', marginTop: '8px' }}>
-                  Mahsulotlarni sevimlilar ro'yxatiga qo'shing
-                </p>
-                <Link to="/catalog" className="btn primary" style={{ marginTop: '20px' }}>
-                  Katalogga o'tish
-                </Link>
-              </div>
-            </div>
-          )}
+          {/* Wishlist removed per request */}
         </div>
       </div>
 
       <style>{`
-        @media (max-width: 768px) {
-          .container > div {
-            grid-template-columns: 1fr !important;
-          }
-        }
+        /* Keep small fallbacks but prefer CSS rules in index.css */
       `}</style>
     </div>
   )

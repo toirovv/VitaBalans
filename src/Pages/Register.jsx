@@ -1,13 +1,12 @@
 import React, { useState, useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash, FaCheck } from 'react-icons/fa'
+import { FaUser, FaLock, FaEye, FaEyeSlash, FaCheck } from 'react-icons/fa'
 import logo from '../assets/images/VitaBalansLogo.jpg'
 import { AuthContext } from '../contexts/AuthContext'
 
 function Register() {
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
     phone: '',
     password: '',
     confirmPassword: ''
@@ -24,7 +23,9 @@ function Register() {
   }
 
   const formatPhone = (value) => {
-    const digits = value.replace(/\D/g, '')
+    let digits = value.replace(/\D/g, '')
+    // If user pasted full international number, strip leading 998
+    if (digits.startsWith('998')) digits = digits.slice(3)
     if (digits.length <= 2) return digits
     if (digits.length <= 5) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`
     if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2, 5)} ${digits.slice(5)}`
@@ -51,9 +52,9 @@ function Register() {
     e.preventDefault()
     setError('')
 
-    const { name, email, phone, password, confirmPassword } = formData
+    const { name, phone, password, confirmPassword } = formData
 
-    if (!name || !email || !password) {
+    if (!name || !password) {
       setError("Iltimos, barcha maydonlarni to'ldiring")
       return
     }
@@ -86,7 +87,7 @@ function Register() {
       return
     }
 
-    const userObj = { name, email, phone: '+998 ' + digits }
+    const userObj = { name, phone: '+998 ' + digits }
     const res = register(userObj, password)
     if (!res.ok) {
       setError(res.message || 'Ro\'yxatdan o\'tishda xato')
@@ -171,6 +172,20 @@ function Register() {
       {/* Right Side - Form */}
       <div className="auth-right">
         <div className="auth-form">
+          {/* Logo for mobile */}
+          <Link to="/" style={{ display: 'block', textAlign: 'center', marginBottom: '24px' }}>
+            <img
+              src={logo}
+              alt="VitaBalans"
+              style={{
+                width: '80px',
+                height: '80px',
+                borderRadius: '16px'
+              }}
+              className="mobile-logo"
+            />
+          </Link>
+
           <h2 style={{ fontSize: '1.8rem', marginBottom: '8px' }}>Ro'yxatdan o'tish</h2>
           <p style={{ color: '#64748b', marginBottom: '32px' }}>Yangi hisob yarating</p>
 
@@ -204,25 +219,24 @@ function Register() {
                   onBlur={e => e.target.style.borderColor = '#e5e7eb'}
                 />
               </div>
-            </div>
-
-            {/* Email */}
-            <div style={{ marginBottom: '20px' }}>
-              <label style={labelStyle}>Email</label>
-              <div style={{ position: 'relative' }}>
-                <FaEnvelope style={iconStyle} />
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="email@example.com"
-                  value={formData.email}
-                  onChange={handleChange}
-                  style={inputStyle}
-                  onFocus={e => e.target.style.borderColor = '#10b981'}
-                  onBlur={e => e.target.style.borderColor = '#e5e7eb'}
-                />
+                <style>{`
+                  /* mobile / small-screen tweaks for auth pages */
+                  @media (max-width: 900px) {
+                    .mobile-logo { display: block !important; }
+                    .auth-left img { width: 100px; height: 100px; }
+                    .auth-left h2 { font-size: 1.25rem; }
+                    .auth-left p { font-size: 0.95rem; }
+                    .auth-form h2 { font-size: 1.25rem; }
+                    .auth-form p { font-size: 0.9rem; }
+                    input[name="phone"] { font-size: 0.95rem; }
+                  }
+                  @media (min-width: 901px) {
+                    .mobile-logo { display: none; }
+                  }
+                `}</style>
               </div>
-            </div>
+
+            {/* Email removed per request */}
 
             {/* Phone */}
             <div style={{ marginBottom: '20px' }}>
@@ -236,10 +250,13 @@ function Register() {
                   background: '#f3f4f6',
                   borderRadius: '12px 0 0 12px',
                   border: '2px solid #e5e7eb',
-                  borderRight: 'none'
+                  borderRight: 'none',
+                  minWidth: '86px',
+                  flexShrink: 0,
+                  boxSizing: 'border-box'
                 }}>
-                 <img style={{width:18,height:12,objectFit:'cover'}} src="https://img.freepik.com/premium-photo/republic-uzbekistan-national-fabric-flag-textile-background-symbol-world-asian-country_113767-2072.jpg?semt=ais_hybrid&w=740&q=80" alt="uz" />
-                  <span style={{ fontWeight: '500', color: '#374151' }}>+998</span>
+                 <img style={{width:20,height:12,objectFit:'cover'}} src="https://img.freepik.com/premium-photo/republic-uzbekistan-national-fabric-flag-textile-background-symbol-world-asian-country_113767-2072.jpg?semt=ais_hybrid&w=740&q=80" alt="uz" />
+                  <span style={{ fontWeight: '600', color: '#374151', marginLeft:6, fontSize: '0.9rem', whiteSpace: 'nowrap' }}>+998</span>
                 </div>
                 <input
                   type="tel"
@@ -251,7 +268,8 @@ function Register() {
                   style={{
                     ...inputStyle,
                     paddingLeft: '16px',
-                    borderRadius: '0 12px 12px 0'
+                    borderRadius: '0 12px 12px 0',
+                    flex: 1
                   }}
                   onFocus={e => e.target.style.borderColor = '#10b981'}
                   onBlur={e => e.target.style.borderColor = '#e5e7eb'}
