@@ -2016,3 +2016,17 @@ label {
     font-size: 1rem;
   }
 }
+
+/* Feature card hover */
+.feature-card {
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  cursor: default;
+}
+.feature-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 18px 50px rgba(16,185,129,0.12);
+}
+
+/* Make hover background green-ish and icon stronger */
+.feature-card:hover { background: linear-gradient(135deg, #ecfdf5, #e6fffa); }
+.feature-card:hover div:first-child { background: linear-gradient(135deg, #10b981, #059669); color: white; }

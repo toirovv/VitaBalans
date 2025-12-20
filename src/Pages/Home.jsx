@@ -146,7 +146,7 @@ function Home() {
             gap: '24px'
           }}>
             {features.map((f, i) => (
-              <div key={i} style={{
+              <div key={i} className="feature-card" style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '16px',
