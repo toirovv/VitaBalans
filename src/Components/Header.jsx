@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { FaShoppingCart, FaUser, FaBars, FaTimes, FaSignOutAlt } from 'react-icons/fa'
+import { FaShoppingCart, FaUser, FaBars, FaTimes, FaSignOutAlt, FaTags } from 'react-icons/fa'
 import logo from '../assets/images/VitaBalansLogo.jpg'
 import { CartContext } from '../contexts/CartContext'
 import { AuthContext } from '../contexts/AuthContext'
@@ -32,6 +32,7 @@ function Header() {
         <nav className={`main-nav ${open ? 'open' : ''}`}>
           <Link to="/" onClick={() => setOpen(false)}>Bosh sahifa</Link>
           <Link to="/brands" onClick={() => setOpen(false)}>Brendlar</Link>
+          <Link to="/toplam" onClick={() => setOpen(false)}>To'plamlar</Link>
           <Link to="/about" onClick={() => setOpen(false)}>Biz haqimizda</Link>
         </nav>
 
@@ -122,6 +123,21 @@ function Header() {
             <FaShoppingCart />
             {totalItems > 0 && <span className="badge">{totalItems}</span>}
           </Link>
+
+          {/* Mobile-only: Brands + Profile icons */}
+          <Link to="/brands" className="icon show-mobile-only" title="Brendlar">
+            <FaTags />
+          </Link>
+
+          {user ? (
+            <Link to="/profile" className="icon show-mobile-only" title="Profil">
+              <FaUser />
+            </Link>
+          ) : (
+            <Link to="/login" className="icon show-mobile-only" title="Kirish">
+              <FaUser />
+            </Link>
+          )}
 
           {/* Kabinet removed from header as requested */}
 

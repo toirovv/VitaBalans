@@ -93,7 +93,7 @@ function Login() {
   }
 
   return (
-    <div className="auth-page">
+    <div className="auth-page no-logo">
       {/* Left Side - Branding */}
       <div className="auth-left">
         <Link to="/" style={{ display: 'flex', justifyContent: 'center' }}>
@@ -102,12 +102,14 @@ function Login() {
             alt="VitaBalans"
             className="auth-logo"
             style={{
-              width: '140px',
-              height: '140px',
-              borderRadius: '24px',
-              boxShadow: '0 20px 50px rgba(16, 185, 129, 0.2)',
+              width: 'min(160px, 28vw)',
+              height: 'auto',
+              borderRadius: '16px',
+              boxShadow: '0 18px 40px rgba(16, 185, 129, 0.16)',
               marginBottom: '32px',
-              objectFit: 'cover'
+              objectFit: 'contain',
+              background: 'white',
+              padding: 6
             }}
           />
         </Link>

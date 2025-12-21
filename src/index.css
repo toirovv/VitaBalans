@@ -31,13 +31,17 @@
 
   /* Gradient */
   --gradient-primary: linear-gradient(135deg, #10b981 0%, #0ea5a3 100%);
-  --gradient-hero: linear-gradient(135deg,
-      #ecfdf5 0%,
-      #f0fdfa 50%,
-      #ffffff 100%);
-  --gradient-card: linear-gradient(180deg,
-      rgba(255, 255, 255, 0.95) 0%,
-      rgba(248, 250, 252, 0.98) 100%);
+  --gradient-hero: linear-gradient(
+    135deg,
+    #ecfdf5 0%,
+    #f0fdfa 50%,
+    #ffffff 100%
+  );
+  --gradient-card: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(248, 250, 252, 0.98) 100%
+  );
 
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -422,7 +426,7 @@ h4 {
   }
 
   /* On small screens show only the logo and the mobile menu button; hide other header actions (cart, profile, login) */
-  .header-actions> :not(.mobile-menu) {
+  .header-actions > :not(.mobile-menu) {
     display: none !important;
   }
 
@@ -435,6 +439,11 @@ h4 {
   .logo {
     height: 56px;
     width: 56px;
+  }
+
+  /* Utility to show elements only on small screens */
+  .show-mobile-only {
+    display: inline-flex !important;
   }
 
   /* Utility to show elements only on small screens */
@@ -458,27 +467,46 @@ h4 {
   }
 }
 
+@media (max-width: 900px) {
+  /* Hide left branding panel on small screens and make form full width */
+  .auth-left {
+    display: none !important;
+  }
+  .auth-page {
+    grid-template-columns: 1fr !important;
+  }
+  .auth-right {
+    padding: 24px !important;
+  }
+}
+
 @media (max-width: 480px) {
-  .container {
-    padding: 0 16px;
-  }
-
-  .logo {
-    height: 32px;
-    width: 32px;
-  }
-
   .brand-text {
     display: none;
   }
 
+
+  /* Ensure homepage product list shows two cards per row on tablets and phones */
+  .home .grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 18px !important;
+    justify-content: stretch !important;
+  }
   .main-nav {
+
+/* Hide logos only on the Login page (keeps Register and others unaffected) */
+.auth-page.no-logo .auth-logo,
+.auth-page.no-logo .mobile-logo {
+  display: none !important;
+}
     left: 8px;
     right: 8px;
     top: 64px;
   }
 }
-
+.cta-inner h1{
+  color: white !important;
+}
 /* ===== Search Form ===== */
 .search-form {
   display: flex;
@@ -566,9 +594,11 @@ h4 {
   right: -20%;
   width: 80%;
   height: 200%;
-  background: radial-gradient(circle,
-      rgba(16, 185, 129, 0.15) 0%,
-      transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(16, 185, 129, 0.15) 0%,
+    transparent 70%
+  );
   pointer-events: none;
 }
 
@@ -951,7 +981,7 @@ h4 {
 }
 
 /* Align hero-inner with container spacing to avoid overflow */
-.hero .container>.hero-inner,
+.hero .container > .hero-inner,
 .hero-inner {
   padding-inline: 12px;
   box-sizing: border-box;
@@ -1046,7 +1076,6 @@ h4 {
 }
 
 @media (max-width: 480px) {
-
   /* Reduce hero height and make banner phone-friendly */
   .hero {
     min-height: auto !important;
@@ -1253,6 +1282,12 @@ h4 {
   .hero {
     padding: 12px 8px !important;
     min-height: auto !important;
+
+  /* Keep two columns on small phones as well */
+  .home .grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
   }
 
   .slide {
@@ -1516,9 +1551,11 @@ h4 {
   height: min(52vh, 520px);
   object-fit: cover;
   border-radius: var(--radius-xl);
-  background: linear-gradient(180deg,
-      rgba(255, 255, 255, 0.85),
-      rgba(248, 250, 252, 0.6));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.85),
+    rgba(248, 250, 252, 0.6)
+  );
   padding: 8px;
   box-shadow: var(--shadow-xl);
   animation: float 6s ease-in-out infinite;
@@ -1526,7 +1563,6 @@ h4 {
 }
 
 @keyframes float {
-
   0%,
   100% {
     transform: translateY(0);
@@ -1651,7 +1687,7 @@ h4 {
     padding: 20px !important;
   }
 
-  .feature-card>div:first-child {
+  .feature-card > div:first-child {
     margin-bottom: 12px;
     width: 64px;
     height: 64px;
@@ -1680,7 +1716,7 @@ h4 {
     gap: 8px !important;
   }
 
-  .features-grid .feature-card>div:first-child {
+  .features-grid .feature-card > div:first-child {
     width: 48px !important;
     height: 48px !important;
     font-size: 1.15rem !important;
@@ -1875,7 +1911,9 @@ h4 {
     flex-basis: 100% !important;
     width: 100% !important;
   }
-
+  .auth-logo {
+   display: none;
+  } 
   .slide-image .hero-image,
   .hero-image {
     max-height: 200px !important;
@@ -1908,12 +1946,15 @@ h4 {
 }
 
 @media (max-width: 900px) {
-
   .hero-image,
   .slide-image .hero-image,
   .hero-media .hero-image {
     max-width: var(--hero-img-max-tablet) !important;
     padding: 4px !important;
+  }
+  .auth-logo {
+    width: 100px;
+    height: 200px;
   }
 
   .hero-actions .btn {
@@ -1923,7 +1964,6 @@ h4 {
 }
 
 @media (max-width: 480px) {
-
   .hero-image,
   .slide-image .hero-image,
   .hero-media .hero-image {
@@ -1939,6 +1979,10 @@ h4 {
     width: calc(100% - 32px) !important;
     max-width: 420px !important;
   }
+  .auth-logo {
+    width: 100px;
+    height: 200px;
+  }
 }
 
 /* ===== Product Grid & Card ===== */
@@ -1951,6 +1995,39 @@ h4 {
   /* increased gap for more breathing room */
   justify-content: center;
   /* center columns when row isn't full */
+}
+
+/* Make grid rows equal height so cards remain uniform */
+.grid {
+  grid-auto-rows: 1fr;
+  align-items: stretch;
+}
+
+/* Ensure each card fills its grid cell and uses column layout so footers align */
+.grid > * {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Product card image area: fixed heights for consistent card size */
+.product-card .card-image-wrapper {
+  flex: 0 0 220px;
+  height: 220px;
+}
+
+@media (max-width: 900px) {
+  .product-card .card-image-wrapper {
+    flex: 0 0 160px;
+    height: 160px;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-card .card-image-wrapper {
+    flex: 0 0 120px;
+    height: 120px;
+  }
 }
 
 /* Homepage-specific larger catalog layout */
@@ -1977,6 +2054,10 @@ h4 {
     max-width: 160px !important;
     max-height: 160px !important;
     padding: 6px !important;
+  }
+  .auth-logo {
+    width: 100px;
+    height: 200px;
   }
 
   /* Slightly smaller images and tighter cards on medium screens */
@@ -2102,6 +2183,10 @@ h4 {
 @media (max-width: 900px) {
   .card {
     width: auto;
+  }
+  .auth-logo {
+    width: 100px;
+    height: 200px;
   }
 
   .product-card {
@@ -2247,7 +2332,10 @@ h4 {
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
   }
-
+  .auth-logo {
+    width: 100px;
+    height: 200px;
+  }
   .card {
     width: auto;
     /* allow cards to fill available column on tablet and below */
@@ -2359,6 +2447,10 @@ h4 {
   .rating {
     font-size: 0.75rem;
   }
+  .auth-logo {
+    width: 100px;
+    height: 200px;
+  }
 }
 
 /* Make hero image full-width on smaller screens but keep good aspect ratio */
@@ -2372,6 +2464,10 @@ h4 {
     padding: 12px;
     margin-top: 18px;
   }
+  .auth-logo {
+    width: 100px;
+    height: 200px;
+  }
 }
 
 @media (max-width: 400px) {
@@ -2379,7 +2475,10 @@ h4 {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
-
+  .auth-logo {
+    width: 200px;
+    height: 200px;
+  }
   .card {
     min-height: auto;
     /* let cards size naturally on very small screens */
@@ -2448,7 +2547,10 @@ h4 {
     padding: 6px 6px !important;
     font-size: 0.72rem !important;
   }
-
+  .auth-logo {
+    width: 100px;
+    height: 200px;
+  }
   .card-footer {
     gap: 6px;
     align-items: center;
@@ -2508,11 +2610,14 @@ button,
 
 /* Tighter button sizing on small screens to ensure everything fits */
 @media (max-width: 600px) {
-
   .btn,
   button {
     padding: 6px 10px !important;
     font-size: 0.72rem !important;
+  }
+  .auth-logo {
+    width: 100px;
+    height: 200px;
   }
 }
 
@@ -2544,11 +2649,14 @@ button,
 }
 
 @media (max-width: 900px) {
-
   /* on small screens make the input take more space, catalog button smaller */
   .home-search.compact {
     flex-direction: row;
     align-items: center;
+  }
+  .auth-logo {
+    width: 100px;
+    height: 200px;
   }
 
   .home-search.compact .compact-input {
@@ -2572,6 +2680,10 @@ button,
     padding-right: 8px !important;
     font-size: 0.72rem !important;
   }
+  .auth-logo {
+    width: 100px;
+    height: 200px;
+  }
 }
 
 @media (max-width: 900px) {
@@ -2580,6 +2692,10 @@ button,
     align-items: stretch;
     gap: 10px;
     padding: 0 12px;
+  }
+  .auth-logo {
+    width: 100px;
+    height: 200px;
   }
 
   .home-search .btn.primary {
@@ -2598,6 +2714,10 @@ button,
   .hero-actions {
     flex-direction: column;
     gap: 8px;
+  }
+  .auth-logo {
+    width: 100px;
+    height: 200px;
   }
 
   /* On very small screens keep buttons compact rather than full-width */
@@ -2635,6 +2755,10 @@ button[disabled] {
 @media (max-width: 900px) {
   .home-search .btn.primary {
     width: 100%;
+  }
+  .auth-logo {
+    width: 100px;
+    height: 200px;
   }
 }
 
@@ -2876,9 +3000,11 @@ button[disabled] {
   position: absolute;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle,
-      rgba(16, 185, 129, 0.15) 0%,
-      transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(16, 185, 129, 0.15) 0%,
+    transparent 70%
+  );
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -3458,7 +3584,7 @@ label {
   gap: 12px;
 }
 
-.form-row>* {
+.form-row > * {
   flex: 1;
 }
 
@@ -3750,7 +3876,6 @@ label {
 
 /* Force header to be compact on small screens and defer navigation to bottom nav */
 @media (max-width: 900px) {
-
   /* Hide the main nav and burger on small screens so header only shows logo */
   .main-nav {
     display: none !important;
@@ -3808,7 +3933,7 @@ label {
     align-items: center;
   }
 
-  .feature-card>div:first-child {
+  .feature-card > div:first-child {
     margin-bottom: 12px;
     width: 64px;
     height: 64px;
@@ -3934,21 +4059,19 @@ label {
 /* Mobile: make CTA banner fully visible, left-aligned and compact */
 @media (max-width: 480px) {
   .cta-banner {
-    padding: 28px 12px;
-    /* reduce vertical padding so the banner fits on small screens */
-    margin-top: 40px;
+    padding: 5px 0;
   }
 
   .cta-banner .cta-inner {
-    text-align: left;
+    text-align: center;
     max-width: 100%;
     margin: 0;
-    /* remove centering container on phones */
     padding: 0 8px;
   }
 
   .cta-banner h2 {
     font-size: 1.25rem;
+    color: white !important;
     margin-bottom: 8px;
     font-weight: 700;
   }
@@ -3962,7 +4085,8 @@ label {
 
   .cta-banner .cta-btn {
     padding: 10px 14px;
-    font-size: 0.95rem;
+    text-align: center;
+    font-size: 10px;
     display: inline-block;
   }
 }
@@ -3986,7 +4110,7 @@ label {
 }
 
 /* Make product-following sections' headings smaller and sections a bit taller */
-.products+section {
+.products + section {
   padding-top: 60px;
 }
 
@@ -4026,7 +4150,6 @@ label {
 }
 
 @media (max-width: 768px) {
-
   /* Make banner taller / portrait-like on small screens */
   .hero-image {
     height: 80vh;

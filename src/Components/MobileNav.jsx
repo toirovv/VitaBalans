@@ -25,9 +25,9 @@ export default function MobileNav() {
                 <span className="mobile-label">Savat</span>
             </NavLink>  
 
-            <NavLink to="/brands" className={({ isActive }) => "mobile-item" + (isActive ? ' active' : '')}>
+            <NavLink to="/toplam" className={({ isActive }) => "mobile-item" + (isActive ? ' active' : '')}>
                 <FaTh className="mobile-icon" />
-                <span className="mobile-label">Brands</span>
+                <span className="mobile-label">Toplamlar</span>
             </NavLink>
         </nav>
     )

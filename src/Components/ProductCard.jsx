@@ -4,7 +4,7 @@ import { FaStar, FaShoppingCart } from 'react-icons/fa'
 import { CartContext } from '../contexts/CartContext'
 import { AuthContext } from '../contexts/AuthContext'
 
-function ProductCard({ product }) {
+function ProductCard({ product, fixedSize = false }) {
   const [showNotification, setShowNotification] = useState(false)
   const [notificationMsg, setNotificationMsg] = useState('')
   const [notificationInCard, setNotificationInCard] = useState(false)
@@ -43,7 +43,14 @@ function ProductCard({ product }) {
 
   return (
     <>
-      <Link to={`/product/${product.id}`} className="card product-card" style={{ textDecoration: 'none' }}>
+      <Link
+        to={`/product/${product.id}`}
+        className="card product-card"
+        style={{
+          textDecoration: 'none',
+          ...(fixedSize ? { minWidth: 260, maxWidth: 260, minHeight: 420 } : {})
+        }}
+      >
         {/* Notification (in-card) */}
         {showNotification && (
           <div className={`vb-toast in-card ${notificationInCard ? 'in-place' : 'at-top'}`} role="status">

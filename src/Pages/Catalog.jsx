@@ -80,6 +80,13 @@ function Catalog() {
           pointerEvents: 'none'
         }} />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+          <div style={{ marginBottom: '8px' }}>
+            <Link to="/" style={{ color: '#10b981', textDecoration: 'none', fontWeight: 600 }}>
+              Bosh sahifa
+            </Link>
+            <span style={{ color: '#10b981', margin: '0 8px' }}>»</span>
+            <span style={{ color: '#0f172a', fontWeight: 600 }}>Katalog</span>
+          </div>
           <h1 style={{
             fontSize: '2.8rem',
             marginBottom: '16px',
