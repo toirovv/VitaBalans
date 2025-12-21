@@ -440,14 +440,22 @@ h4 {
   }
 
   /* Utility to show elements only on small screens */
-  .show-mobile-only { display: inline-flex !important; }
+  .show-mobile-only {
+    display: inline-flex !important;
+  }
   /* Utility to hide elements on small screens */
-  .hide-mobile { display: none !important; }
+  .hide-mobile {
+    display: none !important;
+  }
 }
 
 @media (min-width: 901px) {
-  .show-mobile-only { display: none !important; }
-  .hide-mobile { display: inline-flex !important; }
+  .show-mobile-only {
+    display: none !important;
+  }
+  .hide-mobile {
+    display: inline-flex !important;
+  }
 }
 
 @media (max-width: 480px) {
@@ -505,6 +513,11 @@ h4 {
   padding: 14px 18px 14px 56px;
 }
 
+/* Ensure space between search and hero when search is placed above hero */
+.home-search {
+  margin-bottom: 18px;
+}
+
 .search-form .search-icon {
   position: absolute;
   left: 14px;
@@ -518,7 +531,7 @@ h4 {
   font-size: 0.95rem;
 }
 .search-form:focus-within {
-  box-shadow: 0 6px 24px rgba(16,185,129,0.08);
+  box-shadow: 0 6px 24px rgba(16, 185, 129, 0.08);
 }
 
 @media (max-width: 900px) {
@@ -541,8 +554,9 @@ h4 {
 /* ===== Hero Section ===== */
 .hero {
   background: var(--gradient-hero);
-  padding: clamp(32px, 6vw, 60px) 0;
-  min-height: clamp(360px, 45vh, 500px);
+  padding: clamp(6px, 1vw, 12px) 0; /* compact vertical padding for banner style */
+  /* Banner height tuned to match example: wide, not overly tall */
+  min-height: clamp(260px, 36vh, 420px);
   display: flex;
   align-items: center;
   position: relative;
@@ -608,14 +622,95 @@ h4 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 60px;
   padding: 0 24px;
+}
+
+/* Hide swiper navigation arrows to use dots-only pagination */
+.swiper-button-next,
+.swiper-button-prev {
+  display: none !important;
+}
+
+/* Pagination (dots) styling for hero — compact blue dots like example */
+.hero .swiper-pagination {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  display: flex;
+  gap: 8px;
+}
+
+.hero .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  background: rgba(3, 102, 255, 0.9); /* blue */
+  opacity: 1 !important;
+  border-radius: 9999px;
+  transition: all 200ms var(--transition-base);
+}
+
+.hero .swiper-pagination-bullet-active {
+  width: 12px;
+  height: 12px;
+  background: rgba(3, 102, 255, 1);
+  box-shadow: 0 6px 18px rgba(3, 102, 255, 0.14);
 }
 
 .hero-slider .swiper-slide .hero-image {
   max-width: 45%;
   width: 100%;
   height: auto;
+}
+
+/* Slide layout: text on left, image on right */
+.slide {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  justify-content: space-between; /* ensure text and image spread apart */
+  width: 100%;
+}
+
+.slide-text {
+  flex: 0 0 48%;
+  max-width: 48%;
+  padding-right: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* vertical centering */
+  align-items: flex-end; /* keep right alignment on desktop */
+  text-align: right;
+}
+
+/* Title/description styling inside slides */
+.slide .hero-title {
+  font-size: clamp(1.6rem, 2.2rem + 1vw, 2.8rem);
+  color: white;
+  line-height: 1.05;
+  margin: 6px 0 12px;
+}
+.slide .hero-desc {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.05rem;
+  margin-bottom: 12px;
+}
+
+.slide-image {
+  flex: 0 0 52%;
+  max-width: 52%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+
+.slide-image .hero-image {
+  width: 100% !important;
+  height: auto !important;
+  object-fit: cover !important;
+  border-radius: 10px !important;
 }
 
 .hero-slider .swiper-pagination {
@@ -640,27 +735,105 @@ h4 {
   .slide {
     position: relative;
     display: flex;
-    flex-direction: column-reverse;
-    gap: 18px;
+    flex-direction: row;
+    gap: 14px;
     padding: 0 12px;
     align-items: center;
-    text-align: center;
+    text-align: left;
   }
 
   .slide .hero-image {
     max-width: 60%;
   }
 
-  .hero-content {
-    max-width: 100%;
+  .slide-text {
+    max-width: 52%;
   }
 }
 
 @media (max-width: 480px) {
-  .slide .hero-image {
-    max-width: 80%;
+  /* Keep text left and image right on narrow phones; scale image down and tighten spacing */
+  /* Default compact side-by-side on small phones */
+  .slide {
+    gap: 10px;
+    justify-content: space-between;
+    padding: 6px 8px;
   }
-  .hero-dots { margin-top: 12px; }
+  .slide-text {
+    flex: 0 0 56%;
+    max-width: 56%;
+    padding-right: 8px;
+  }
+  .slide-text .hero-title {
+    font-size: 1rem !important;
+  }
+  .slide-text .hero-desc {
+    font-size: 0.88rem !important;
+    color: var(--text-secondary);
+  }
+  .slide-image {
+    flex: 0 0 42%;
+    max-width: 42%;
+  }
+  .slide-image .hero-image {
+    max-height: 180px !important;
+    object-fit: cover !important;
+    border-radius: 8px !important;
+  }
+  .hero-actions {
+    margin-top: 6px !important;
+  }
+  .hero-actions .btn {
+    padding: 6px 10px !important;
+    font-size: 0.78rem !important;
+  }
+  .hero-dots {
+    margin-top: 10px;
+  }
+
+  /* For very narrow screens stack vertically to ensure full visibility */
+  @media (max-width: 360px) {
+    .slide {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 8px;
+    }
+    .slide-image {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+    .slide-image .hero-image {
+      width: 100% !important;
+      max-height: 260px !important;
+      object-fit: cover !important;
+      border-radius: 8px !important;
+    }
+    .slide-text {
+      flex: 0 0 100%;
+      max-width: 100%;
+      padding-right: 0;
+    }
+    .slide-text .hero-title {
+      font-size: 1.05rem !important;
+    }
+    .slide-text .hero-desc {
+      font-size: 0.95rem !important;
+    }
+    .hero-actions {
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+    }
+    .hero-actions .btn {
+      width: 100% !important;
+      padding: 10px 12px !important;
+      font-size: 0.9rem !important;
+    }
+    .hero .swiper-pagination {
+      bottom: 6px;
+    }
+  }
 }
 
 /* Cap hero/slider height on smaller viewports to avoid very tall slides */
@@ -706,8 +879,9 @@ h4 {
 }
 
 .hero-content {
-  flex: 1;
-  max-width: 560px;
+  flex: 0 0 42%;
+  max-width: 48%;
+  text-align: right;
 }
 
 .hero-content h1 {
@@ -726,8 +900,11 @@ h4 {
 .hero-inner {
   display: flex;
   align-items: center;
-  gap: 32px;
-  padding: 36px 0;
+  gap: 24px;
+  padding: 0; /* remove vertical breathing for a compact banner */
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 .hero-content .hero-chip {
   display: inline-block;
@@ -746,21 +923,20 @@ h4 {
 
 /* Ensure hero media image is compact and doesn't stretch text */
 .hero-media {
-  flex: 0 0 auto;
+  flex: 0 0 60%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  overflow: hidden;
 }
 .hero-media .hero-image {
-  width: auto !important;
-  height: auto !important;
-  max-width: 400px !important;
-  max-height: 400px !important;
-  padding: 12px !important;
-  background: transparent !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  object-fit: cover !important;
   border-radius: 12px !important;
   box-shadow: none !important;
-  animation: none !important;
+  display: block !important;
 }
 
 .hero-content h1 {
@@ -810,95 +986,104 @@ h4 {
   }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 480px) {
+  /* Reduce hero height and make banner phone-friendly */
+  .hero {
+    min-height: 160px !important;
+    padding: 8px 0 !important;
+  }
+  .home-search {
+    padding: 8px 12px;
+    margin-bottom: 12px;
+  }
+
   .hero-content h1 {
     font-size: 1rem !important;
     line-height: 1.15;
   }
   .hero-desc {
-    font-size: 0.82rem !important;
+    font-size: 0.9rem !important;
   }
-  .hero-image {
-    max-width: 140px !important;
-    max-height: 140px !important;
-    padding: 6px !important;
-    animation: none !important;
-  }
-  .hero-chip { font-size: 0.78rem !important; padding: 6px 10px !important; }
-}
-
-/* Phone variant: stack hero vertically with image on top, centered content and full-width actions */
-@media (max-width: 420px) {
-  .hero-inner {
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 0;
+  .hero-chip {
+    font-size: 0.78rem !important;
+    padding: 6px 10px !important;
   }
 
-  /* place image above the content explicitly */
-  .hero-media {
-    order: -1;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-
-  .hero-media .hero-image {
-    max-width: 260px !important;
-    max-height: 260px !important;
-    width: auto !important;
-    height: auto !important;
-    padding: 8px !important;
-    background: transparent !important;
-  }
-
-  .hero-content {
+  /* Stack slides vertically on phones: image above, text below */
+  .slide {
+    flex-direction: column !important;
+    align-items: center !important;
     text-align: center !important;
-    max-width: 92% !important;
+    gap: 10px !important;
+    padding: 8px 12px !important;
   }
 
-  /* Stack hero actions and make buttons full width for easy tapping */
+  .slide-image {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+  .slide-image .hero-image {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 260px !important;
+    object-fit: cover !important;
+    border-radius: 8px !important;
+  }
+
+  .slide-text {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    padding-right: 0 !important;
+    text-align: center !important;
+  }
+  .slide-text .hero-title {
+    font-size: 1.05rem !important;
+  }
+  .slide-text .hero-desc {
+    font-size: 0.95rem !important;
+    color: var(--text-secondary);
+  }
+
+  /* Buttons full width on phone for easy tapping */
   .hero-actions {
     flex-direction: column !important;
     gap: 8px !important;
-    width: 100%;
-    align-items: center;
-  }
-
-  .hero-actions .btn {
     width: 100% !important;
+    align-items: center !important;
+  }
+  .hero-actions .btn {
+    width: calc(100% - 32px) !important;
     max-width: 420px !important;
-    padding: 6px 8px !important;
-    font-size: 0.8rem !important;
+    padding: 10px 12px !important;
+    font-size: 0.95rem !important;
   }
 
-  /* Compact search layout for phone: input full-width, catalog button smaller but visible */
-  /* Compact search layout for phone: input and catalog button inline */
+  /* Compact search layout for phone remains */
   .home-search.compact {
     flex-direction: row !important;
     gap: 8px !important;
     align-items: center !important;
     width: 100%;
   }
-
   .home-search.compact .search-form.compact {
     flex: 1 1 auto !important;
     display: flex !important;
     align-items: center !important;
   }
-
   .home-search.compact .compact-input {
     width: 100% !important;
     padding: 10px 12px 10px 44px !important;
   }
-
   .catalog-btn {
     flex: 0 0 100px !important;
     width: 100px !important;
     align-self: center !important;
     padding: 6px 8px !important;
     font-size: 0.78rem !important;
+  }
+
+  .hero .swiper-pagination {
+    bottom: 10px !important;
   }
 }
 
@@ -912,7 +1097,9 @@ h4 {
   .hero-content h1 {
     font-size: 1rem !important;
   }
-  .hero-desc { font-size: 0.82rem !important; }
+  .hero-desc {
+    font-size: 0.82rem !important;
+  }
 }
 
 /* Phone-dark variant: keep original hero background (no black), text/buttons left and image on the right for narrow screens */
@@ -1036,7 +1223,11 @@ h4 {
   height: min(52vh, 520px);
   object-fit: cover;
   border-radius: var(--radius-xl);
-  background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(248,250,252,0.6));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.85),
+    rgba(248, 250, 252, 0.6)
+  );
   padding: 8px;
   box-shadow: var(--shadow-xl);
   animation: float 6s ease-in-out infinite;
@@ -1085,8 +1276,14 @@ h4 {
 }
 
 @keyframes slideDown {
-  from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
-  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 /* When used inside a product card: constrain and use pale yellow background */
@@ -1114,8 +1311,14 @@ h4 {
 }
 
 @keyframes slideDownInCard {
-  from { opacity: 0; transform: translateX(-50%) translateY(-12px); }
-  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 /* Feature cards: on small screens make them stack vertically and become full-width (long) */
@@ -2904,23 +3107,25 @@ label {
     font-size: 0.9rem;
   }
 
-/* Smaller catalog CTA in header to meet request */
-.catalog-cta {
-  padding: 4px 8px !important;
-  font-size: 0.78rem !important;
-  line-height: 1;
-  border-radius: 8px !important;
-  margin-right: 6px;
-  min-width: 44px;
-  height: 34px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
+  /* Smaller catalog CTA in header to meet request */
+  .catalog-cta {
+    padding: 4px 8px !important;
+    font-size: 0.78rem !important;
+    line-height: 1;
+    border-radius: 8px !important;
+    margin-right: 6px;
+    min-width: 44px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-@media (max-width: 900px) {
-  .catalog-cta { display: none !important; }
-}
+  @media (max-width: 900px) {
+    .catalog-cta {
+      display: none !important;
+    }
+  }
 
   /* Search area adjustments */
   section .container form {
@@ -3042,92 +3247,146 @@ label {
   }
 }
 
-  /* Profile page layout */
-  .profile-page {
-    padding: 40px 24px 80px;
-  }
+/* Profile page layout */
+.profile-page {
+  padding: 40px 24px 80px;
+}
+.profile-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+.profile-sidebar {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 100px;
+}
+.profile-content {
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 900px) {
   .profile-grid {
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 32px;
-    align-items: start;
+    grid-template-columns: 1fr;
   }
+
   .profile-sidebar {
-    background: white;
-    border-radius: 20px;
-    padding: 24px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-    position: sticky;
-    top: 100px;
+    position: static;
+    top: auto;
   }
+
   .profile-content {
-    background: white;
-    border-radius: 20px;
-    padding: 32px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    padding: 20px;
   }
+}
 
-  @media (max-width: 900px) {
-    .profile-grid {
-      grid-template-columns: 1fr;
-    }
+/* CTA Banner styles: smaller text and taller band on desktop */
+.cta-banner {
+  background: var(--gradient-primary);
+  padding: 100px 0 80px; /* generous vertical padding */
+  margin-top: 80px; /* add more separation from previous section */
+  color: white;
+  position: relative; /* ensure normal flow (not sticky) */
+  z-index: 0;
+}
+.cta-banner .cta-inner {
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.cta-banner h2 {
+  font-size: 2.2rem;
+  margin-bottom: 12px;
+  font-weight: 800;
+}
+.cta-banner p {
+  font-size: 1rem;
+  opacity: 0.92;
+  margin-bottom: 32px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.cta-banner .cta-btn {
+  background: white;
+  color: var(--primary-600);
+  padding: 12px 28px;
+  font-size: 1rem;
+}
 
-    .profile-sidebar {
-      position: static;
-      top: auto;
-    }
-
-    .profile-content {
-      padding: 20px;
-    }
-  }
-
-  /* CTA Banner styles: smaller text and taller band on desktop */
+@media (max-width: 900px) {
   .cta-banner {
-    background: var(--gradient-primary);
-    padding: 100px 0;
-    margin-top: 60px;
-    color: white;
-  }
-  .cta-banner .cta-inner {
-    text-align: center;
-    max-width: 900px;
-    margin: 0 auto;
+    padding: 60px 0;
   }
   .cta-banner h2 {
-    font-size: 2.2rem;
-    margin-bottom: 12px;
-    font-weight: 800;
+    font-size: 1.6rem;
   }
   .cta-banner p {
-    font-size: 1rem;
-    opacity: 0.92;
-    margin-bottom: 32px;
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
+    font-size: 0.95rem;
   }
   .cta-banner .cta-btn {
-    background: white;
-    color: var(--primary-600);
-    padding: 12px 28px;
-    font-size: 1rem;
+    padding: 10px 20px;
   }
+}
 
-  @media (max-width: 900px) {
-    .cta-banner { padding: 60px 0; }
-    .cta-banner h2 { font-size: 1.6rem; }
-    .cta-banner p { font-size: 0.95rem; }
-    .cta-banner .cta-btn { padding: 10px 20px; }
+/* Mobile: make CTA banner fully visible, left-aligned and compact */
+@media (max-width: 480px) {
+  .cta-banner {
+    padding: 28px 12px; /* reduce vertical padding so the banner fits on small screens */
+    margin-top: 40px;
   }
+  .cta-banner .cta-inner {
+    text-align: left;g
+    max-width: 100%;
+    margin: 0; /* remove centering container on phones */
+    padding: 0 8px;
+  }
+  .cta-banner h2 {
+    font-size: 1.25rem;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .cta-banner p {
+    font-size: 0.92rem;
+    margin-bottom: 12px;
+    max-width: none;
+    opacity: 0.95;
+  }
+  .cta-banner .cta-btn {
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    display: inline-block;
+  }
+}
 
-  /* Make product-following sections' headings smaller and sections a bit taller */
-  .products + section, .products + .cta-banner {
-    padding-top: 60px;
+/* Very small phones: make CTA button full-width for easier tapping */
+@media (max-width: 360px) {
+  .cta-banner {
+    padding: 20px 10px;
   }
-  .products h2 {
-    font-size: 1.8rem;
+  .cta-banner .cta-inner { padding: 0 6px; }
+  .cta-banner .cta-btn {
+    display: block;
+    width: calc(100% - 12px);
+    text-align: center;
+    margin-left: 6px;
   }
+}
+
+/* Make product-following sections' headings smaller and sections a bit taller */
+.products + section {
+  padding-top: 60px;
+}
+.products h2 {
+  font-size: 1.8rem;
+}
 
 /* ===== Image-only Hero Banner & responsive vertical behavior ===== */
 .hero {
@@ -3184,8 +3443,22 @@ label {
   font-weight: 700;
   font-size: 0.95rem;
 }
-.availability.available { color: var(--primary-600); }
-.availability.unavailable { color: #ef4444; }
+.availability.available {
+  color: var(--primary-600);
+}
+.availability.unavailable {
+  color: #ef4444;
+}
 
-.card .price { font-weight: 800; font-size: 1.05rem; margin-top: 8px; color: var(--text-primary); }
-.card .old-price { display: flex; align-items: center; gap: 8px; color: var(--text-muted); }
+.card .price {
+  font-weight: 800;
+  font-size: 1.05rem;
+  margin-top: 8px;
+  color: var(--text-primary);
+}
+.card .old-price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+}

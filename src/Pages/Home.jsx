@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import ProductCard from '../Components/ProductCard'
-import bannerImg from "../assets/images/VitaBalansLogo.jpg"
 import products from '../data/products'
 import { FaArrowRight, FaLeaf, FaHeart, FaStar, FaShieldAlt, FaSearch } from 'react-icons/fa'
+
+// Swiper importlari
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { Autoplay, Pagination } from 'swiper/modules'
+
+// Swiper CSS
+import 'swiper/css'
+import 'swiper/css/pagination'
 
 function Home() {
   const [index, setIndex] = useState(0)
@@ -19,7 +26,7 @@ function Home() {
     navigate(`/catalog?${params.toString()}`)
   }
 
-  // live-first-letter search while typing (optional UX)
+  // live-first-letter search while typing
   useEffect(() => {
     const q = (searchQuery || '').trim()
     if (!q) {
@@ -30,7 +37,7 @@ function Home() {
     const results = products.filter(p => p.title && p.title.trim().charAt(0).toLowerCase() === first)
     setSearchResults(results)
   }, [searchQuery])
-
+  
   const features = [
     { icon: <FaLeaf />, title: "100% Tabiiy", desc: "Faqat tabiiy ingredientlar" },
     { icon: <FaHeart />, title: "Sog'liq uchun", desc: "Salomatlik kafolati" },
@@ -58,19 +65,40 @@ function Home() {
       <section className={`hero ${isPhoneDark ? 'phone-dark' : ''}`}>
         <div className="container">
           <div className="hero-inner">
-            <div className="hero-content">
-              <div className="hero-actions">
-                <Link to="/catalog" className="btn primary">
-                  Xarid qilish <FaArrowRight />
-                </Link>
-                <Link to="/about" className="btn secondary">
-                  Batafsil
-                </Link>
-              </div>
-            </div>
+            <div className="hero-slider">
+              <Swiper
+                modules={[Autoplay, Pagination]}
+                slidesPerView={1}
+                autoplay={{ delay: 3500, disableOnInteraction: false }}
+                pagination={{ clickable: true }}
+                loop={true}
+                className="hero-swiper"
+              >
+                {products.map(p => (
+                  <SwiperSlide key={p.id}>
+                    <div className="slide">
+                      <div className="slide-text">
+                        <div className="hero-chip">Tabiiy & Sifatli</div>
+                        <h1 className="hero-title">{p.title}</h1>
+                        <p className="hero-desc">{p.description}</p>
 
-            <div className="hero-media">
-              <img src={bannerImg} className="hero-image" alt="VitaBalans banner" />
+                        <div className="hero-actions">
+                          <Link to="/catalog" className="btn primary">
+                            Xarid qilish <FaArrowRight />
+                          </Link>
+                          <Link to="/about" className="btn secondary">
+                            Batafsil
+                          </Link>
+                        </div>
+                      </div>
+
+                      <div className="slide-image">
+                        <img src={p.image} loading="lazy" className="hero-image" alt={p.title} />
+                      </div>
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
             </div>
           </div>
         </div>
@@ -102,6 +130,7 @@ function Home() {
               Katalog <FaArrowRight />
             </Link>
           </form>
+
           {/* Search results on Home (first-letter matching) */}
           {Array.isArray(searchResults) && (
             <section style={{ marginTop: 18 }}>
@@ -161,13 +190,15 @@ function Home() {
         </div>
       </section>
 
-      {/* All Products (newest first) */}
+      {/* All Products */}
       <section className="products container">
         <h2>Mahsulotlar</h2>
         <div className="grid">
-          {products.slice().reverse().map(p => (
-            <ProductCard key={p.id} product={p} />
-          ))}
+          {(() => {
+            // Show available products first, keep relative order otherwise
+            const ordered = products.slice().sort((a, b) => (b.available ? 1 : 0) - (a.available ? 1 : 0))
+            return ordered.map(p => <ProductCard key={p.id} product={p} />)
+          })()}
         </div>
       </section>
 

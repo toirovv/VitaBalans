@@ -12,6 +12,7 @@ import Cart from './Pages/Cart'
 import Checkout from './Pages/Checkout'
 import Catalog from './Pages/Catalog'
 import ProductDetail from './Pages/ProductDetail'
+import NotFound from './Pages/NotFound'
 import AuthProvider from './contexts/AuthContext'
 import CartProvider from './contexts/CartContext'
 import Loader from './Components/Loader'
@@ -44,6 +45,7 @@ function App() {
             <Route path='checkout' element={<Checkout />} />
             <Route path='catalog' element={<Catalog />} />
             <Route path='product/:id' element={<ProductDetail />} />
+            <Route path='*' element={<NotFound />} />
           </Route>
         </Routes>
       </>
