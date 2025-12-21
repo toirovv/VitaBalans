@@ -70,7 +70,7 @@ function Login() {
         setError(res?.message || 'Kirishda xatolik')
         return
       }
-      try { sessionStorage.setItem('justLoggedIn', '1') } catch (e) {}
+      try { sessionStorage.setItem('justLoggedIn', '1') } catch (e) { console.debug('sessionStorage set failed', e) }
       // Notify server about login (non-blocking)
       try {
         fetch('http://localhost:3001/notify', {
@@ -83,8 +83,8 @@ function Login() {
             items: [],
             total: 0
           })
-        }).catch(() => {})
-      } catch (e) {}
+        }).catch((notifyErr) => { console.debug('notify fetch failed', notifyErr) })
+      } catch (e) { console.debug('notify error', e) }
 
       navigate('/profile')
     } catch (err) {

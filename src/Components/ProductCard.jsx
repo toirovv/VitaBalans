@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { FaStar, FaShoppingCart } from 'react-icons/fa'
+import { Link } from 'react-router-dom'
+import { FaShoppingCart } from 'react-icons/fa'
 import { CartContext } from '../contexts/CartContext'
 import { AuthContext } from '../contexts/AuthContext'
 
@@ -11,7 +11,6 @@ function ProductCard({ product, fixedSize = false }) {
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 480 : false)
   const { add } = useContext(CartContext)
   const { user } = useContext(AuthContext)
-  const nav = useNavigate()
   // Prices in `products.js` are stored in so'm (integer). Display as localized UZS.
 
   const handleAdd = (e) => {
@@ -39,7 +38,7 @@ function ProductCard({ product, fixedSize = false }) {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  const avgRating = product.rating || 4.8
+  // rating is available on product when needed
 
   return (
     <>
@@ -80,10 +79,8 @@ function ProductCard({ product, fixedSize = false }) {
 
           <p className="card-description">{product.description}</p>
 
-          <div className="rating" aria-hidden style={{ margin: '8px 0' }}>
-            {Array.from({ length: 5 }).map((_, i) => (
-              <FaStar key={i} color="#f5b50a" style={{ width: 16, height: 16 }} />
-            ))}
+          <div className="rating" aria-hidden style={{ margin: '8px 0', color: '#64748b', fontSize: '0.9rem' }}>
+            {product.rating ? `${product.rating.toFixed(1)} / 5` : '—'}
           </div>
 
           <div className="old-price">
@@ -111,12 +108,7 @@ function ProductCard({ product, fixedSize = false }) {
         </div>
       </Link>
 
-      <style>{`
-        @keyframes slideDown {
-          from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
-          to { opacity: 1; transform: translateX(-50%) translateY(0); }
-        }
-      `}</style>
+      {/* Inline animation removed to prevent in-card popups */}
     </>
   )
 }

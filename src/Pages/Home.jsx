@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import ProductCard from '../Components/ProductCard'
 import products from '../data/products'
@@ -13,7 +13,6 @@ import 'swiper/css'
 import 'swiper/css/pagination'
 
 function Home() {
-  const [index, setIndex] = useState(0)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState(null)
   const navigate = useNavigate()
@@ -45,10 +44,7 @@ function Home() {
     { icon: <FaShieldAlt />, title: "Sertifikatlangan", desc: "Xalqaro sertifikat" },
   ]
 
-  useEffect(() => {
-    const t = setInterval(() => setIndex(i => (i + 1) % products.length), 5000)
-    return () => clearInterval(t)
-  }, [])
+  // autoplay handled by Swiper; no local index required
 
   const [isPhoneDark, setIsPhoneDark] = useState(false)
 

@@ -7,6 +7,7 @@ const products = [
     title: 'Energy Booster',
     price: 229900,
     oldPrice: 344900,
+    available: true,
     description: 'Tabiiy ekstraktlar bilan energiyangizni oshiring. Kun davomida kuch va tetiklikni ta\'minlaydi.',
     image: logo,
     category: 'Energiya',
@@ -27,7 +28,7 @@ const products = [
     id: 'p3',
     title: 'Daily Vitamins',
     price: 172400,
-    available: false,
+    available: true,
     description: 'Umumiy salomatlik uchun kundalik multivitaminlar. Immunitetni mustahkamlaydi.',
     image: logo,
     category: 'Vitaminlar',
@@ -35,16 +36,6 @@ const products = [
   },
   {
     id: 'p4',
-    title: 'Sleep Aid',
-    price: 149400,
-    available: false,
-    description: 'Tinch uyqu uchun yumshoq o\'simliklar. Uxlashni osonlashtiradi va uyqu sifatini yaxshilaydi.',
-    image: logo,
-    category: 'Uyqu',
-    rating: 4.6
-  },
-  {
-    id: 'p5',
     title: 'Omega-3 Plus',
     price: 344900,
     available: false,
@@ -54,14 +45,24 @@ const products = [
     rating: 4.8
   },
   {
-    id: 'p6',
+    id: 'p5',
     title: 'Immune Shield',
     price: 264400,
-    available: false,
+    available: true,
     description: 'Immunitet tizimini mustahkamlovchi kompleks. Vitamin C, D va Zinc kombinatsiyasi.',
     image: logo,
     category: 'Immunitet',
     rating: 4.9
+  },
+  {
+    id: 'p6',
+    title: 'Sleep Aid',
+    price: 149400,
+    available: true,
+    description: 'Tinch uyqu uchun yumshoq o\'simliklar. Uxlashni osonlashtiradi va uyqu sifatini yaxshilaydi.',
+    image: logo,
+    category: 'Uyqu',
+    rating: 4.6
   },
   {
     id: 'p7',
@@ -70,18 +71,38 @@ const products = [
     available: false,
     description: 'Bo\'g\'imlar va tog\'aylar uchun glukozamin va xondroitin. Harakatchanlikni yaxshilaydi.',
     image: logo,
-    category: 'Bo\'g\'imlar',
+    category: "Bo'g'imlar",
     rating: 4.5
   },
   {
     id: 'p8',
     title: 'Beauty Complex',
     price: 321900,
-    available: false,
+    available: true,
     description: 'Teri, soch va tirnoqlar uchun biotin va kollagen. Ichkaridan go\'zallik.',
     image: logo,
-    category: 'Go\'zallik',
+    category: "Go'zallik",
     rating: 4.7
+  },
+  {
+    id: 'p9',
+    title: 'Probiotic Balance',
+    price: 198000,
+    available: false,
+    description: 'Ichak florasini tiklash va hazm qilishni qo\'llab-quvvatlash uchun probiotik kompleks.',
+    image: logo,
+    category: 'Sog\'liq',
+    rating: 4.6
+  },
+  {
+    id: 'p10',
+    title: 'Hair & Nails Forte',
+    price: 239500,
+    available: true,
+    description: 'Soch va tirnoqlarni mustahkamlash uchun vitamin va minerallar kompleksi.',
+    image: logo,
+    category: "Go'zallik",
+    rating: 4.6
   }
 ]
 
@@ -90,10 +111,11 @@ export const categories = [
   { id: 'Energiya', name: 'Energiya' },
   { id: 'Kayfiyat', name: 'Kayfiyat' },
   { id: 'Vitaminlar', name: 'Vitaminlar' },
-  { id: 'Uyqu', name: 'Uyqu' },
   { id: 'Immunitet', name: 'Immunitet' },
+  { id: 'Uyqu', name: 'Uyqu' },
   { id: "Bo'g'imlar", name: "Bo'g'imlar" },
   { id: "Go'zallik", name: "Go'zallik" },
+  { id: 'Sog\'liq', name: 'Sog\'liq' }
 ]
 
 export default products

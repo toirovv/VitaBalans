@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { FaStar, FaShoppingCart, FaArrowLeft, FaHeart, FaShare } from 'react-icons/fa'
+import { FaShoppingCart, FaArrowLeft, FaHeart, FaShare } from 'react-icons/fa'
 import products from '../data/products'
 import { CartContext } from '../contexts/CartContext'
 import { AuthContext } from '../contexts/AuthContext'
@@ -172,13 +172,8 @@ function ProductDetail() {
 
                     {/* Rating */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-                        <div style={{ display: 'flex', gap: '4px' }}>
-                            {[1, 2, 3, 4, 5].map(s => (
-                                <FaStar key={s} color={s <= Math.round(avgRating) ? '#f5b50a' : '#e2e8f0'} />
-                            ))}
-                        </div>
-                        <span style={{ fontWeight: '600' }}>{avgRating}</span>
-                        <span style={{ color: '#64748b' }}>({reviews.length} ta sharh)</span>
+                            <div style={{ color: '#374151', fontWeight: 700, fontSize: '1rem' }}>{avgRating} / 5</div>
+                            <span style={{ color: '#64748b' }}>({reviews.length} ta sharh)</span>
                     </div>
 
                     <p style={{ fontSize: '1.1rem', color: '#475569', lineHeight: 1.7, marginBottom: '24px' }}>
@@ -328,11 +323,7 @@ function ProductDetail() {
                             }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                                     <strong>{r.user || 'Foydalanuvchi'}</strong>
-                                    <div style={{ display: 'flex', gap: '2px' }}>
-                                        {[1, 2, 3, 4, 5].map(s => (
-                                            <FaStar key={s} size={14} color={s <= r.rating ? '#f5b50a' : '#e2e8f0'} />
-                                        ))}
-                                    </div>
+                                    <div style={{ color: '#f5b50a', fontWeight: 700 }}>{r.rating}/5</div>
                                 </div>
                                 <p style={{ color: '#475569', margin: 0 }}>{r.text}</p>
                             </div>
