@@ -715,14 +715,276 @@ h4 {
   font-weight: 800;
   line-height: 1.1;
   margin-bottom: 18px;
-  background: linear-gradient(
-    135deg,
-    var(--text-primary) 0%,
-    var(--primary-700) 100%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-primary);
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: initial;
+  background-clip: unset;
+}
+
+/* Hero layout: side-by-side on desktop, stacked on small screens */
+.hero-inner {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 36px 0;
+}
+.hero-content .hero-chip {
+  display: inline-block;
+  background: var(--gradient-primary);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.hero-desc {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+/* Ensure hero media image is compact and doesn't stretch text */
+.hero-media {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-media .hero-image {
+  width: auto !important;
+  height: auto !important;
+  max-width: 400px !important;
+  max-height: 400px !important;
+  padding: 12px !important;
+  background: transparent !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  animation: none !important;
+}
+
+.hero-content h1 {
+  font-weight: 900; /* make title bolder */
+  color: var(--text-primary) !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: initial !important;
+}
+
+/* Align hero action buttons to the left and ensure left-aligned text */
+.hero-actions {
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+/* Keep left alignment on smaller screens as requested */
+@media (max-width: 900px) {
+  .hero-content {
+    text-align: left !important;
+  }
+  .hero-actions {
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero-image {
+    width: 60%;
+    max-width: 760px;
+    height: min(72vh, 760px);
+  }
+  .hero-content h1 {
+    font-size: 1.4rem;
+  }
+  .hero-desc {
+    font-size: 0.95rem;
+  }
+  .hero-media {
+    display: flex;
+    justify-content: center;
+  }
+  .hero-image {
+    max-width: 280px;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 420px) {
+  .hero-content h1 {
+    font-size: 1rem !important;
+    line-height: 1.15;
+  }
+  .hero-desc {
+    font-size: 0.82rem !important;
+  }
+  .hero-image {
+    max-width: 140px !important;
+    max-height: 140px !important;
+    padding: 6px !important;
+    animation: none !important;
+  }
+  .hero-chip { font-size: 0.78rem !important; padding: 6px 10px !important; }
+}
+
+/* Phone variant: stack hero vertically with image on top, centered content and full-width actions */
+@media (max-width: 420px) {
+  .hero-inner {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+  }
+
+  /* place image above the content explicitly */
+  .hero-media {
+    order: -1;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .hero-media .hero-image {
+    max-width: 260px !important;
+    max-height: 260px !important;
+    width: auto !important;
+    height: auto !important;
+    padding: 8px !important;
+    background: transparent !important;
+  }
+
+  .hero-content {
+    text-align: center !important;
+    max-width: 92% !important;
+  }
+
+  /* Stack hero actions and make buttons full width for easy tapping */
+  .hero-actions {
+    flex-direction: column !important;
+    gap: 8px !important;
+    width: 100%;
+    align-items: center;
+  }
+
+  .hero-actions .btn {
+    width: 100% !important;
+    max-width: 420px !important;
+    padding: 6px 8px !important;
+    font-size: 0.8rem !important;
+  }
+
+  /* Compact search layout for phone: input full-width, catalog button smaller but visible */
+  /* Compact search layout for phone: input and catalog button inline */
+  .home-search.compact {
+    flex-direction: row !important;
+    gap: 8px !important;
+    align-items: center !important;
+    width: 100%;
+  }
+
+  .home-search.compact .search-form.compact {
+    flex: 1 1 auto !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .home-search.compact .compact-input {
+    width: 100% !important;
+    padding: 10px 12px 10px 44px !important;
+  }
+
+  .catalog-btn {
+    flex: 0 0 100px !important;
+    width: 100px !important;
+    align-self: center !important;
+    padding: 6px 8px !important;
+    font-size: 0.78rem !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .hero-media .hero-image {
+    max-width: 200px !important;
+    max-height: 200px !important;
+    padding: 6px !important;
+  }
+
+  .hero-content h1 {
+    font-size: 1rem !important;
+  }
+  .hero-desc { font-size: 0.82rem !important; }
+}
+
+/* Phone-dark variant: keep original hero background (no black), text/buttons left and image on the right for narrow screens */
+@media (max-width: 420px) {
+  .hero.phone-dark {
+    background: var(--gradient-hero) !important;
+    color: var(--text-primary) !important;
+    padding: 14px 0 !important;
+    min-height: 120px !important;
+  }
+
+  .hero.phone-dark .hero-inner {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+    padding: 12px 8px !important;
+  }
+
+  .hero.phone-dark .hero-content {
+    order: 1 !important;
+    text-align: left !important;
+    flex: 1 1 auto !important;
+    padding-right: 12px !important;
+  }
+
+  .hero.phone-dark .hero-content h1 {
+    color: var(--text-primary) !important;
+    font-size: 1.1rem !important;
+  }
+
+  .hero.phone-dark .hero-content p {
+    color: var(--text-secondary) !important;
+    font-size: 0.9rem !important;
+  }
+
+  .hero.phone-dark .hero-media {
+    order: 2 !important;
+    flex: 0 0 110px !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+  }
+
+  .hero.phone-dark .hero-media .hero-image {
+    max-width: 140px !important;
+    max-height: 140px !important;
+    padding: 6px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 8px !important;
+  }
+
+  .hero.phone-dark .hero-actions {
+    justify-content: flex-start !important;
+    align-items: center !important; /* center vertically */
+    gap: 8px !important;
+    margin-top: 6px !important;
+  }
+
+  .hero.phone-dark .hero-actions .btn {
+    width: auto !important;
+    padding: 6px 10px !important; /* slightly smaller buttons */
+    font-size: 0.9rem !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .hero.phone-dark .hero-actions .btn {
+    padding: 6px 8px !important;
+    font-size: 0.85rem !important;
+  }
 }
 
 /* Header layout: center nav on desktop while keeping brand/actions fixed */
@@ -872,6 +1134,40 @@ h4 {
   }
 }
 
+/* Compact features grid: make cards smaller and 2-per-row on narrow screens */
+.features-grid {
+  gap: 18px;
+}
+.features-grid .feature-card {
+  padding: 18px;
+  gap: 12px;
+}
+
+@media (max-width: 900px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px;
+  }
+  .features-grid .feature-card {
+    padding: 12px !important;
+    gap: 8px !important;
+  }
+  .features-grid .feature-card > div:first-child {
+    width: 48px !important;
+    height: 48px !important;
+    font-size: 1.15rem !important;
+  }
+  .features-grid h4 {
+    font-size: 0.98rem !important;
+    margin-bottom: 6px !important;
+  }
+  .features-grid p {
+    font-size: 0.85rem !important;
+    color: var(--text-secondary) !important;
+    margin: 0 !important;
+  }
+}
+
 /* Hero Dots */
 .hero-dots {
   display: flex;
@@ -923,10 +1219,10 @@ h4 {
 }
 
 @media (min-width: 900px) {
-  .grid {
-    padding-inline: 0;
-    /* On wider screens allow auto-fit columns with fixed card width */
-    grid-template-columns: repeat(auto-fit, minmax(220px, 240px));
+  .hero-media .hero-image {
+    max-width: 160px !important;
+    max-height: 160px !important;
+    padding: 6px !important;
   }
 
   /* Slightly smaller images and tighter cards on medium screens */
@@ -1020,6 +1316,23 @@ h4 {
   margin: 6px 0 10px;
 }
 
+/* Product image: allow full image to show, cap max-height for layout */
+.product-image img {
+  width: 100%;
+  height: auto;
+  max-height: 180px; /* desktop max height */
+  object-fit: contain;
+  display: block;
+}
+
+/* Availability: unavailable styling */
+.availability.unavailable {
+  color: #ef4444;
+  font-weight: 700;
+  font-size: 0.88rem;
+  font-style: italic;
+}
+
 .product-card .btn.full-width {
   width: 100%;
   border-radius: 10px;
@@ -1056,6 +1369,22 @@ h4 {
   .product-card .price {
     font-size: 0.95rem;
   }
+
+  /* Make old-price smaller on mobile to reduce visual weight */
+  .product-card .old-price {
+    font-size: 0.72rem;
+  }
+
+  /* Reduce max-height for product images on small screens */
+  .product-image img {
+    max-height: 110px;
+  }
+
+  /* Make 'Mavjud emas' less prominent on mobile */
+  .availability.unavailable {
+    font-size: 0.72rem;
+    font-style: italic;
+  }
 }
 
 .card:hover {
@@ -1081,8 +1410,8 @@ h4 {
 }
 
 .hero-image {
-  width: 320px;
-  height: 320px;
+  width: 100%;
+  height: auto;
   object-fit: contain;
   border-radius: var(--radius-xl);
   background: white;
@@ -1180,12 +1509,12 @@ h4 {
   }
 
   .hero-image {
-    width: clamp(160px, 22vw, 380px);
+    width: 160px;
     height: auto;
     object-fit: contain;
     border-radius: var(--radius-xl);
     background: white;
-    padding: clamp(12px, 2.5vw, 40px);
+    padding: 12px;
     box-shadow: var(--shadow-xl);
     animation: float 6s ease-in-out infinite;
   }
@@ -1424,6 +1753,52 @@ button,
   align-items: center;
 }
 
+/* Compact variant keeps input and catalog button inline on small screens */
+.home-search.compact {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.home-search.compact .compact-input {
+  padding: 8px 10px 8px 44px !important;
+  font-size: 1rem !important;
+  flex: 1 1 auto;
+}
+.catalog-btn {
+  padding: 6px 8px !important;
+  font-size: 0.78rem !important;
+  flex: 0 0 auto;
+  min-width: 68px;
+}
+
+@media (max-width: 900px) {
+  /* on small screens make the input take more space, catalog button smaller */
+  .home-search.compact {
+    flex-direction: row;
+    align-items: center;
+  }
+  .home-search.compact .compact-input {
+    padding: 12px 12px 12px 44px !important;
+    flex: 1 1 auto;
+  }
+  .catalog-btn {
+    padding: 6px 6px !important;
+    font-size: 0.72rem !important;
+    margin-left: 8px;
+    min-width: 62px;
+  }
+}
+
+/* Very small mobile (Android / iOS) - compact catalog button to fixed 100px width */
+@media (max-width: 420px) {
+  .catalog-btn {
+    width: 100px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    font-size: 0.72rem !important;
+  }
+}
+
 @media (max-width: 900px) {
   .home-search {
     flex-direction: column;
@@ -1470,6 +1845,15 @@ button,
 .btn.small {
   font-size: 0.88rem;
   padding: 6px 10px;
+}
+
+/* Disabled button appearance */
+.btn.disabled,
+button[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 /* Ensure search area catalog button collapses nicely on mobile */
@@ -2744,3 +3128,64 @@ label {
   .products h2 {
     font-size: 1.8rem;
   }
+
+/* ===== Image-only Hero Banner & responsive vertical behavior ===== */
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 18px 0 28px;
+}
+.hero-slider {
+  position: relative;
+}
+.slides-wrapper {
+  display: flex;
+  transition: transform 450ms ease;
+}
+.slide {
+  min-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-image {
+  width: 100%;
+  height: 420px;
+  object-fit: cover;
+  display: block;
+  border-radius: 16px;
+}
+
+@media (max-width: 768px) {
+  /* Make banner taller / portrait-like on small screens */
+  .hero-image {
+    height: 80vh;
+    aspect-ratio: 3 / 4;
+    object-position: center;
+    border-radius: 10px;
+  }
+}
+
+/* ===== Sale badge & availability styling for product cards ===== */
+.badge-sale {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--primary-500);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-weight: 800;
+  z-index: 12;
+  font-size: 0.95rem;
+}
+
+.availability {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.availability.available { color: var(--primary-600); }
+.availability.unavailable { color: #ef4444; }
+
+.card .price { font-weight: 800; font-size: 1.05rem; margin-top: 8px; color: var(--text-primary); }
+.card .old-price { display: flex; align-items: center; gap: 8px; color: var(--text-muted); }

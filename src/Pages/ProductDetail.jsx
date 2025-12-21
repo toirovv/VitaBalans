@@ -170,28 +170,52 @@ function ProductDetail() {
                     </p>
 
                     <div style={{
-                        fontSize: '2.5rem',
-                        fontWeight: '700',
-                        color: '#10b981',
-                        marginBottom: '32px'
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '18px',
+                        marginBottom: '18px'
                     }}>
-                        ${product.price.toFixed(2)}
+                        <div style={{
+                            fontSize: '2.5rem',
+                            fontWeight: '700',
+                            color: '#10b981'
+                        }}>
+                            {Math.round(product.price).toLocaleString('uz-UZ')} so'm
+                        </div>
+                        {/* show old price if available */}
+                        {product.oldPrice && (
+                            <div style={{ color: 'var(--text-muted)', textDecoration: 'line-through' }}>
+                                {Math.round(product.oldPrice).toLocaleString('uz-UZ')} so'm
+                            </div>
+                        )}
+                        {/* availability and discount */}
+                        <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
+                            <div style={{ fontWeight: 700 }} className={product.available ? 'availability available' : 'availability unavailable'}>
+                                {product.available ? 'Mavjud' : 'Mavjud emas'}
+                            </div>
+                            {product.oldPrice && product.oldPrice > product.price && (
+                                <div style={{ color: 'var(--text-muted)', fontWeight: 700 }}>
+                                    -{Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}%
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     {/* Actions */}
                     <div style={{ display: 'flex', gap: '16px', marginBottom: '32px' }}>
                         <button
-                            className="btn primary"
+                            className={`btn primary ${product.available ? '' : 'disabled'}`}
                             onClick={handleAddToCart}
-                            style={{ flex: 1, padding: '16px 32px', fontSize: '1.1rem' }}
+                            style={{ flex: 1, padding: '14px 24px', fontSize: '1.05rem' }}
+                            disabled={!product.available}
                         >
                             <FaShoppingCart style={{ marginRight: '10px' }} />
-                            Savatga qo'shish
+                            {product.available ? "Savatga qo'shish" : 'Mavjud emas'}
                         </button>
-                        <button className="btn outline" style={{ padding: '16px' }}>
+                        <button className="btn outline" style={{ padding: '12px' }}>
                             <FaHeart />
                         </button>
-                        <button className="btn outline" style={{ padding: '16px' }}>
+                        <button className="btn outline" style={{ padding: '12px' }}>
                             <FaShare />
                         </button>
                     </div>

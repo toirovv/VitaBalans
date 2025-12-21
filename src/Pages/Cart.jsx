@@ -16,7 +16,8 @@ function Cart() {
 
   const subtotal = items.reduce((s, p) => s + p.price * p.qty, 0)
   const discount = applied ? subtotal * applied : 0
-  const shipping = subtotal > 50 ? 0 : 5.99
+  // Shipping logic adjusted for so'm amounts: free over 500,000 so'm, otherwise 15,000 so'm
+  const shipping = subtotal > 500000 ? 0 : 15000
   const total = subtotal - discount + shipping
 
   const apply = () => {
@@ -170,7 +171,7 @@ function Cart() {
                 <Link to={`/product/${item.id}`} style={{ textDecoration: 'none' }}>
                   <h4 style={{ margin: '0 0 4px', fontSize: '1.05rem' }}>{item.title}</h4>
                 </Link>
-                <p style={{ color: '#64748b', margin: 0 }}>${item.price.toFixed(2)} / dona</p>
+                <p style={{ color: '#64748b', margin: 0 }}>{Math.round(item.price).toLocaleString('uz-UZ')} so'm / dona</p>
               </div>
 
               {/* Quantity Control */}
@@ -229,7 +230,7 @@ function Cart() {
                 minWidth: '80px',
                 textAlign: 'right'
               }}>
-                ${(item.price * item.qty).toFixed(2)}
+                {Math.round(item.price * item.qty).toLocaleString('uz-UZ')} so'm
               </div>
 
               <button
@@ -318,13 +319,13 @@ function Cart() {
           <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', color: '#475569' }}>
               <span>Mahsulotlar</span>
-              <span>${subtotal.toFixed(2)}</span>
+              <span>{Math.round(subtotal).toLocaleString('uz-UZ')} so'm</span>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', color: '#475569' }}>
               <span>Chegirma</span>
               <span style={{ color: discount > 0 ? '#10b981' : 'inherit' }}>
-                -${discount.toFixed(2)}
+                -{Math.round(discount).toLocaleString('uz-UZ')} so'm
               </span>
             </div>
 
@@ -334,12 +335,12 @@ function Cart() {
                 {shipping === 0 ? (
                   <span style={{ color: '#10b981', fontWeight: '500' }}>Bepul</span>
                 ) : (
-                  `$${shipping.toFixed(2)}`
+                  `${Math.round(shipping).toLocaleString('uz-UZ')} so'm`
                 )}
               </span>
             </div>
 
-            {subtotal < 50 && (
+            {subtotal < 500000 && (
               <p style={{
                 fontSize: '0.8rem',
                 color: '#f59e0b',
@@ -349,7 +350,7 @@ function Cart() {
                 borderRadius: '8px',
                 marginTop: '8px'
               }}>
-                💡 $50 dan ortiq xarid qilsangiz, yetkazib berish bepul!
+                💡 500 000 so'm dan ortiq xarid qilsangiz, yetkazib berish bepul!
               </p>
             )}
 
@@ -363,7 +364,7 @@ function Cart() {
               fontWeight: '700'
             }}>
               <span>Jami</span>
-              <span style={{ color: '#10b981' }}>${total.toFixed(2)}</span>
+              <span style={{ color: '#10b981' }}>{Math.round(total).toLocaleString('uz-UZ')} so'm</span>
             </div>
           </div>
 

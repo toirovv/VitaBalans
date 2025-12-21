@@ -11,8 +11,7 @@ function ProductCard({ product }) {
   const { add } = useContext(CartContext)
   const { user } = useContext(AuthContext)
   const nav = useNavigate()
-  // Default exchange rate: 1 USD -> 11500 UZS (adjustable)
-  const EXCHANGE_RATE = 11500
+  // Prices in `products.js` are stored in so'm (integer). Display as localized UZS.
 
   const handleAdd = (e) => {
     e.preventDefault()
@@ -46,14 +45,18 @@ function ProductCard({ product }) {
             )}
           </div>
         )}
-        {/* Sale badge (top-left) */}
-        {product.discountLabel || product.discount ? (
-          <div className="badge-sale">{product.discountLabel || `Chegirma ${product.discount} so'm`}</div>
-        ) : null}
+        {/* Sale badge (top-left) - compute percent when oldPrice exists */}
+        {(() => {
+          const hasDiscount = product.oldPrice && product.oldPrice > product.price
+          const discountPct = hasDiscount ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : null
+          if (product.discountLabel) return <div className="badge-sale">{product.discountLabel}</div>
+          if (discountPct) return <div className="badge-sale">-{discountPct}%</div>
+          return null
+        })()}
 
         {/* Product Image */}
         <div className="card-image-wrapper product-image" style={{ padding: 8 }}>
-          <img src={product.image} alt={product.title} style={{ width: '100%', height: 140, objectFit: 'contain', borderRadius: 12, display: 'block' }} />
+          <img src={product.image} alt={product.title} style={{ width: '100%', objectFit: 'contain', borderRadius: 12, display: 'block' }} />
         </div>
 
         {/* Product Info */}
@@ -70,16 +73,24 @@ function ProductCard({ product }) {
 
           <div className="old-price">
             {product.oldPrice ? (
-              <span style={{ textDecoration: 'line-through', color: 'var(--text-muted)' }}>{Math.round(product.oldPrice * EXCHANGE_RATE).toLocaleString('uz-UZ')} so'm</span>
+              <span style={{ textDecoration: 'line-through', color: 'var(--text-muted)' }}>{Math.round(product.oldPrice).toLocaleString('uz-UZ')} so'm</span>
             ) : null}
-            {product.available && <span className="availability">Mavjud</span>}
+            {/* Always show availability so user can see if product is in stock */}
+            <span className={`availability ${product.available ? 'available' : 'unavailable'}`} style={{ marginLeft: product.oldPrice ? 12 : 0 }}>
+              {product.available ? 'Mavjud' : 'Mavjud emas'}
+            </span>
           </div>
 
-          <div className="price">{Math.round(product.price * EXCHANGE_RATE).toLocaleString('uz-UZ')} so'm</div>
+          <div className="price">{Math.round(product.price).toLocaleString('uz-UZ')} so'm</div>
 
           <div className="card-footer">
-            <button className="btn primary full-width" onClick={handleAdd} style={{ padding: '10px 14px' }}>
-              Savatga qo'shish
+            <button
+              className={`btn primary full-width ${product.available ? '' : 'disabled'}`}
+              onClick={handleAdd}
+              style={{ padding: '10px 14px' }}
+              disabled={!product.available}
+            >
+              {product.available ? "Savatga qo'shish" : 'Mavjud emas'}
             </button>
           </div>
         </div>

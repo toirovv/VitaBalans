@@ -5,7 +5,8 @@ const products = [
   {
     id: 'p1',
     title: 'Energy Booster',
-    price: 19.99,
+    price: 229900,
+    oldPrice: 344900,
     description: 'Tabiiy ekstraktlar bilan energiyangizni oshiring. Kun davomida kuch va tetiklikni ta\'minlaydi.',
     image: logo,
     category: 'Energiya',
@@ -14,16 +15,19 @@ const products = [
   {
     id: 'p2',
     title: 'Mood Support',
-    price: 24.99,
+    price: 287400,
+    available: true,
+    oldPrice: 329400,
     description: 'Kayfiyat muvozanatini tiklash uchun o\'simlik tarkibli qo\'shimcha. Stress va tashvishni kamaytiradi.',
-    image: logo,
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRK3P7-FrTKpVSxcE8HO6eWtqM_ACgp0sloUQ&s",
     category: 'Kayfiyat',
     rating: 4.9
   },
   {
     id: 'p3',
     title: 'Daily Vitamins',
-    price: 14.99,
+    price: 172400,
+    available: false,
     description: 'Umumiy salomatlik uchun kundalik multivitaminlar. Immunitetni mustahkamlaydi.',
     image: logo,
     category: 'Vitaminlar',
@@ -32,7 +36,8 @@ const products = [
   {
     id: 'p4',
     title: 'Sleep Aid',
-    price: 12.99,
+    price: 149400,
+    available: false,
     description: 'Tinch uyqu uchun yumshoq o\'simliklar. Uxlashni osonlashtiradi va uyqu sifatini yaxshilaydi.',
     image: logo,
     category: 'Uyqu',
@@ -41,7 +46,8 @@ const products = [
   {
     id: 'p5',
     title: 'Omega-3 Plus',
-    price: 29.99,
+    price: 344900,
+    available: false,
     description: 'Yurak va miya salomatligi uchun omega-3 yog\' kislotalari. Xotira va diqqatni yaxshilaydi.',
     image: logo,
     category: 'Vitaminlar',
@@ -50,7 +56,8 @@ const products = [
   {
     id: 'p6',
     title: 'Immune Shield',
-    price: 22.99,
+    price: 264400,
+    available: false,
     description: 'Immunitet tizimini mustahkamlovchi kompleks. Vitamin C, D va Zinc kombinatsiyasi.',
     image: logo,
     category: 'Immunitet',
@@ -59,7 +66,8 @@ const products = [
   {
     id: 'p7',
     title: 'Joint Flex',
-    price: 34.99,
+    price: 402400,
+    available: false,
     description: 'Bo\'g\'imlar va tog\'aylar uchun glukozamin va xondroitin. Harakatchanlikni yaxshilaydi.',
     image: logo,
     category: 'Bo\'g\'imlar',
@@ -68,7 +76,8 @@ const products = [
   {
     id: 'p8',
     title: 'Beauty Complex',
-    price: 27.99,
+    price: 321900,
+    available: false,
     description: 'Teri, soch va tirnoqlar uchun biotin va kollagen. Ichkaridan go\'zallik.',
     image: logo,
     category: 'Go\'zallik',

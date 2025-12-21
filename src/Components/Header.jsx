@@ -23,7 +23,6 @@ function Header() {
   return (
     <header className="site-header">
       <div className="container header-inner">
-        {/* Brand */}
         <Link to="/" className="brand">
           <img src={logo} alt="VitaBalans" className="logo" />
           <span className="brand-text">VitaBalans</span>
@@ -33,9 +32,6 @@ function Header() {
         <nav className={`main-nav ${open ? 'open' : ''}`}>
           <Link to="/" onClick={() => setOpen(false)}>Bosh sahifa</Link>
           <Link to="/brands" onClick={() => setOpen(false)}>Brendlar</Link>
-          {/* Nav Kabinet hidden on mobile to avoid duplication with header action */}
-          <Link className="hide-mobile" to={user ? '/profile' : '/login'} onClick={() => setOpen(false)}>Kabinet</Link>
-          {/* Katalog link removed per request */}
           <Link to="/about" onClick={() => setOpen(false)}>Biz haqimizda</Link>
         </nav>
 
@@ -127,10 +123,7 @@ function Header() {
             {totalItems > 0 && <span className="badge">{totalItems}</span>}
           </Link>
 
-          {/* Kabinet (user quick link) - visible only on mobile header actions */}
-          <Link to={user ? '/profile' : '/login'} className="icon show-mobile-only" title="Kabinet" aria-label="Kabinet">
-            <FaUser />
-          </Link>
+          {/* Kabinet removed from header as requested */}
 
           {/* Mobile Menu Toggle */}
           <button

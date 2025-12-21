@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import ProductCard from '../Components/ProductCard'
+import bannerImg from "../assets/images/VitaBalansLogo.jpg"
 import products from '../data/products'
 import { FaArrowRight, FaLeaf, FaHeart, FaStar, FaShieldAlt, FaSearch } from 'react-icons/fa'
 
@@ -42,52 +43,38 @@ function Home() {
     return () => clearInterval(t)
   }, [])
 
+  const [isPhoneDark, setIsPhoneDark] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsPhoneDark(window.innerWidth <= 420)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
   return (
     <div className="home">
       {/* Hero Section */}
-      <section className="hero">
-        <div className="hero-slider">
-          <div className="slides-wrapper" style={{ transform: `translateX(-${index * 100}%)` }}>
-            {products.map((p) => (
-              <div className="slide" key={p.id}>
-                <div className="hero-content">
-                  <span style={{
-                    display: 'inline-block',
-                    background: 'linear-gradient(135deg, #10b981, #0ea5a3)',
-                    color: 'white',
-                    padding: '6px 16px',
-                    borderRadius: '20px',
-                    fontSize: '0.85rem',
-                    fontWeight: '600',
-                    marginBottom: '16px'
-                  }}>
-                    🌿 Yangi kolleksiya
-                  </span>
-                  <h1>{p.title}</h1>
-                  <p>{p.description}</p>
-                  <div className="hero-actions">
-                    <Link to="/catalog" className="btn primary">
-                      Xarid qilish <FaArrowRight />
-                    </Link>
-                    <Link to="/about" className="btn secondary">
-                      Batafsil
-                    </Link>
-                  </div>
-                </div>
-                <img src={p.image} className="hero-image" alt={p.title} />
+      <section className={`hero ${isPhoneDark ? 'phone-dark' : ''}`}>
+        <div className="container">
+          <div className="hero-inner">
+            <div className="hero-content">
+              <span className="hero-chip">🌿 Yangi kolleksiya</span>
+              <h1>{products[0]?.title || 'VitaBalans'}</h1>
+              <p className="hero-desc">{products[0]?.description || 'Tabiiy vitaminlar va qo\'shimchalar'}</p>
+              <div className="hero-actions">
+                <Link to="/catalog" className="btn primary">
+                  Xarid qilish <FaArrowRight />
+                </Link>
+                <Link to="/about" className="btn secondary">
+                  Batafsil
+                </Link>
               </div>
-            ))}
-          </div>
+            </div>
 
-          <div className="hero-dots">
-            {products.map((_, i) => (
-              <button
-                key={i}
-                className={"hero-dot" + (i === index ? ' active' : '')}
-                onClick={() => setIndex(i)}
-                aria-label={`Slide ${i + 1}`}
-              />
-            ))}
+            <div className="hero-media">
+              <img src={bannerImg} className="hero-image" alt="VitaBalans banner" />
+            </div>
           </div>
         </div>
       </section>
@@ -98,29 +85,22 @@ function Home() {
         padding: '40px 0'
       }}>
         <div className="container">
-          <form onSubmit={handleSearch} className="home-search" style={{ maxWidth: '900px', margin: '0 auto' }}>
-            <div className="search-form" style={{ flex: 1, background: 'white', borderRadius: 16, boxShadow: '0 4px 20px rgba(16, 185, 129, 0.06)', padding: 4 }}>
+          <form onSubmit={handleSearch} className="home-search compact" style={{ maxWidth: '900px', margin: '0 auto' }}>
+            <div className="search-form compact" style={{ flex: 1, background: 'white', borderRadius: 16, boxShadow: '0 4px 20px rgba(16, 185, 129, 0.06)', padding: 4 }}>
               <FaSearch className="search-icon" />
               <input
                 type="text"
                 placeholder="Mahsulot qidirish..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="home-search-input"
+                className="home-search-input compact-input"
               />
             </div>
-            
+
             <Link
               to="/catalog"
-              className="btn primary"
-              style={{
-                padding: '10px 16px',
-                borderRadius: '12px',
-                fontSize: '0.95rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}
+              className="btn primary small catalog-btn"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
             >
               Katalog <FaArrowRight />
             </Link>
@@ -146,7 +126,7 @@ function Home() {
       {/* Features Section */}
       <section style={{ padding: '60px 0', background: '#ffffff' }}>
         <div className="container">
-          <div style={{
+          <div className="features-grid" style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
             gap: '24px'
