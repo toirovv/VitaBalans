@@ -69,7 +69,7 @@ function Home() {
                 pagination={{ clickable: true }}
                 loop={true}
                 className="hero-swiper"
-                allowTouchMove={!isPhoneDark}
+                allowTouchMove={true}
               >
                 {products.map(p => (
                   <SwiperSlide key={p.id}>
