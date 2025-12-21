@@ -30,6 +30,45 @@ function ProductCard({ product, fixedSize = false, compact = false }) {
     setNotificationInCard(true)
     setShowNotification(true)
     setTimeout(() => setShowNotification(false), 1500)
+    // Fly-to-cart animation
+    try {
+      const img = document.querySelector(`#prod-img-${product.id}`)
+      const cart = document.getElementById('cart-link')
+      if (img && cart) {
+        const imgRect = img.getBoundingClientRect()
+        const cartRect = cart.getBoundingClientRect()
+
+        const clone = img.cloneNode(true)
+        clone.style.position = 'fixed'
+        clone.style.left = `${imgRect.left}px`
+        clone.style.top = `${imgRect.top}px`
+        clone.style.width = `${imgRect.width}px`
+        clone.style.height = `${imgRect.height}px`
+        clone.style.transition = 'transform 1100ms cubic-bezier(.18,.86,.2,1), opacity 1100ms'
+        clone.style.zIndex = 9999
+        clone.classList.add('fly-img')
+        document.body.appendChild(clone)
+
+        const dx = cartRect.left + cartRect.width / 2 - (imgRect.left + imgRect.width / 2)
+        const dy = cartRect.top + cartRect.height / 2 - (imgRect.top + imgRect.height / 2)
+        const scale = 0.14
+
+        requestAnimationFrame(() => {
+          clone.style.transform = `translate(${dx}px, ${dy}px) scale(${scale}) rotate(10deg)`
+          clone.style.opacity = '0.9'
+        })
+
+        setTimeout(() => {
+          clone.remove()
+          // cart bounce
+          cart.classList.add('cart-bounce')
+          setTimeout(() => cart.classList.remove('cart-bounce'), 700)
+        }, 1200)
+      }
+    } catch (err) {
+      // fail silently
+      console.error(err)
+    }
   }
 
   useEffect(() => {
@@ -72,6 +111,7 @@ function ProductCard({ product, fixedSize = false, compact = false }) {
         {/* Product Image */}
         <div className="card-image-wrapper product-image" style={{ padding: compact ? 6 : 8 }}>
           <img
+            id={`prod-img-${product.id}`}
             src={product.image}
             alt={product.title}
             style={{

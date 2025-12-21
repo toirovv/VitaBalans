@@ -312,6 +312,26 @@ h4 {
   position: relative;
 }
 
+/* Fly-to-cart animation cloned image */
+.fly-img {
+  border-radius: 10px;
+  pointer-events: none;
+  will-change: transform, opacity;
+  box-shadow: 0 12px 30px rgba(16,185,129,0.18);
+}
+
+/* Cart bounce effect */
+.cart-bounce {
+  animation: cartPop 520ms cubic-bezier(.2,.9,.2,1);
+}
+
+@keyframes cartPop {
+  0% { transform: translateY(0) scale(1); }
+  25% { transform: translateY(-6px) scale(1.06); }
+  60% { transform: translateY(2px) scale(0.98); }
+  100% { transform: translateY(0) scale(1); }
+}
+
 /* Compact styles for Toplam (smaller, responsive product cards) */
 .toplam-grid {
   gap: 12px;
@@ -518,11 +538,11 @@ h4 {
   }
 
 
-  /* Ensure homepage product list shows two cards per row on tablets and phones */
+  /* Allow homepage grid to auto-fit varying card counts on small screens */
   .home .grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 18px !important;
-    justify-content: stretch !important;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 14px;
+    justify-content: stretch;
   }
   .main-nav {
 
@@ -728,7 +748,9 @@ h4 {
 .swiper-button-prev {
   display: none !important;
 }
-
+.grid{
+  margin-bottom: 30px;
+}
 /* Pagination (dots) styling for hero — compact blue dots like example */
 .hero .swiper-pagination {
   position: absolute;
@@ -828,6 +850,57 @@ h4 {
   max-width: 45%;
   width: 100%;
   height: auto;
+}
+
+/* Responsive adjustments for Swiper hero slides */
+@media (max-width: 900px) {
+  .slide {
+    flex-direction: column;
+    gap: 14px;
+    align-items: center;
+    text-align: center;
+  }
+
+  .slide-text {
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding-right: 0;
+    align-items: center;
+    text-align: center;
+  }
+
+  .slide-image {
+    flex: 0 0 100%;
+    max-width: 340px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .slide .hero-image {
+    max-width: 90%;
+    max-height: 260px;
+    object-fit: contain !important;
+  }
+
+  .hero-inner {
+    padding: 28px 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .slide .hero-title {
+    font-size: 1.25rem;
+    text-align: center;
+  }
+
+  .slide .hero-desc {
+    font-size: 0.95rem;
+    text-align: center;
+  }
+
+  .hero-inner {
+    padding: 18px 12px;
+  }
 }
 
 .slide.active {
@@ -1339,10 +1412,10 @@ h4 {
     padding: 12px 8px !important;
     min-height: auto !important;
 
-  /* Keep two columns on small phones as well */
+  /* Allow homepage grid to auto-fit for very small phones */
   .home .grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px !important;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
   }
   }
 
@@ -4038,7 +4111,8 @@ label {
 
 /* CTA Banner styles: smaller text and taller band on desktop */
 .cta-banner {
-  background: var(--gradient-primary);
+  /* Stronger green gradient for a more vivid banner */
+  background: linear-gradient(135deg, #0fb67f 0%, #10b981 40%, #0ea56f 100%);
   padding: 100px 0 80px;
   /* generous vertical padding */
   margin-top: 80px;
@@ -4071,17 +4145,21 @@ label {
 }
 
 .cta-banner .cta-btn {
-  background: transparent;
-  border: 2px solid white;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.18);
   color: white;
   padding: 12px 28px;
   font-size: 1rem;
-  transition: all 0.3s ease;
+  transition: all 0.22s ease;
+  box-shadow: 0 6px 22px rgba(16,185,129,0.12);
+  backdrop-filter: blur(4px);
 }
 
 .cta-banner .cta-btn:hover {
   background: white;
-  color: var(--primary-600);
+  color: #05694a; /* slightly darker green on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(16,185,129,0.18);
 }
 
 @media (max-width: 900px) {

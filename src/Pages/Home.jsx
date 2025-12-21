@@ -70,6 +70,18 @@ function Home() {
                 loop={true}
                 className="hero-swiper"
                 allowTouchMove={true}
+                breakpoints={{
+                  // when window width is >= 640px
+                  640: {
+                    slidesPerView: 1,
+                    spaceBetween: 12
+                  },
+                  // when window width is >= 900px
+                  900: {
+                    slidesPerView: 1,
+                    spaceBetween: 20
+                  }
+                }}
               >
                 {products.map(p => (
                   <SwiperSlide key={p.id}>

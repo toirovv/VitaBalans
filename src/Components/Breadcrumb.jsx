@@ -47,24 +47,24 @@ export default function Breadcrumb() {
 
     return items
   }, [pathname])
+  // If on home page, don't show breadcrumb
+  if (pathname === '/' || pathname === '') return null
 
-  // show just Home » Current (avoid repeating Home twice when at root)
-  const showItems = parts.length > 1 ? parts : parts
+  // Show only Home » Current (no intermediate links)
+  const showItems = parts.length > 1 ? [parts[0], parts[parts.length - 1]] : parts
 
   return (
     <nav style={{ padding: '12px 0', fontSize: '0.95rem' }} aria-label="breadcrumb">
       <div className="container" style={{ display: 'flex', alignItems: 'center' }}>
         {showItems.map((it, i) => (
-          <span key={it.to} style={{ display: 'inline-flex', alignItems: 'center' }}>
+          <span key={it.to + i} style={{ display: 'inline-flex', alignItems: 'center' }}>
             {i === 0 ? (
               <Link to={it.to} style={{ color: '#10b981', textDecoration: 'none', fontWeight: 600 }}>{it.name}</Link>
             ) : i === showItems.length - 1 ? (
-              <span style={{ color: '#0f172a', fontWeight: 600, marginLeft: 8 }}>{it.name}</span>
-            ) : (
-              <>
-                <span style={{ color: '#10b981', margin: '0 8px' }}>»</span>
-                <Link to={it.to} style={{ color: '#10b981', textDecoration: 'none' }}>{it.name}</Link>
-              </>
+              <span style={{ color: '#10b981', fontWeight: 700, marginLeft: 8 }}>{it.name}</span>
+            ) : null}
+            {i === 0 && showItems.length > 1 && (
+              <span style={{ color: '#10b981', margin: '0 8px' }}>»</span>
             )}
           </span>
         ))}

@@ -119,7 +119,7 @@ function Header() {
           {/* Catalog CTA removed per request */}
 
           {/* Cart */}
-          <Link to="/cart" className="icon" title="Savat">
+          <Link to="/cart" id="cart-link" className="icon" title="Savat">
             <FaShoppingCart />
             {totalItems > 0 && <span className="badge">{totalItems}</span>}
           </Link>
