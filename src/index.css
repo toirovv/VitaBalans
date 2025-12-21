@@ -1096,7 +1096,7 @@ h4 {
     overflow: hidden;
     width: 100% !important;
     max-width: 380px !important;
-    margin: 0 auto !important;
+    margin: 0 auto 0 0 !important;
   }
 
   /* Decorative elements (green bloor or sparks could go here, keeping simple for now) */
@@ -1789,8 +1789,13 @@ h4 {
   }
 
   .hero {
-    padding: 10px 12px !important;
+    padding: 6px 0 !important;
     min-height: auto !important;
+  }
+
+  .hero .container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
 
   .slide {
