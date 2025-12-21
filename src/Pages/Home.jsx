@@ -59,9 +59,6 @@ function Home() {
         <div className="container">
           <div className="hero-inner">
             <div className="hero-content">
-              <span className="hero-chip">🌿 Yangi kolleksiya</span>
-              <h1>{products[0]?.title || 'VitaBalans'}</h1>
-              <p className="hero-desc">{products[0]?.description || 'Tabiiy vitaminlar va qo\'shimchalar'}</p>
               <div className="hero-actions">
                 <Link to="/catalog" className="btn primary">
                   Xarid qilish <FaArrowRight />
