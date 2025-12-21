@@ -4,7 +4,7 @@ import { FaShoppingCart } from 'react-icons/fa'
 import { CartContext } from '../contexts/CartContext'
 import { AuthContext } from '../contexts/AuthContext'
 
-function ProductCard({ product, fixedSize = false }) {
+function ProductCard({ product, fixedSize = false, compact = false }) {
   const [showNotification, setShowNotification] = useState(false)
   const [notificationMsg, setNotificationMsg] = useState('')
   const [notificationInCard, setNotificationInCard] = useState(false)
@@ -44,10 +44,11 @@ function ProductCard({ product, fixedSize = false }) {
     <>
       <Link
         to={`/product/${product.id}`}
-        className="card product-card"
+        className={`card product-card ${compact ? 'compact' : ''}`}
         style={{
           textDecoration: 'none',
-          ...(fixedSize ? { minWidth: 260, maxWidth: 260, minHeight: 420 } : {})
+          ...(fixedSize ? { minWidth: 260, maxWidth: 260, minHeight: 420 } : {}),
+          ...(compact && !fixedSize ? { minWidth: 180, maxWidth: 220, minHeight: 360 } : {})
         }}
       >
         {/* Notification (in-card) */}
@@ -69,15 +70,25 @@ function ProductCard({ product, fixedSize = false }) {
         })()}
 
         {/* Product Image */}
-        <div className="card-image-wrapper product-image" style={{ padding: 8 }}>
-          <img src={product.image} alt={product.title} style={{ width: '100%', objectFit: 'contain', borderRadius: 12, display: 'block' }} />
+        <div className="card-image-wrapper product-image" style={{ padding: compact ? 6 : 8 }}>
+          <img
+            src={product.image}
+            alt={product.title}
+            style={{
+              width: '100%',
+              objectFit: compact ? 'cover' : 'contain',
+              borderRadius: 12,
+              display: 'block',
+              maxHeight: compact ? 160 : 'none'
+            }}
+          />
         </div>
 
         {/* Product Info */}
         <div className="card-body">
-          <h3 className="card-title">{product.title}</h3>
+          <h3 className="card-title" style={compact ? { fontSize: '0.95rem', marginBottom: 6 } : {}}>{product.title}</h3>
 
-          <p className="card-description">{product.description}</p>
+          <p className="card-description" style={compact ? { fontSize: '0.85rem', color: 'var(--text-secondary)', height: 36, overflow: 'hidden' } : {}}>{product.description}</p>
 
           <div className="rating" aria-hidden style={{ margin: '8px 0', color: '#64748b', fontSize: '0.9rem' }}>
             {product.rating ? `${product.rating.toFixed(1)} / 5` : '—'}
@@ -93,13 +104,13 @@ function ProductCard({ product, fixedSize = false }) {
             </span>
           </div>
 
-          <div className="price">{Math.round(product.price).toLocaleString('uz-UZ')} so'm</div>
+          <div className="price" style={compact ? { fontSize: '0.95rem', marginTop: 6 } : {}}>{Math.round(product.price).toLocaleString('uz-UZ')} so'm</div>
 
           <div className="card-footer">
             <button
               className={`btn primary full-width ${product.available ? '' : 'disabled'}`}
               onClick={handleAdd}
-              style={{ padding: '8px 12px', fontSize: '0.85rem' }}
+              style={compact ? { padding: '7px 10px', fontSize: '0.83rem' } : { padding: '8px 12px', fontSize: '0.85rem' }}
               disabled={!product.available}
             >
               {product.available ? "Savatga qo'shish" : 'Mavjud emas'}

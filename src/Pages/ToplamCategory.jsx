@@ -26,7 +26,7 @@ export default function ToplamCategory() {
 
       <section>
         <div
-          className="grid"
+          className="grid toplam-grid"
           style={{
             marginTop: 12,
             display: 'grid',
@@ -39,7 +39,7 @@ export default function ToplamCategory() {
           }}
         >
           {filtered.length ? filtered.map(p => (
-            <ProductCard key={p.id} product={p} fixedSize={filtered.length <= 2} />
+            <ProductCard key={p.id} product={p} fixedSize={filtered.length <= 2} compact />
           )) : (
             <div style={{ padding: 24, color: 'var(--text-secondary)' }}>Bu kategoriyada mahsulotlar mavjud emas.</div>
           )}

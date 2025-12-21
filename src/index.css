@@ -312,6 +312,38 @@ h4 {
   position: relative;
 }
 
+/* Compact styles for Toplam (smaller, responsive product cards) */
+.toplam-grid {
+  gap: 12px;
+}
+
+.product-card.compact {
+  padding: 10px;
+  box-shadow: var(--shadow-sm);
+  border-radius: 10px;
+}
+
+.product-card.compact .card-image-wrapper {
+  padding: 6px;
+}
+
+.product-card.compact .card-body {
+  padding: 8px 6px;
+}
+
+@media (max-width: 600px) {
+  .toplam-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .product-card.compact {
+    min-width: 140px !important;
+    max-width: 100% !important;
+    min-height: auto !important;
+  }
+}
+
 .header-actions {
   display: flex;
   align-items: center;
