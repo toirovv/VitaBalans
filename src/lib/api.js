@@ -1,7 +1,9 @@
 export const API_BASE = import.meta.env.VITE_API_BASE || '/api'
 
 export async function apiFetch(path, opts) {
-  const url = `${API_BASE.replace(/\/$/, '')}/${path.replace(/^\//, '')}`
+  const url = /^https?:\/\//i.test(path)
+    ? path
+    : `${API_BASE.replace(/\/$/, '')}/${path.replace(/^\//, '')}`
   let res
   try {
     res = await fetch(url, opts)
