@@ -33,7 +33,7 @@ function Profile() {
 
   useEffect(() => {
     let mounted = true
-    fetch('/api/coupons')
+    import('../lib/api').then(m => m.apiFetch('/coupons'))
       .then(res => res.json())
       .then(data => {
         if (!mounted) return

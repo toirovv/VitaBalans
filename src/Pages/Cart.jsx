@@ -28,7 +28,7 @@ function Cart() {
       return
     }
     try {
-      const res = await fetch('/api/coupons')
+      const res = await import('../lib/api').then(m => m.apiFetch('/coupons'))
       if (!res.ok) throw new Error('API error')
       const list = await res.json()
       const found = (Array.isArray(list) ? list : []).find(c => (c.name || c.code || '').toLowerCase() === cc.toLowerCase())

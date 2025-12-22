@@ -7,14 +7,21 @@ export default function Promokodlar() {
 
   useEffect(() => {
     let mounted = true
-    fetch('/api/coupons')
+    import('../lib/api').then(m => m.apiFetch('/coupons'))
       .then(res => res.json())
       .then(data => {
         if (!mounted) return
-        setCoupons(Array.isArray(data) ? data : [])
+        const arr = Array.isArray(data) ? data : []
+        const normalized = arr.map(item => ({
+          ...item,
+          // some APIs may return `amout` (typo) — prefer `amount`, fall back to `amout` and coerce to number
+          amount: Number(item.amount ?? item.amout ?? 0)
+        }))
+        setCoupons(normalized)
       })
       .catch(err => {
         if (!mounted) return
+        // Require coupons from API only: surface the error and clear coupons
         setError(err)
         setCoupons([])
       })
@@ -34,7 +41,10 @@ export default function Promokodlar() {
       {loading ? (
         <div className="card" style={{ padding: 12 }}>Yuklanmoqda...</div>
       ) : error ? (
-        <div className="card" style={{ padding: 12 }}>Xatolik yuz berdi</div>
+        <div className="card" style={{ padding: 12 }}>
+          <div style={{ fontWeight: 600, marginBottom: 8 }}>Xatolik yuz berdi</div>
+          <div style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', whiteSpace: 'pre-wrap' }}>{error.message || String(error)}</div>
+        </div>
       ) : coupons.length === 0 ? (
         <div className="card" style={{ padding: 12 }}>Kupon topilmadi</div>
       ) : (

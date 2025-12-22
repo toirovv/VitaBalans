@@ -123,7 +123,7 @@ export const categories = [
 // while allowing the app to use server-provided prices when available.
 if (typeof window !== 'undefined' && window.fetch) {
   try {
-    fetch('/api/products')
+    import('../lib/api').then(m => m.apiFetch('/products'))
       .then(res => res.json())
       .then(data => {
         if (!Array.isArray(data)) return
