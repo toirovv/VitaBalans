@@ -7,6 +7,8 @@ function Checkout() {
   const { items: ctxItems, clear } = useContext(CartContext)
   const { user } = useContext(AuthContext)
   const location = useLocation()
+  // Initialize applied coupon from navigation state when coming from Cart
+  const initialNavCoupon = (location && location.state && location.state.coupon) ? location.state.coupon : null
 
   // Prefer items passed via navigation state (from Cart) to avoid losing items
   const navItems = (location && location.state && location.state.items) ? location.state.items : ctxItems
@@ -24,7 +26,7 @@ function Checkout() {
   const [placedOrder, setPlacedOrder] = useState(null)
   const [couponCode, setCouponCode] = useState('')
   const [applyingCoupon, setApplyingCoupon] = useState(false)
-  const [appliedCoupon, setAppliedCoupon] = useState(null)
+  const [appliedCoupon, setAppliedCoupon] = useState(initialNavCoupon)
   const [couponError, setCouponError] = useState(null)
 
   useEffect(() => {
@@ -50,9 +52,7 @@ function Checkout() {
 
   const discountAmount = React.useMemo(() => {
     if (!appliedCoupon) return 0
-    if (appliedCoupon.type === 'percent') {
-      return Math.round((subtotal * (Number(appliedCoupon.amount) || 0)) / 100)
-    }
+    // Treat API `amount` as a fixed UZS value (per request: do not use percent)
     return Number(appliedCoupon.amount) || 0
   }, [appliedCoupon, subtotal])
 
@@ -160,7 +160,7 @@ function Checkout() {
     let finalDiscount = discountAmount
     try {
       if (appliedCoupon) {
-        const res = await fetch('https://api.vita-balans.uz/coupons')
+        const res = await fetch('/api/coupons')
         if (res.ok) {
           const list = await res.json()
           const found = (Array.isArray(list) ? list : []).find(c => {
@@ -170,8 +170,8 @@ function Checkout() {
           })
           if (found) {
             finalCoupon = found
-            if (found.type === 'percent') finalDiscount = Math.round((subtotal * (Number(found.amount) || 0)) / 100)
-            else finalDiscount = Number(found.amount) || 0
+            // Use API `amount` as fixed UZS value regardless of type
+            finalDiscount = Number(found.amount) || 0
             setAppliedCoupon(found)
             setCouponError(null)
           } else {
@@ -235,7 +235,7 @@ function Checkout() {
     setApplyingCoupon(true)
     setCouponError(null)
     try {
-      const res = await fetch('https://api.vita-balans.uz/coupons')
+      const res = await fetch('/api/coupons')
       if (!res.ok) throw new Error('API error')
       const list = await res.json()
       const found = (Array.isArray(list) ? list : []).find(c => (c.name || c.code || '').toLowerCase() === code.toLowerCase())
@@ -247,7 +247,8 @@ function Checkout() {
         setCouponError(null)
       }
     } catch (e) {
-      setCouponError('Kuponni tekshirishda xatolik')
+      console.error('Checkout coupon check error', e)
+      setCouponError(e?.message || 'Kuponni tekshirishda xatolik')
     } finally {
       setApplyingCoupon(false)
     }
@@ -292,7 +293,7 @@ function Checkout() {
               <div style={{ marginTop: 12, padding: 10, borderRadius: 8, background: 'linear-gradient(135deg,#ecfdf5,#f0fdfa)' }}>
                 <div style={{ fontWeight: 700 }}>{appliedCoupon.name || appliedCoupon.code}</div>
                 <div style={{ color: '#64748b' }}>{appliedCoupon.description}</div>
-                <div style={{ marginTop: 8, fontWeight: 700 }}>{appliedCoupon.type === 'percent' ? `-${appliedCoupon.amount}%` : `-${appliedCoupon.amount} so'm`}</div>
+                <div style={{ marginTop: 8, fontWeight: 700 }}>-{Number(appliedCoupon.amount || 0).toFixed(0)} so'm</div>
               </div>
             )}
           </div>

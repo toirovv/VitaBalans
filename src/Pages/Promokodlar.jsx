@@ -7,7 +7,7 @@ export default function Promokodlar() {
 
   useEffect(() => {
     let mounted = true
-    fetch('https://api.vita-balans.uz/coupons')
+    fetch('/api/coupons')
       .then(res => res.json())
       .then(data => {
         if (!mounted) return
@@ -44,7 +44,7 @@ export default function Promokodlar() {
               <div>
                 <strong style={{ display: 'block', marginBottom: 6 }}>{c.name}</strong>
                 <div style={{ color: 'var(--text-secondary)', marginBottom: 8, whiteSpace: 'pre-line' }}>{c.description}</div>
-                <div style={{ fontSize: '0.95rem' }}>{c.type === 'percent' ? `${c.amount}% chegirma` : `${c.amount} so'm`}</div>
+                <div style={{ fontSize: '0.95rem' }}>{Number(c.amount || 0).toFixed(0)} so'm</div>
               </div>
               <div style={{ marginTop: 12, display: 'flex', justifyContent: 'flex-end' }}>
                 <button

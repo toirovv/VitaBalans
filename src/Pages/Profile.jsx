@@ -33,7 +33,7 @@ function Profile() {
 
   useEffect(() => {
     let mounted = true
-    fetch('https://api.vita-balans.uz/coupons')
+    fetch('/api/coupons')
       .then(res => res.json())
       .then(data => {
         if (!mounted) return
@@ -363,7 +363,7 @@ function Profile() {
                         borderRadius: '8px',
                         fontWeight: '700'
                       }}>
-                        {c.type === 'percent' ? `-${c.amount}%` : `-${c.amount} so'm`}
+                        -{Number(c.amount || 0).toFixed(0)} so'm
                       </div>
                     </div>
                   ))}

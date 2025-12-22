@@ -4,30 +4,45 @@ import { CartContext } from '../contexts/CartContext'
 import { AuthContext } from '../contexts/AuthContext'
 import { FaTrash, FaPlus, FaMinus, FaTag, FaArrowRight, FaShoppingBag, FaTruck, FaShieldAlt, FaUndo } from 'react-icons/fa'
 
-const PROMOS = { 'VITA10': 0.1, 'WELCOME5': 0.05, 'FIRST20': 0.2 }
+// Coupons are provided by backend API; apply as fixed UZS amounts
 
 function Cart() {
   const { items, remove, updateQty, clear } = useContext(CartContext)
   const { user } = useContext(AuthContext)
   const [code, setCode] = useState('')
-  const [applied, setApplied] = useState(null)
+  const [applied, setApplied] = useState(null) // will hold coupon object from API
   const [promoError, setPromoError] = useState('')
   const [showNotification, setShowNotification] = useState(false)
 
   const subtotal = items.reduce((s, p) => s + p.price * p.qty, 0)
-  const discount = applied ? subtotal * applied : 0
+  // discount is fixed UZS taken from applied.amount (if any)
+  const discount = applied ? (Number(applied.amount) || 0) : 0
   // Shipping logic adjusted for so'm amounts: free over 500,000 so'm, otherwise 15,000 so'm
   const shipping = subtotal > 500000 ? 0 : 15000
   const total = subtotal - discount + shipping
 
-  const apply = () => {
-    const disc = PROMOS[code.toUpperCase()] || null
-    if (disc) {
-      setApplied(disc)
-      setPromoError('')
-    } else {
-      setPromoError('Noto\'g\'ri promo kod')
-      setApplied(null)
+  const apply = async () => {
+    const cc = (code || '').trim()
+    if (!cc) {
+      setPromoError('Promo kod kiriting')
+      return
+    }
+    try {
+      const res = await fetch('/api/coupons')
+      if (!res.ok) throw new Error('API error')
+      const list = await res.json()
+      const found = (Array.isArray(list) ? list : []).find(c => (c.name || c.code || '').toLowerCase() === cc.toLowerCase())
+      if (!found) {
+        setPromoError('Noto\'g\'ri promo kod')
+        setApplied(null)
+      } else {
+        // Treat API amount as fixed UZS
+        setApplied(found)
+        setPromoError('')
+      }
+    } catch (e) {
+      console.error('Coupon apply error', e)
+      setPromoError(e?.message || 'Kuponni tekshirishda xatolik')
     }
   }
 
@@ -39,8 +54,8 @@ function Cart() {
       setTimeout(() => setShowNotification(false), 3000)
       return
     }
-    // Use SPA navigation and pass current items so Checkout can receive them
-    navigate('/checkout', { state: { items } })
+    // Pass applied coupon to Checkout so it can initialize with it
+    navigate('/checkout', { state: { items, coupon: applied } })
   }
 
   if (items.length === 0) {
@@ -312,7 +327,7 @@ function Cart() {
               gap: '10px',
               fontWeight: '500'
             }}>
-              <FaTag /> {Math.round(applied * 100)}% chegirma qo'llanildi!
+              <FaTag /> -{Number(applied.amount || 0).toLocaleString('uz-UZ')} so'm chegirma qo'llanildi!
             </div>
           )}
 
