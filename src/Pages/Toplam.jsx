@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { categories } from '../data/products'
 import products from '../data/products'
@@ -6,13 +6,30 @@ import ProductCard from '../Components/ProductCard'
 
 export default function Toplam() {
   const [selected, setSelected] = useState('all')
+  const [coupons, setCoupons] = useState([])
+  const [loadingCoupons, setLoadingCoupons] = useState(true)
 
-  // Toplam main page only shows category tiles; products are shown on the dedicated category page
+  useEffect(() => {
+    let mounted = true
+    fetch('https://api.vita-balans.uz/coupons')
+      .then(res => res.json())
+      .then(data => {
+        if (!mounted) return
+        setCoupons(Array.isArray(data) ? data : [])
+      })
+      .catch(() => {
+        if (!mounted) return
+        setCoupons([])
+      })
+      .finally(() => mounted && setLoadingCoupons(false))
+
+    return () => { mounted = false }
+  }, [])
+
 
   const nav = useNavigate()
 
   const goToCategory = (catId) => {
-    // open a dedicated Toplam category page
     nav(`/toplam/${encodeURIComponent(catId)}`)
   }
 
@@ -23,6 +40,30 @@ export default function Toplam() {
       </nav>
 
       <h1 style={{ margin: '8px 0 20px', fontSize: '1.6rem' }}>To'plamlar</h1>
+
+      <section style={{ marginBottom: 20 }}>
+        <h2 style={{ margin: '0 0 10px', fontSize: '1.1rem' }}>Kuponlar</h2>
+        {loadingCoupons ? (
+          <div className="card" style={{ padding: 12 }}>Yuklanmoqda...</div>
+        ) : coupons.length === 0 ? (
+          <div className="card" style={{ padding: 12 }}>Kupon topilmadi</div>
+        ) : (
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            {coupons.map(c => (
+              <div key={c.id} className="card product-card" style={{ padding: 12, minWidth: 220 }}>
+                <div>
+                  <strong style={{ display: 'block', marginBottom: 6 }}>{c.name}</strong>
+                  <div style={{ color: 'var(--text-secondary)', marginBottom: 8, whiteSpace: 'pre-line' }}>{c.description}</div>
+                  <div style={{ fontSize: '0.95rem' }}>{c.type === 'percent' ? `${c.amount}% chegirma` : `${c.amount} so'm`}</div>
+                </div>
+                <div style={{ marginTop: 12, display: 'flex', justifyContent: 'flex-end' }}>
+                  <button className="btn" onClick={() => navigator.clipboard && navigator.clipboard.writeText(c.name)}>Nusxa</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
 
       <div className="grid" style={{ gap: 24 }}>
         {categories.map(cat => (
@@ -54,7 +95,6 @@ export default function Toplam() {
         ))}
       </div>
 
-      {/* Note: products for a specific to'plam are shown on the dedicated category page */}
     </div>
   )
 }
