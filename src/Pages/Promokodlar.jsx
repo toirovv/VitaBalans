@@ -7,7 +7,7 @@ export default function Promokodlar() {
 
   useEffect(() => {
     let mounted = true
-    fetch('/api/coupons')
+    fetch('https://api.vita-balans.uz/coupons')
       .then(res => res.json())
       .then(data => {
         if (!mounted) return
