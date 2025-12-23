@@ -1,9 +1,10 @@
 import React, { useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import products, { categories } from '../data/products'
+import useProducts from '../hooks/useProducts'
 
 export default function Breadcrumb() {
   const { pathname } = useLocation()
+  const { products, categories, loading } = useProducts()
 
   const parts = useMemo(() => {
     const segs = pathname.split('/').filter(Boolean)
@@ -46,7 +47,7 @@ export default function Breadcrumb() {
     })
 
     return items
-  }, [pathname])
+  }, [pathname, products, categories])
   // If on home page, don't show breadcrumb
   if (pathname === '/' || pathname === '') return null
 

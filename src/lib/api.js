@@ -1,4 +1,4 @@
-export const API_BASE = import.meta.env.VITE_API_BASE || 'https://api.vita-balans.uz'
+export const API_BASE = import.meta.env.VITE_API_BASE || 'https://fastapi-backend-production-d38d.up.railway.app'
 
 export async function apiFetch(path, opts) {
   const url = /^https?:\/\//i.test(path)

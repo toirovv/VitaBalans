@@ -1,20 +1,22 @@
 import React, { useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import products, { categories } from '../data/products'
+import useProducts from '../hooks/useProducts'
 import ProductCard from '../Components/ProductCard'
 
 export default function ToplamCategory() {
   const { id } = useParams()
 
+  const { products, categories, loading } = useProducts()
+
   const categoryName = useMemo(() => {
-    const found = categories.find(c => c.id === id)
+    const found = (categories || []).find(c => c.id === id)
     return found ? found.name : id
-  }, [id])
+  }, [id, categories])
 
   const filtered = useMemo(() => {
     if (!id || id === 'all') return products
-    return products.filter(p => p.category === id)
-  }, [id])
+    return (products || []).filter(p => p.category === id)
+  }, [id, products])
 
   return (
     <div className="container">

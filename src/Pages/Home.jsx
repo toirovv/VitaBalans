@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import ProductCard from '../Components/ProductCard'
-import products from '../data/products'
+import useProducts from '../hooks/useProducts'
 import { FaArrowRight, FaLeaf, FaHeart, FaStar, FaShieldAlt, FaSearch } from 'react-icons/fa'
 
 // Swiper importlari
@@ -13,8 +13,14 @@ import 'swiper/css'
 import 'swiper/css/pagination'
 
 function Home() {
+  const { products, loading, error, lastUrl } = useProducts()
   const [searchQuery, setSearchQuery] = useState('')
-  const [searchResults, setSearchResults] = useState(null)
+  const searchResults = useMemo(() => {
+    const q = (searchQuery || '').trim()
+    if (!q) return null
+    const first = q.charAt(0).toLowerCase()
+    return (products || []).filter(p => p.title && p.title.trim().charAt(0).toLowerCase() === first)
+  }, [searchQuery, products])
   const navigate = useNavigate()
 
   const handleSearch = (e) => {
@@ -24,18 +30,6 @@ function Home() {
     if (q) params.set('q', q)
     navigate(`/catalog?${params.toString()}`)
   }
-
-  // live-first-letter search while typing
-  useEffect(() => {
-    const q = (searchQuery || '').trim()
-    if (!q) {
-      setSearchResults(null)
-      return
-    }
-    const first = q.charAt(0).toLowerCase()
-    const results = products.filter(p => p.title && p.title.trim().charAt(0).toLowerCase() === first)
-    setSearchResults(results)
-  }, [searchQuery])
 
   const features = [
     { icon: <FaLeaf />, title: "100% Tabiiy", desc: "Faqat tabiiy ingredientlar" },
@@ -201,6 +195,13 @@ function Home() {
       {/* All Products */}
       <section className="products container">
         <h2>Mahsulotlar</h2>
+        {loading && <div className="card p-4">Yuklanmoqda...</div>}
+        {!loading && error && <div className="card p-4 text-red-600">Xato: {error.message}</div>}
+        {!loading && !error && (!products || products.length === 0) && (
+          <div className="card p-4 text-sm" style={{ marginBottom: 12 }}>
+            Hech qanday mahsulot topilmadi. So'rov yuborilgan URL: <strong>{lastUrl}</strong>
+          </div>
+        )}
         <div className="grid">
           {(() => {
             // Show available products first, keep relative order otherwise
@@ -213,8 +214,13 @@ function Home() {
       {/* CTA Banner */}
       <section className="cta-banner">
         <div className="container cta-inner">
-          <h2>Sog'lom hayot – sizning tanlovingiz!</h2>
-          <p>VitaBalans bilan tabiiy vitaminlar va qo'shimchalar orqali sog'lig'ingizni mustahkamlang.</p>
+          <h2 style={{ color: '#ffffff' }}>Sog'lom hayot – sizning tanlovingiz!</h2>
+          <p style={{ color: '#ffffff', maxWidth: '900px', margin: '0 auto 24px', lineHeight: '1.7' }}>
+            VitaBalans bilan tabiiy vitaminlar va qo'shimchalar orqali sog'lig'ingizni mustahkamlang.
+            Bizning mahsulotlarimiz 100% tabiiy ingredientlardan tayyorlangan bo'lib, sizning
+            immunitetingizni kuchaytiradi, energiya darajangizni oshiradi va umumiy salomatligingizni
+            yaxshilaydi. Har kuni sog'lom turmush tarziga qadam qo'ying!
+          </p>
           <Link to="/register" className="btn cta-btn">Hoziroq boshlash</Link>
         </div>
       </section>

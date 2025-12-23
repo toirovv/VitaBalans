@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
-import products, { categories } from '../data/products'
+import useProducts from '../hooks/useProducts'
 import ProductCard from '../Components/ProductCard'
 import { FaSearch, FaArrowRight } from 'react-icons/fa'
 
 function Catalog() {
+  const { products, categories, loading, error } = useProducts()
   const [searchParams] = useSearchParams()
   const initialQuery = searchParams.get('q') || ''
   const paramMin = searchParams.get('min') || ''
@@ -59,7 +60,7 @@ function Catalog() {
     }
 
     return result
-  }, [query, selectedCategory, sortBy, priceRange])
+  }, [products, query, selectedCategory, sortBy, priceRange])
 
   return (
     <div>
@@ -150,6 +151,14 @@ function Catalog() {
 
       {/* Main Content */}
       <div className="container" style={{ padding: '40px 24px 80px' }}>
+        {loading && (
+          <div className="card" style={{ padding: 20, marginBottom: 16 }}>Yuklanmoqda...</div>
+        )}
+        {!loading && error && (
+          <div className="card" style={{ padding: 20, marginBottom: 16, color: '#b91c1c' }}>
+            Mahsulotlarni yuklashda xato: {error.message}
+          </div>
+        )}
         <div className="catalog-main-grid" style={{
           display: 'grid',
           gridTemplateColumns: '260px 1fr',

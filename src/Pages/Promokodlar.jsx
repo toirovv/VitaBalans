@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { apiFetch } from '../lib/api'
 
 export default function Promokodlar() {
   const [coupons, setCoupons] = useState([])
@@ -10,15 +11,8 @@ export default function Promokodlar() {
 
     async function loadCoupons() {
       try {
-        const res = await fetch(
-          'https://api.vita-balans.uz/api/coupons',
-          {
-            method: 'GET',
-            headers: {
-              Accept: 'application/json',
-            },
-          }
-        )
+        // Use apiFetch so VITE_API_BASE is respected and errors are descriptive
+        const res = await apiFetch('/api/coupons')
 
         if (!res.ok) {
           throw new Error(`Server xato: ${res.status}`)
@@ -28,14 +22,15 @@ export default function Promokodlar() {
 
         if (!active) return
 
-        // API array qaytarmasa — bo‘sh qilib qo‘yamiz
-        const list = Array.isArray(data) ? data : []
+        // Normalize response shapes: try array or common wrapper fields
+        const list = Array.isArray(data)
+          ? data
+          : (data.items || data.data || data.coupons || [])
 
-        // amount / amout ni normalize qilamiz
-        const normalized = list.map(item => ({
-          id: item.id,
-          name: item.name || 'Nomaʼlum kupon',
-          description: item.description || '',
+        const normalized = (list || []).map(item => ({
+          id: item.id ?? item._id ?? item.code ?? Math.random().toString(36).slice(2),
+          name: item.name || item.code || 'Nomaʼlum kupon',
+          description: item.description || item.desc || '',
           amount: Number(item.amount ?? item.amout ?? 0),
         }))
 

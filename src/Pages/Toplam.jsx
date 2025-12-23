@@ -1,11 +1,10 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { categories } from '../data/products'
-import products from '../data/products'
+import useProducts from '../hooks/useProducts'
 import ProductCard from '../Components/ProductCard'
 
 export default function Toplam() {
-  const [selected, setSelected] = useState('all')
+  const { products, categories } = useProducts()
 
 
   const nav = useNavigate()

@@ -31,26 +31,40 @@
 
   /* Gradient */
   --gradient-primary: linear-gradient(135deg, #10b981 0%, #0ea5a3 100%);
-  --gradient-hero: linear-gradient(
-    135deg,
-    #ecfdf5 0%,
-    #f0fdfa 50%,
-    #ffffff 100%
-  );
-  --gradient-card: linear-gradient(
-    180deg,
+  --gradient-hero: linear-gradient(135deg,
+      #ecfdf5 0%,
+      #f0fdfa 50%,
+      #ffffff 100%);
+
+  .cta-banner {
+    padding: 12px 0 18px;
+    /* Make the banner appear as a centered rounded card on phones */
+    background: linear-gradient(135deg, #0dd054 0%, #1d9605 100%) !important;
+    border-radius: 14px;
+    max-width: 100%;
+    margin: 12px auto;
+    box-shadow: 0 8px 30px rgba(3, 190, 66, 0.12);
+  }
+
+  /* Limit CTA banner width on mobile only */
+  @media (max-width: 768px) {
+    .cta-banner {
+      max-width: 380px;
+    }
+  }
+
+  --gradient-card: linear-gradient(180deg,
     rgba(255, 255, 255, 0.95) 0%,
-    rgba(248, 250, 252, 0.98) 100%
-  );
+    rgba(248, 250, 252, 0.98) 100%);
 
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  0 2px 4px -2px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  0 4px 6px -4px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  0 8px 10px -6px rgba(0, 0, 0, 0.1);
   --shadow-card: 0 4px 20px rgba(16, 185, 129, 0.08);
   --shadow-card-hover: 0 12px 40px rgba(16, 185, 129, 0.15);
 
@@ -317,19 +331,47 @@ h4 {
   border-radius: 10px;
   pointer-events: none;
   will-change: transform, opacity;
-  box-shadow: 0 12px 30px rgba(16,185,129,0.18);
+  box-shadow: 0 12px 30px rgba(16, 185, 129, 0.18);
 }
 
 /* Cart bounce effect */
 .cart-bounce {
-  animation: cartPop 520ms cubic-bezier(.2,.9,.2,1);
+  animation: cartPop 520ms cubic-bezier(.2, .9, .2, 1);
 }
 
 @keyframes cartPop {
-  0% { transform: translateY(0) scale(1); }
-  25% { transform: translateY(-6px) scale(1.06); }
-  60% { transform: translateY(2px) scale(0.98); }
-  100% { transform: translateY(0) scale(1); }
+  0% {
+    transform: translateY(0) scale(1);
+  }
+
+  25% {
+    transform: translateY(-6px) scale(1.06);
+  }
+
+  60% {
+    transform: translateY(2px) scale(0.98);
+  }
+
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ===== Product Card Styles ===== */
+.product-card {
+  width: 300px;
+  min-width: 300px;
+  max-width: 300px;
+  min-height: 420px;
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
 }
 
 /* Compact styles for Toplam (smaller, responsive product cards) */
@@ -349,6 +391,59 @@ h4 {
 
 .product-card.compact .card-body {
   padding: 8px 6px;
+}
+
+/* Responsive cards for mobile */
+@media (max-width: 768px) {
+  .product-card {
+    width: 175px !important;
+    min-width: 175px !important;
+    max-width: 175px !important;
+    min-height: 320px !important;
+  }
+
+  .product-card .card-image-wrapper img {
+    height: 120px !important;
+  }
+
+  .product-card .card-title {
+    font-size: 0.85rem !important;
+  }
+
+  .product-card .card-description {
+    font-size: 0.75rem !important;
+    -webkit-line-clamp: 2 !important;
+  }
+
+  .product-card .price {
+    font-size: 0.85rem !important;
+  }
+
+  .product-card .btn {
+    padding: 4px 8px !important;
+    font-size: 0.65rem !important;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    justify-items: center;
+  }
+
+  .product-card .rating {
+    margin: 4px 0 !important;
+    font-size: 0.75rem !important;
+  }
+
+  .product-card .old-price {
+    margin: 2px 0 !important;
+    font-size: 0.7rem !important;
+    gap: 6px !important;
+  }
+
+  .product-card .card-body {
+    padding: 6px !important;
+  }
 }
 
 @media (max-width: 600px) {
@@ -478,7 +573,7 @@ h4 {
   }
 
   /* On small screens show only the logo and the mobile menu button; hide other header actions (cart, profile, login) */
-  .header-actions > :not(.mobile-menu) {
+  .header-actions> :not(.mobile-menu) {
     display: none !important;
   }
 
@@ -520,13 +615,16 @@ h4 {
 }
 
 @media (max-width: 900px) {
+
   /* Hide left branding panel on small screens and make form full width */
   .auth-left {
     display: none !important;
   }
+
   .auth-page {
     grid-template-columns: 1fr !important;
   }
+
   .auth-right {
     padding: 24px !important;
   }
@@ -544,21 +642,25 @@ h4 {
     gap: 14px;
     justify-content: stretch;
   }
+
   .main-nav {
 
-/* Hide logos only on the Login page (keeps Register and others unaffected) */
-.auth-page.no-logo .auth-logo,
-.auth-page.no-logo .mobile-logo {
-  display: none !important;
-}
+    /* Hide logos only on the Login page (keeps Register and others unaffected) */
+    .auth-page.no-logo .auth-logo,
+    .auth-page.no-logo .mobile-logo {
+      display: none !important;
+    }
+
     left: 8px;
     right: 8px;
     top: 64px;
   }
 }
-.cta-inner h1{
+
+.cta-inner h1 {
   color: white !important;
 }
+
 /* ===== Search Form ===== */
 .search-form {
   display: flex;
@@ -609,6 +711,7 @@ h4 {
   font-size: 1rem;
   pointer-events: none;
 }
+
 @media (max-width: 900px) {
   .search-form input {
     width: 100%;
@@ -646,11 +749,9 @@ h4 {
   right: -20%;
   width: 80%;
   height: 200%;
-  background: radial-gradient(
-    circle,
-    rgba(16, 185, 129, 0.06) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(circle,
+      rgba(16, 185, 129, 0.06) 0%,
+      transparent 70%);
   pointer-events: none;
 }
 
@@ -665,9 +766,10 @@ h4 {
   margin: 0 auto;
   width: 100%;
 }
+
 /* Make hero-inner background lighter and less saturated to reduce visual noise */
 .hero-inner {
-  background: linear-gradient(135deg, rgba(236,253,245,0.75) 0%, rgba(240,253,250,0.75) 50%, rgba(255,255,255,0.9) 100%);
+  background: linear-gradient(135deg, rgba(236, 253, 245, 0.75) 0%, rgba(240, 253, 250, 0.75) 50%, rgba(255, 255, 255, 0.9) 100%);
 }
 
 .hero {
@@ -688,8 +790,39 @@ h4 {
   background: #10b981;
   color: white;
   border-radius: 30px;
-  padding: 8px 24px;
-  font-size: 0.9rem;
+  padding: 6px 16px;
+  font-size: 0.8rem;
+}
+
+.hero-actions .btn.secondary {
+  padding: 6px 16px;
+  font-size: 0.8rem;
+}
+
+/* Hero responsive - smaller buttons and aligned text */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 1.1rem !important;
+    text-align: left;
+  }
+
+  .hero-desc {
+    font-size: 0.85rem !important;
+    text-align: left;
+  }
+
+  .hero-actions .btn {
+    padding: 3px 8px !important;
+    font-size: 0.6rem !important;
+  }
+
+  .hero-inner {
+    padding: 20px 16px !important;
+  }
+
+  .slide-text {
+    text-align: left;
+  }
 }
 
 .hero-slider {
@@ -748,9 +881,11 @@ h4 {
 .swiper-button-prev {
   display: none !important;
 }
-.grid{
+
+.grid {
   margin-bottom: 30px;
 }
+
 /* Pagination (dots) styling for hero — compact blue dots like example */
 .hero .swiper-pagination {
   position: absolute;
@@ -857,16 +992,16 @@ h4 {
   .slide {
     flex-direction: column;
     gap: 14px;
-    align-items: center;
-    text-align: center;
+    align-items: flex-start;
+    text-align: left;
   }
 
   .slide-text {
     flex: 0 0 100%;
     max-width: 100%;
     padding-right: 0;
-    align-items: center;
-    text-align: center;
+    align-items: flex-start;
+    text-align: left;
   }
 
   .slide-image {
@@ -890,12 +1025,12 @@ h4 {
 @media (max-width: 480px) {
   .slide .hero-title {
     font-size: 1.25rem;
-    text-align: center;
+    text-align: left;
   }
 
   .slide .hero-desc {
     font-size: 0.95rem;
-    text-align: center;
+    text-align: left;
   }
 
   .hero-inner {
@@ -1012,9 +1147,13 @@ h4 {
   }
 
   /* Mobile adjustments: hide pagination dots, enlarge image and tighten spacing */
-  .hero .swiper-pagination { display: none !important; }
+  .hero .swiper-pagination {
+    display: none !important;
+  }
 
-  .slide { gap: 12px; }
+  .slide {
+    gap: 12px;
+  }
 
   .slide-image .hero-image {
     max-height: 340px !important;
@@ -1108,7 +1247,7 @@ h4 {
 }
 
 /* Align hero-inner with container spacing to avoid overflow */
-.hero .container > .hero-inner,
+.hero .container>.hero-inner,
 .hero-inner {
   padding-inline: 12px;
   box-sizing: border-box;
@@ -1204,6 +1343,7 @@ h4 {
 }
 
 @media (max-width: 480px) {
+
   /* Reduce hero height and make banner phone-friendly */
   .hero {
     min-height: auto !important;
@@ -1412,11 +1552,11 @@ h4 {
     padding: 12px 8px !important;
     min-height: auto !important;
 
-  /* Allow homepage grid to auto-fit for very small phones */
-  .home .grid {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 10px;
-  }
+    /* Allow homepage grid to auto-fit for very small phones */
+    .home .grid {
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+    }
   }
 
   .slide {
@@ -1681,11 +1821,9 @@ h4 {
   height: min(52vh, 520px);
   object-fit: cover;
   border-radius: var(--radius-xl);
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.85),
-    rgba(248, 250, 252, 0.6)
-  );
+  background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.85),
+      rgba(248, 250, 252, 0.6));
   padding: 8px;
   box-shadow: var(--shadow-xl);
   animation: float 6s ease-in-out infinite;
@@ -1693,6 +1831,7 @@ h4 {
 }
 
 @keyframes float {
+
   0%,
   100% {
     transform: translateY(0);
@@ -1803,7 +1942,7 @@ h4 {
     padding: 20px !important;
   }
 
-  .feature-card > div:first-child {
+  .feature-card>div:first-child {
     margin-bottom: 12px;
     width: 64px;
     height: 64px;
@@ -1832,7 +1971,7 @@ h4 {
     gap: 8px !important;
   }
 
-  .features-grid .feature-card > div:first-child {
+  .features-grid .feature-card>div:first-child {
     width: 48px !important;
     height: 48px !important;
     font-size: 1.15rem !important;
@@ -2027,9 +2166,11 @@ h4 {
     flex-basis: 100% !important;
     width: 100% !important;
   }
+
   .auth-logo {
-   display: none;
-  } 
+    display: none;
+  }
+
   .slide-image .hero-image,
   .hero-image {
     max-height: 200px !important;
@@ -2062,12 +2203,14 @@ h4 {
 }
 
 @media (max-width: 900px) {
+
   .hero-image,
   .slide-image .hero-image,
   .hero-media .hero-image {
     max-width: var(--hero-img-max-tablet) !important;
     padding: 4px !important;
   }
+
   .auth-logo {
     width: 100px;
     height: 200px;
@@ -2080,6 +2223,7 @@ h4 {
 }
 
 @media (max-width: 480px) {
+
   .hero-image,
   .slide-image .hero-image,
   .hero-media .hero-image {
@@ -2095,6 +2239,7 @@ h4 {
     width: calc(100% - 32px) !important;
     max-width: 420px !important;
   }
+
   .auth-logo {
     width: 100px;
     height: 200px;
@@ -2120,7 +2265,7 @@ h4 {
 }
 
 /* Ensure each card fills its grid cell and uses column layout so footers align */
-.grid > * {
+.grid>* {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -2171,6 +2316,7 @@ h4 {
     max-height: 160px !important;
     padding: 6px !important;
   }
+
   .auth-logo {
     width: 100px;
     height: 200px;
@@ -2300,6 +2446,7 @@ h4 {
   .card {
     width: auto;
   }
+
   .auth-logo {
     width: 100px;
     height: 200px;
@@ -2449,10 +2596,12 @@ h4 {
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
   }
+
   .auth-logo {
     width: 100px;
     height: 200px;
   }
+
   .card {
     width: auto;
     /* allow cards to fill available column on tablet and below */
@@ -2565,6 +2714,7 @@ h4 {
   .rating {
     font-size: 0.75rem;
   }
+
   .auth-logo {
     width: 100px;
     height: 200px;
@@ -2582,6 +2732,7 @@ h4 {
     padding: 12px;
     margin-top: 18px;
   }
+
   .auth-logo {
     width: 100px;
     height: 200px;
@@ -2593,10 +2744,12 @@ h4 {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
+
   .auth-logo {
     width: 200px;
     height: 200px;
   }
+
   .card {
     min-height: auto;
     /* let cards size naturally on very small screens */
@@ -2666,10 +2819,12 @@ h4 {
     padding: 6px 6px !important;
     font-size: 0.72rem !important;
   }
+
   .auth-logo {
     width: 100px;
     height: 200px;
   }
+
   .card-footer {
     gap: 6px;
     align-items: center;
@@ -2729,11 +2884,13 @@ button,
 
 /* Tighter button sizing on small screens to ensure everything fits */
 @media (max-width: 600px) {
+
   .btn,
   button {
     padding: 6px 10px !important;
     font-size: 0.72rem !important;
   }
+
   .auth-logo {
     width: 100px;
     height: 200px;
@@ -2768,11 +2925,13 @@ button,
 }
 
 @media (max-width: 900px) {
+
   /* on small screens make the input take more space, catalog button smaller */
   .home-search.compact {
     flex-direction: row;
     align-items: center;
   }
+
   .auth-logo {
     width: 100px;
     height: 200px;
@@ -2799,6 +2958,7 @@ button,
     padding-right: 8px !important;
     font-size: 0.72rem !important;
   }
+
   .auth-logo {
     width: 100px;
     height: 200px;
@@ -2812,6 +2972,7 @@ button,
     gap: 10px;
     padding: 0 12px;
   }
+
   .auth-logo {
     width: 100px;
     height: 200px;
@@ -2834,6 +2995,7 @@ button,
     flex-direction: column;
     gap: 8px;
   }
+
   .auth-logo {
     width: 100px;
     height: 200px;
@@ -2875,6 +3037,7 @@ button[disabled] {
   .home-search .btn.primary {
     width: 100%;
   }
+
   .auth-logo {
     width: 100px;
     height: 200px;
@@ -3119,11 +3282,9 @@ button[disabled] {
   position: absolute;
   width: 600px;
   height: 600px;
-  background: radial-gradient(
-    circle,
-    rgba(16, 185, 129, 0.15) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(circle,
+      rgba(16, 185, 129, 0.15) 0%,
+      transparent 70%);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -3703,7 +3864,7 @@ label {
   gap: 12px;
 }
 
-.form-row > * {
+.form-row>* {
   flex: 1;
 }
 
@@ -3995,6 +4156,7 @@ label {
 
 /* Force header to be compact on small screens and defer navigation to bottom nav */
 @media (max-width: 900px) {
+
   /* Hide the main nav and burger on small screens so header only shows logo */
   .main-nav {
     display: none !important;
@@ -4052,7 +4214,7 @@ label {
     align-items: center;
   }
 
-  .feature-card > div:first-child {
+  .feature-card>div:first-child {
     margin-bottom: 12px;
     width: 64px;
     height: 64px;
@@ -4145,21 +4307,22 @@ label {
 }
 
 .cta-banner .cta-btn {
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   color: white;
   padding: 12px 28px;
   font-size: 1rem;
   transition: all 0.22s ease;
-  box-shadow: 0 6px 22px rgba(16,185,129,0.12);
+  box-shadow: 0 6px 22px rgba(16, 185, 129, 0.12);
   backdrop-filter: blur(4px);
 }
 
 .cta-banner .cta-btn:hover {
   background: white;
-  color: #05694a; /* slightly darker green on hover */
+  color: #05694a;
+  /* slightly darker green on hover */
   transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(16,185,129,0.18);
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.18);
 }
 
 @media (max-width: 900px) {
@@ -4234,7 +4397,7 @@ label {
 }
 
 /* Make product-following sections' headings smaller and sections a bit taller */
-.products + section {
+.products+section {
   padding-top: 60px;
 }
 
@@ -4274,6 +4437,7 @@ label {
 }
 
 @media (max-width: 768px) {
+
   /* Make banner taller / portrait-like on small screens */
   .hero-image {
     height: 80vh;
@@ -4339,31 +4503,36 @@ label {
 
   .slide-text {
     justify-content: flex-start !important;
-    
 
-/* ===== Button size adjustments (global smaller buttons) ===== */
-.btn {
-  padding: 8px 12px;
-  font-size: 0.95rem;
-  border-radius: 10px;
-}
 
-.btn.small {
-  padding: 6px 10px;
-  font-size: 0.88rem;
-  border-radius: 8px;
-}
+    /* ===== Button size adjustments (global smaller buttons) ===== */
+    .btn {
+      padding: 8px 12px;
+      font-size: 0.95rem;
+      border-radius: 10px;
+    }
 
-@media (max-width: 480px) {
-  .btn {
-    padding: 8px 10px;
-    font-size: 0.95rem;
-    height: 40px;
-  }
-  .btn.small { height: 36px; }
-}
+    .btn.small {
+      padding: 6px 10px;
+      font-size: 0.88rem;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 480px) {
+      .btn {
+        padding: 8px 10px;
+        font-size: 0.95rem;
+        height: 40px;
+      }
+
+      .btn.small {
+        height: 36px;
+      }
+    }
+
     /* Global smaller button sizes and helper class */
-    .btn { }
+    .btn {}
+
     padding-top: 8px !important;
   }
 

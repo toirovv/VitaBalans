@@ -9,6 +9,7 @@ function ProductCard({ product, fixedSize = false, compact = false }) {
   const [notificationMsg, setNotificationMsg] = useState('')
   const [notificationInCard, setNotificationInCard] = useState(false)
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 480 : false)
+  const [imgError, setImgError] = useState(false)
   const { add } = useContext(CartContext)
   const { user } = useContext(AuthContext)
   // Prices in `products.js` are stored in so'm (integer). Display as localized UZS.
@@ -86,8 +87,8 @@ function ProductCard({ product, fixedSize = false, compact = false }) {
         className={`card product-card ${compact ? 'compact' : ''}`}
         style={{
           textDecoration: 'none',
-          ...(fixedSize ? { minWidth: 260, maxWidth: 260, minHeight: 420 } : {}),
-          ...(compact && !fixedSize ? { minWidth: 180, maxWidth: 220, minHeight: 360 } : {})
+          display: 'flex',
+          flexDirection: 'column'
         }}
       >
         {/* Notification (in-card) */}
@@ -99,42 +100,56 @@ function ProductCard({ product, fixedSize = false, compact = false }) {
             )}
           </div>
         )}
-        {/* Sale badge (top-left) - compute percent when oldPrice exists */}
-        {(() => {
-          const hasDiscount = product.oldPrice && product.oldPrice > product.price
-          const discountPct = hasDiscount ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : null
-          if (product.discountLabel) return <div className="badge-sale">{product.discountLabel}</div>
-          if (discountPct) return <div className="badge-sale">-{discountPct}%</div>
-          return null
-        })()}
+        {/* Top-left badges: category / sale */}
+        {product.category && (
+          <div className="badge-category" style={{ position: 'absolute', left: 12, top: 12, background: 'rgba(255,255,255,0.9)', padding: '6px 8px', borderRadius: 10, fontSize: 12, color: '#065f46', fontWeight: 700 }}>
+            {product.category}
+          </div>
+        )}
+        {/* Sale badge (top-right) - use discount from API */}
+        {product.discountPercent > 0 && (
+          <div className="badge-sale">-{product.discountPercent}%</div>
+        )}
 
         {/* Product Image */}
         <div className="card-image-wrapper product-image" style={{ padding: compact ? 6 : 8 }}>
           <img
             id={`prod-img-${product.id}`}
-            src={product.image}
+            src={!imgError && product.image ? product.image : '/assets/images/VitaBalansLogo.jpg'}
             alt={product.title}
+            onError={() => setImgError(true)}
             style={{
               width: '100%',
+              height: compact ? 160 : 200,
               objectFit: compact ? 'cover' : 'contain',
               borderRadius: 12,
               display: 'block',
-              maxHeight: compact ? 160 : 'none'
             }}
           />
         </div>
 
         {/* Product Info */}
         <div className="card-body">
-          <h3 className="card-title" style={compact ? { fontSize: '0.95rem', marginBottom: 6 } : {}}>{product.title}</h3>
-
-          <p className="card-description" style={compact ? { fontSize: '0.85rem', color: 'var(--text-secondary)', height: 36, overflow: 'hidden' } : {}}>{product.description}</p>
-
-          <div className="rating" aria-hidden style={{ margin: '8px 0', color: '#64748b', fontSize: '0.9rem' }}>
-            {product.rating ? `${product.rating.toFixed(1)} / 5` : '—'}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between' }}>
+            <h3 className="card-title" style={compact ? { fontSize: '0.95rem', marginBottom: 6 } : {}}>{product.title}</h3>
           </div>
 
-          <div className="old-price">
+          <p className="card-description" style={{
+            fontSize: compact ? '0.85rem' : '0.95rem',
+            color: 'var(--text-secondary)',
+            display: '-webkit-box',
+            WebkitLineClamp: compact ? 2 : 3,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            marginTop: 0
+          }}>{product.description}</p>
+
+          <div className="rating" aria-hidden style={{ margin: '8px 0', color: '#f59e0b', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: 4 }}>
+            {'★'.repeat(Math.round(product.rating || 0))}{'☆'.repeat(5 - Math.round(product.rating || 0))}
+            <span style={{ color: '#64748b', marginLeft: 4 }}>{product.rating ? product.rating.toFixed(1) : '—'}</span>
+          </div>
+
+          <div className="old-price" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             {product.oldPrice ? (
               <span style={{ textDecoration: 'line-through', color: 'var(--text-muted)' }}>{Math.round(product.oldPrice).toLocaleString('uz-UZ')} so'm</span>
             ) : null}

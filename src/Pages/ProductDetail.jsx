@@ -1,13 +1,14 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { FaShoppingCart, FaArrowLeft, FaHeart, FaShare } from 'react-icons/fa'
-import products from '../data/products'
+import useProducts from '../hooks/useProducts'
 import { CartContext } from '../contexts/CartContext'
 import { AuthContext } from '../contexts/AuthContext'
 import ProductCard from '../Components/ProductCard'
 
 function ProductDetail() {
     const { id } = useParams()
+    const { products, loading } = useProducts()
     const product = products.find(p => p.id === id)
     const [rating, setRating] = useState(5)
     const [reviewText, setReviewText] = useState('')
@@ -25,6 +26,14 @@ function ProductDetail() {
             setReviews([])
         }
     }, [id])
+
+    if (loading) {
+        return (
+            <div className="container" style={{ padding: '80px 24px', textAlign: 'center' }}>
+                <h3>Yuklanmoqda...</h3>
+            </div>
+        )
+    }
 
     if (!product) {
         return (
