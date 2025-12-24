@@ -4,7 +4,7 @@ import { CartContext } from '../contexts/CartContext'
 import { AuthContext } from '../contexts/AuthContext'
 import { FaTrash, FaPlus, FaMinus, FaTag, FaArrowRight, FaShoppingBag, FaTruck, FaShieldAlt, FaUndo } from 'react-icons/fa'
 
-// Coupons are provided by backend API; apply as fixed UZS amounts
+// Coupons are provided by backend API; apply as percent (5% or 10%)
 
 function Cart() {
   const { items, remove, updateQty, clear } = useContext(CartContext)
@@ -15,8 +15,17 @@ function Cart() {
   const [showNotification, setShowNotification] = useState(false)
 
   const subtotal = items.reduce((s, p) => s + p.price * p.qty, 0)
-  // discount is fixed UZS taken from applied.amount (if any)
-  const discount = applied ? (Number(applied.amount) || 0) : 0
+  // discount: API amount 100 dan kichik bo'lsa foiz, aks holda so'm
+  const discount = React.useMemo(() => {
+    if (!applied) return 0
+    const amt = Number(applied.amount) || 0
+    if (amt <= 100) {
+      // Foiz sifatida
+      return Math.round(subtotal * amt / 100)
+    }
+    // So'm sifatida
+    return amt
+  }, [applied, subtotal])
   // Shipping logic adjusted for so'm amounts: free over 500,000 so'm, otherwise 15,000 so'm
   const shipping = subtotal > 500000 ? 0 : 15000
   const total = subtotal - discount + shipping
@@ -36,8 +45,10 @@ function Cart() {
         setPromoError('Noto\'g\'ri promo kod')
         setApplied(null)
       } else {
-        // Treat API amount as fixed UZS
-        setApplied(found)
+        // Kupon topildi - API amount qiymatiga qarab isPercent belgilanadi
+        const amt = Number(found.amount) || 0
+        const isPercent = amt <= 100
+        setApplied({ ...found, amount: amt, isPercent })
         setPromoError('')
       }
     } catch (e) {
@@ -327,7 +338,10 @@ function Cart() {
               gap: '10px',
               fontWeight: '500'
             }}>
-              <FaTag /> -{Number(applied.amount || 0).toLocaleString('uz-UZ')} so'm chegirma qo'llanildi!
+              <FaTag /> {applied.isPercent
+                ? `${applied.amount}% chegirma qo'llanildi! (-${discount.toLocaleString('uz-UZ')} so'm)`
+                : `${applied.amount.toLocaleString('uz-UZ')} so'm chegirma qo'llanildi!`
+              }
             </div>
           )}
 

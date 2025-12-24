@@ -28,18 +28,23 @@ export default function Promokodlar() {
           : (data.items || data.data || data.coupons || [])
 
         const normalized = (list || []).map(item => {
-          // Kritik kuponlar 10,000 so'm, oddiy kuponlar 5,000 so'm
+          // API'dan kelgan amount qiymatiga qarab:
+          // Agar 100 dan katta bo'lsa - bu so'm (masalan 10000)
+          // Agar 100 dan kichik bo'lsa - bu foiz (masalan 5, 10)
+          const rawAmount = Number(item.amount) || 0
+          const isPercent = rawAmount <= 100
+
           const isCritical = (item.name || item.code || '').toLowerCase().includes('krit') ||
             (item.description || item.desc || '').toLowerCase().includes('krit') ||
             item.type === 'critical' ||
             item.isCritical === true
-          const amount = isCritical ? 10000 : 5000
 
           return {
             id: item.id ?? item._id ?? item.code ?? Math.random().toString(36).slice(2),
             name: item.name || item.code || 'Nomaʼlum kupon',
             description: item.description || item.desc || '',
-            amount: amount,
+            amount: rawAmount,
+            isPercent: isPercent,
             isCritical: isCritical,
           }
         })
@@ -106,7 +111,10 @@ export default function Promokodlar() {
                   </span>
                 )}
                 <div className="font-medium text-green-600">
-                  {coupon.amount.toLocaleString('uz-UZ')} so'm chegirma
+                  {coupon.isPercent
+                    ? `${coupon.amount}% chegirma`
+                    : `${coupon.amount.toLocaleString('uz-UZ')} so'm chegirma`
+                  }
                 </div>
               </div>
 

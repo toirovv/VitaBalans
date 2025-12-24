@@ -21,7 +21,7 @@ function Checkout() {
 
   const [cardNumber, setCardNumber] = useState('')
   const [cardExp, setCardExp] = useState('')
-  
+
   const [loading, setLoading] = useState(false)
   const [placedOrder, setPlacedOrder] = useState(null)
   const [couponCode, setCouponCode] = useState('')
@@ -43,7 +43,7 @@ function Checkout() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (p) => setCoords({ lat: p.coords.latitude, lng: p.coords.longitude }),
-        () => {}
+        () => { }
       )
     }
   }, [])
@@ -52,8 +52,12 @@ function Checkout() {
 
   const discountAmount = React.useMemo(() => {
     if (!appliedCoupon) return 0
-    // Treat API `amount` as a fixed UZS value (per request: do not use percent)
-    return Number(appliedCoupon.amount) || 0
+    // API amount 100 dan kichik bo'lsa foiz, aks holda so'm
+    const amt = Number(appliedCoupon.amount) || 0
+    if (amt <= 100) {
+      return Math.round(subtotal * amt / 100)
+    }
+    return amt
   }, [appliedCoupon, subtotal])
 
   const totalAfterDiscount = Math.max(0, subtotal - discountAmount)
@@ -96,14 +100,14 @@ function Checkout() {
   }
 
   const formatCardInput = (v) => {
-    const digits = (v || '').replace(/\D/g, '').slice(0,19)
+    const digits = (v || '').replace(/\D/g, '').slice(0, 19)
     return digits.match(/.{1,4}/g)?.join(' ') || digits
   }
 
   const formatExpInput = (v) => {
-    const digits = (v || '').replace(/\D/g, '').slice(0,4)
+    const digits = (v || '').replace(/\D/g, '').slice(0, 4)
     if (digits.length <= 2) return digits
-    return digits.slice(0,2) + '/' + digits.slice(2)
+    return digits.slice(0, 2) + '/' + digits.slice(2)
   }
 
   const reverseGeocode = async (lat, lng) => {
@@ -169,10 +173,13 @@ function Checkout() {
             return a === b
           })
           if (found) {
-            finalCoupon = found
-            // Use API `amount` as fixed UZS value regardless of type
-            finalDiscount = Number(found.amount) || 0
-            setAppliedCoupon(found)
+            // API amount qiymatiga qarab isPercent belgilanadi
+            const amt = Number(found.amount) || 0
+            const isPercent = amt <= 100
+            finalCoupon = { ...found, amount: amt, isPercent }
+            // Foiz yoki qat'iy summa asosida chegirma
+            finalDiscount = isPercent ? Math.round(subtotal * amt / 100) : amt
+            setAppliedCoupon({ ...found, amount: amt, isPercent })
             setCouponError(null)
           } else {
             // coupon no longer valid — remove it and continue
@@ -243,7 +250,10 @@ function Checkout() {
         setAppliedCoupon(null)
         setCouponError('Kupon topilmadi')
       } else {
-        setAppliedCoupon(found)
+        // API amount qiymatiga qarab isPercent belgilanadi
+        const amt = Number(found.amount) || 0
+        const isPercent = amt <= 100
+        setAppliedCoupon({ ...found, amount: amt, isPercent })
         setCouponError(null)
       }
     } catch (e) {
@@ -284,16 +294,21 @@ function Checkout() {
 
           <div style={{ background: 'white', borderRadius: 12, padding: 16, boxShadow: '0 6px 18px rgba(15,23,42,0.06)', marginTop: 12 }}>
             <h3 style={{ margin: '0 0 12px' }}>Promo kod</h3>
-            <div style={{ display: 'flex', gap: 8 }}> 
+            <div style={{ display: 'flex', gap: 8 }}>
               <input className="form-input" placeholder="Kupon kod" value={couponCode} onChange={(e) => setCouponCode(e.target.value)} />
-                <button className="btn" onClick={handleApplyCoupon} disabled={applyingCoupon}>{applyingCoupon ? 'Tekshirilmoqda...' : "Qo'llash"}</button>
+              <button className="btn" onClick={handleApplyCoupon} disabled={applyingCoupon}>{applyingCoupon ? 'Tekshirilmoqda...' : "Qo'llash"}</button>
             </div>
             {couponError && <div style={{ color: '#ef4444', marginTop: 8 }}>{couponError}</div>}
             {appliedCoupon && (
               <div style={{ marginTop: 12, padding: 10, borderRadius: 8, background: 'linear-gradient(135deg,#ecfdf5,#f0fdfa)' }}>
                 <div style={{ fontWeight: 700 }}>{appliedCoupon.name || appliedCoupon.code}</div>
                 <div style={{ color: '#64748b' }}>{appliedCoupon.description}</div>
-                <div style={{ marginTop: 8, fontWeight: 700 }}>-{Number(appliedCoupon.amount || 0).toFixed(0)} so'm</div>
+                <div style={{ marginTop: 8, fontWeight: 700 }}>
+                  {appliedCoupon.isPercent
+                    ? `-${appliedCoupon.amount}% (${discountAmount.toLocaleString('uz-UZ')} so'm)`
+                    : `-${appliedCoupon.amount.toLocaleString('uz-UZ')} so'm`
+                  }
+                </div>
               </div>
             )}
           </div>

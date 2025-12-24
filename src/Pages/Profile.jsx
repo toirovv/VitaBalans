@@ -307,7 +307,10 @@ function Profile() {
                         fontWeight: '600',
                         fontSize: '0.8rem'
                       }}>
-                        -{Number(c.amount || 0).toLocaleString()} so'm
+                        {(Number(c.amount) || 0) <= 100
+                          ? `${c.amount}% chegirma`
+                          : `-${Number(c.amount || 0).toLocaleString()} so'm`
+                        }
                       </div>
                     </div>
                   ))}
