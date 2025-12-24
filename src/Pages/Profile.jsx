@@ -307,7 +307,7 @@ function Profile() {
                         fontWeight: '600',
                         fontSize: '0.8rem'
                       }}>
-                        -{c.type === 'percent' ? c.amount + '%' : Number(c.amount || 0).toLocaleString() + "so'm"}
+                        -{c.type === 'percent' ? c.amount + '%' : Number(c.amount || 0).toLocaleString() + " so'm"}
                       </div>
                     </div>
                   ))}
