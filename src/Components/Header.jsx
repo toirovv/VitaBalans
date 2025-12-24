@@ -18,8 +18,6 @@ function Header() {
     nav('/')
   }
 
-  const totalItems = items.reduce((s, i) => s + i.qty, 0)
-
   return (
     <header className="site-header">
       <div className="container header-inner">
@@ -118,10 +116,10 @@ function Header() {
 
           {/* Catalog CTA removed per request */}
 
-          {/* Cart */}
-          <Link to="/cart" id="cart-link" className="icon" title="Savat">
+          {/* Cart - Desktop only */}
+          <Link to="/cart" className="icon hide-mobile" title="Savat">
             <FaShoppingCart />
-            {totalItems > 0 && <span className="badge">{totalItems}</span>}
+            {items.length > 0 && <span className="badge">{items.reduce((s, i) => s + i.qty, 0)}</span>}
           </Link>
 
           {/* Mobile-only: Brands + Profile icons */}
@@ -134,8 +132,27 @@ function Header() {
               <FaUser />
             </Link>
           ) : (
-            <Link to="/login" className="icon show-mobile-only" title="Kirish">
-              <FaUser />
+            <Link
+              to="/login"
+              className="show-mobile-only"
+              title="Kirish"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '8px 14px',
+                background: 'var(--primary-500)',
+                color: 'white',
+                borderRadius: '20px',
+                fontSize: '0.85rem',
+                fontWeight: '600',
+                gap: '6px',
+                textDecoration: 'none',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <FaUser style={{ fontSize: '0.75rem' }} />
+              Kirish
             </Link>
           )}
 

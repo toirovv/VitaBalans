@@ -1,13 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AuthContext } from '../contexts/AuthContext'
-import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaEdit, FaShoppingBag, FaTag, FaSignOutAlt, FaCog } from 'react-icons/fa'
+import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaShoppingBag, FaTag, FaSignOutAlt } from 'react-icons/fa'
 
 function Profile() {
   const { user, logout, updateUser } = useContext(AuthContext)
   const [orders, setOrders] = useState([])
-  const [isEditing, setIsEditing] = useState(false)
-  const [editData, setEditData] = useState({})
+
   const [activeTab, setActiveTab] = useState('profile')
   const [coupons, setCoupons] = useState([])
   const [loadingCoupons, setLoadingCoupons] = useState(true)
@@ -18,9 +17,7 @@ function Profile() {
   useEffect(() => {
     const o = JSON.parse(localStorage.getItem('vb_orders') || '[]')
     setOrders(o)
-    if (user) {
-      setEditData({ name: user.name, phone: user.phone || '', address: user.address || '' })
-    }
+
     try {
       const flag = sessionStorage.getItem('justLoggedIn')
       if (flag) {
@@ -28,7 +25,7 @@ function Profile() {
         sessionStorage.removeItem('justLoggedIn')
         setTimeout(() => setShowWelcome(false), 4000)
       }
-    } catch(e) {}
+    } catch (e) { }
   }, [user])
 
   useEffect(() => {
@@ -54,10 +51,7 @@ function Profile() {
     navigate('/')
   }
 
-  const handleSave = () => {
-    updateUser(editData)
-    setIsEditing(false)
-  }
+
 
   if (!user) return (
     <div className="container" style={{ padding: '80px 24px', textAlign: 'center' }}>
@@ -173,113 +167,43 @@ function Profile() {
           {/* Profile Tab */}
           {activeTab === 'profile' && (
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                <h2 style={{ margin: 0 }}>Profil ma'lumotlari</h2>
-                <button
-                  className="btn outline small"
-                  onClick={() => setIsEditing(!isEditing)}
-                  aria-pressed={isEditing}
-                >
-                  <FaEdit style={{ marginRight: '8px' }} />
-                  <span style={{ fontSize: '0.9rem' }}>{isEditing ? 'Bekor qilish' : 'Tahrirlash'}</span>
-                </button>
-              </div>
+              <h2 style={{ marginBottom: '24px' }}>Profil ma'lumotlari</h2>
 
-              {isEditing ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', color: '#475569' }}>
-                      To'liq ism
-                    </label>
-                    <input
-                      type="text"
-                      value={editData.name}
-                      onChange={e => setEditData({ ...editData, name: e.target.value })}
-                      style={{
-                        width: '100%',
-                        padding: '14px 16px',
-                        border: '2px solid #e2e8f0',
-                        borderRadius: '12px',
-                        fontSize: '1rem'
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', color: '#475569' }}>
-                      Telefon
-                    </label>
-                    <input
-                      type="tel"
-                      value={editData.phone}
-                      onChange={e => setEditData({ ...editData, phone: e.target.value })}
-                      style={{
-                        width: '100%',
-                        padding: '14px 16px',
-                        border: '2px solid #e2e8f0',
-                        borderRadius: '12px',
-                        fontSize: '1rem'
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', color: '#475569' }}>
-                      Manzil
-                    </label>
-                    <textarea
-                      value={editData.address}
-                      onChange={e => setEditData({ ...editData, address: e.target.value })}
-                      style={{
-                        width: '100%',
-                        padding: '14px 16px',
-                        border: '2px solid #e2e8f0',
-                        borderRadius: '12px',
-                        fontSize: '1rem',
-                        minHeight: '100px',
-                        resize: 'vertical'
-                      }}
-                    />
-                  </div>
-                  <button className="btn primary" onClick={handleSave} style={{ alignSelf: 'flex-start' }}>
-                    Saqlash
-                  </button>
-                </div>
-              ) : (
-                <div style={{ display: 'grid', gap: '24px' }}>
-                  {[
-                    { icon: <FaUser />, label: 'Ism', value: user.name },
-                    { icon: <FaEnvelope />, label: 'Email', value: user.email },
-                    { icon: <FaPhone />, label: 'Telefon', value: user.phone || 'Kiritilmagan' },
-                    { icon: <FaMapMarkerAlt />, label: 'Manzil', value: user.address || 'Kiritilmagan' },
-                  ].map((item, i) => (
-                    <div key={i} style={{
+              <div style={{ display: 'grid', gap: '16px' }}>
+                {[
+                  { icon: <FaUser />, label: 'Ism', value: user.name },
+                  { icon: <FaEnvelope />, label: 'Email', value: user.email },
+                  { icon: <FaPhone />, label: 'Telefon', value: user.phone || 'Kiritilmagan' },
+                  { icon: <FaMapMarkerAlt />, label: 'Manzil', value: user.address || 'Kiritilmagan' },
+                ].map((item, i) => (
+                  <div key={i} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    padding: '14px',
+                    background: '#f8fafc',
+                    borderRadius: '10px'
+                  }}>
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '10px',
+                      background: 'linear-gradient(135deg, #ecfdf5, #f0fdfa)',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '16px',
-                      padding: '20px',
-                      background: '#f8fafc',
-                      borderRadius: '12px'
+                      justifyContent: 'center',
+                      color: '#10b981',
+                      fontSize: '1rem'
                     }}>
-                      <div style={{
-                        width: '48px',
-                        height: '48px',
-                        borderRadius: '12px',
-                        background: 'linear-gradient(135deg, #ecfdf5, #f0fdfa)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: '#10b981',
-                        fontSize: '1.2rem'
-                      }}>
-                        {item.icon}
-                      </div>
-                      <div>
-                        <div style={{ fontSize: '0.85rem', color: '#64748b' }}>{item.label}</div>
-                        <div style={{ fontWeight: '500' }}>{item.value}</div>
-                      </div>
+                      {item.icon}
                     </div>
-                  ))}
-                </div>
-              )}
+                    <div>
+                      <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{item.label}</div>
+                      <div style={{ fontWeight: '500', fontSize: '0.95rem' }}>{item.value}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
@@ -325,45 +249,65 @@ function Profile() {
           {/* Promos Tab */}
           {activeTab === 'promos' && (
             <div>
-              <h2 style={{ marginBottom: '32px' }}>Promo kodlar</h2>
+              <h2 style={{ marginBottom: '20px', fontSize: '1.3rem' }}>Ishlatilgan promo kodlar</h2>
               {loadingCoupons ? (
-                <div className="card" style={{ padding: 12 }}>Yuklanmoqda...</div>
+                <div style={{ padding: 10, color: '#64748b', fontSize: '0.9rem' }}>Yuklanmoqda...</div>
               ) : couponsError ? (
-                <div className="card" style={{ padding: 12 }}>Kuponlarni yuklashda xatolik</div>
+                <div style={{ padding: 10, color: '#ef4444', fontSize: '0.9rem' }}>Xatolik yuz berdi</div>
               ) : coupons.length === 0 ? (
-                <div className="card" style={{ padding: 12 }}>Kupon topilmadi</div>
+                <div style={{ padding: '30px 10px', textAlign: 'center', color: '#64748b' }}>
+                  <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🎟️</div>
+                  <p style={{ fontSize: '0.9rem' }}>Hali ishlatilgan promo kod yo'q</p>
+                </div>
               ) : (
-                <div style={{ display: 'grid', gap: '16px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   {coupons.map((c, i) => (
                     <div key={c.id || i} style={{
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      padding: '20px',
-                      background: 'linear-gradient(135deg, #ecfdf5, #f0fdfa)',
-                      borderRadius: '12px',
-                      border: '2px dashed #10b981'
+                      padding: '12px 14px',
+                      background: '#f8fafc',
+                      borderRadius: '10px',
+                      border: '1px solid #e2e8f0'
                     }}>
-                      <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <div style={{
-                          fontFamily: 'monospace',
-                          fontSize: '1.2rem',
-                          fontWeight: '700',
-                          color: '#059669',
-                          marginBottom: '4px'
+                          width: '32px',
+                          height: '32px',
+                          borderRadius: '8px',
+                          background: 'linear-gradient(135deg, #ecfdf5, #f0fdfa)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#10b981',
+                          fontSize: '0.9rem'
                         }}>
-                          {c.name || c.code || c.id}
+                          <FaTag />
                         </div>
-                        <div style={{ color: '#64748b', fontSize: '0.9rem' }}>{c.description}</div>
+                        <div>
+                          <div style={{
+                            fontFamily: 'monospace',
+                            fontSize: '0.9rem',
+                            fontWeight: '600',
+                            color: '#059669'
+                          }}>
+                            {c.name || c.code || c.id}
+                          </div>
+                          {c.description && (
+                            <div style={{ color: '#94a3b8', fontSize: '0.75rem' }}>{c.description}</div>
+                          )}
+                        </div>
                       </div>
                       <div style={{
                         background: '#10b981',
                         color: 'white',
-                        padding: '8px 16px',
-                        borderRadius: '8px',
-                        fontWeight: '700'
+                        padding: '4px 10px',
+                        borderRadius: '6px',
+                        fontWeight: '600',
+                        fontSize: '0.8rem'
                       }}>
-                        -{Number(c.amount || 0).toFixed(0)} so'm
+                        -{Number(c.amount || 0).toLocaleString()} so'm
                       </div>
                     </div>
                   ))}

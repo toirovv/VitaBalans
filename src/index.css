@@ -624,8 +624,8 @@ h4 {
     height: 44px;
   }
 
-  /* On small screens show only the logo and the mobile menu button; hide other header actions (cart, profile, login) */
-  .header-actions> :not(.mobile-menu) {
+  /* On small screens show logo, mobile menu, and profile/brands icons */
+  .header-actions> :not(.mobile-menu):not(.show-mobile-only) {
     display: none !important;
   }
 

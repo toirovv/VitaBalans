@@ -27,12 +27,22 @@ export default function Promokodlar() {
           ? data
           : (data.items || data.data || data.coupons || [])
 
-        const normalized = (list || []).map(item => ({
-          id: item.id ?? item._id ?? item.code ?? Math.random().toString(36).slice(2),
-          name: item.name || item.code || 'Nomaʼlum kupon',
-          description: item.description || item.desc || '',
-          amount: Number(item.amount ?? item.amout ?? 0),
-        }))
+        const normalized = (list || []).map(item => {
+          // Kritik kuponlar 10,000 so'm, oddiy kuponlar 5,000 so'm
+          const isCritical = (item.name || item.code || '').toLowerCase().includes('krit') ||
+            (item.description || item.desc || '').toLowerCase().includes('krit') ||
+            item.type === 'critical' ||
+            item.isCritical === true
+          const amount = isCritical ? 10000 : 5000
+
+          return {
+            id: item.id ?? item._id ?? item.code ?? Math.random().toString(36).slice(2),
+            name: item.name || item.code || 'Nomaʼlum kupon',
+            description: item.description || item.desc || '',
+            amount: amount,
+            isCritical: isCritical,
+          }
+        })
 
         setCoupons(normalized)
         setError(null)
@@ -90,8 +100,13 @@ export default function Promokodlar() {
                   {coupon.description}
                 </p>
 
-                <div className="font-medium">
-                  {((coupon.amount < 1000 ? coupon.amount * 1000 : coupon.amount).toLocaleString())} so‘m
+                {coupon.isCritical && (
+                  <span className="inline-block bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded mb-2">
+                    Kritik
+                  </span>
+                )}
+                <div className="font-medium text-green-600">
+                  {coupon.amount.toLocaleString('uz-UZ')} so'm chegirma
                 </div>
               </div>
 
