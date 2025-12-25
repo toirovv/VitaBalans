@@ -16,11 +16,14 @@ export default function Blog() {
 
         async function loadBlogs() {
             try {
+                console.log('Loading blogs from API...')
                 const json = await vitaFetch('/api/v1/articles/')
+                console.log('Blog API response:', json)
 
                 if (!active) return
 
                 const list = json.data || []
+                console.log('Blog list:', list)
 
                 // Extract unique categories
                 const catSet = new Map()

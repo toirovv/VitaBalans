@@ -8,7 +8,7 @@ export default function NotFound() {
         <h1 style={{ fontSize: '2.4rem', marginBottom: 12 }}>404 — Sahifa topilmadi</h1>
         <p style={{ color: '#64748b', marginBottom: 20 }}>Kechirasiz, siz qidirgan manzil mavjud emas yoki o'zgartirilgan.</p>
         <div style={{ margin: '20px 0' }}>
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSl-BraBWVGZSIUOFvGUTJUuPQXTLeNEyWYEg&s" alt="404" style={{ maxWidth: 420, width: '100%', opacity: 0.95 }} />
+          <img src="https://vita-backend.jprq.live/api/v1/articles/" alt="404" style={{ maxWidth: 420, width: '100%', opacity: 0.95 }} />
         </div>
         <Link to="/" className="btn primary" style={{ display: 'inline-block', marginTop: 8 }}>Bosh sahifaga qaytish</Link>
       </div>

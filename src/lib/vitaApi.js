@@ -1,35 +1,35 @@
 // API helper - dev va production uchun to'g'ri URL
 const isDev = import.meta.env.DEV
 
-// Netlify _redirects yordamida proxy ishlatiladi (dev va production da)
-export const VITA_API_BASE = '/vita-api'
+// Dev da proxy, production da to'g'ridan-to'g'ri URL
+export const VITA_API_BASE = isDev
+    ? '/vita-api'  // Vite proxy orqali
+    : 'https://vita-backend.jprq.live'
 
 export function vitaApiUrl(path) {
     return `${VITA_API_BASE}${path}`
 }
 
-// Fetch wrapper with error handling
+// Fetch wrapper - API dan ma'lumot olish
 export async function vitaFetch(path) {
     const url = vitaApiUrl(path)
+    console.log('Fetching from:', url)  // Debug
 
-    try {
-        const res = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            // Production da CORS muammolarini hal qilish uchun
-            mode: isDev ? 'cors' : 'cors',
-        })
+    const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/vnd.api+json, application/json',
+        },
+    })
 
-        if (!res.ok) {
-            throw new Error(`Server xato: ${res.status}`)
-        }
+    console.log('Response status:', res.status)  // Debug
 
-        return res.json()
-    } catch (error) {
-        // CORS yoki network xatoliklari uchun
-        console.error('API xatolik:', error)
-        throw new Error('Failed to fetch')
+    if (!res.ok) {
+        throw new Error(`Server xato: ${res.status}`)
     }
+
+    const data = await res.json()
+    console.log('API data:', data)  // Debug
+    return data
 }
+

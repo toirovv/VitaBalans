@@ -15,6 +15,7 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
       // Proxy for vita-backend promotions API
+      // /vita-api/api/v1/... -> https://vita-backend.jprq.live/api/v1/...
       '/vita-api': {
         target: 'https://vita-backend.jprq.live',
         changeOrigin: true,
