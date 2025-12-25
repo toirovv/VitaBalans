@@ -1,10 +1,10 @@
 // API helper - dev va production uchun to'g'ri URL
-const isDev = import.meta.env.DEV
+// Dev da Vite proxy, Production da Netlify _redirects orqali proxy
 
-// Dev da proxy, production da to'g'ridan-to'g'ri URL
-export const VITA_API_BASE = isDev
-    ? '/vita-api'  // Vite proxy orqali
-    : 'https://vita-backend.jprq.live'
+// Har ikkala muhitda ham /vita-api prefiksi ishlatiladi
+// Dev: Vite proxy orqali https://vita-backend.jprq.live ga yo'naltiriladi
+// Prod: Netlify _redirects orqali https://vita-backend.jprq.live ga yo'naltiriladi
+export const VITA_API_BASE = '/vita-api'
 
 export function vitaApiUrl(path) {
     return `${VITA_API_BASE}${path}`
