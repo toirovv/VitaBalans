@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { apiFetch } from '../lib/api'
 
 export default function Promokodlar() {
   const [coupons, setCoupons] = useState([])
@@ -11,41 +10,36 @@ export default function Promokodlar() {
 
     async function loadCoupons() {
       try {
-        // Use apiFetch so VITE_API_BASE is respected and errors are descriptive
-        const res = await apiFetch('/api/coupons')
+        const res = await fetch('/vita-api/api/v1/payments/promotions/')
 
         if (!res.ok) {
           throw new Error(`Server xato: ${res.status}`)
         }
 
-        const data = await res.json()
+        const json = await res.json()
 
         if (!active) return
 
-        // Normalize response shapes: try array or common wrapper fields
-        const list = Array.isArray(data)
-          ? data
-          : (data.items || data.data || data.coupons || [])
+        const list = json.data || []
 
-        const normalized = (list || []).map(item => {
-          // API'dan kelgan amount qiymatiga qarab:
-          // Agar 100 dan katta bo'lsa - bu so'm (masalan 10000)
-          // Agar 100 dan kichik bo'lsa - bu foiz (masalan 5, 10)
-          const rawAmount = Number(item.amount) || 0
-          const isPercent = rawAmount <= 100
-
-          const isCritical = (item.name || item.code || '').toLowerCase().includes('krit') ||
-            (item.description || item.desc || '').toLowerCase().includes('krit') ||
-            item.type === 'critical' ||
-            item.isCritical === true
+        const normalized = list.map(item => {
+          const attrs = item.attributes || {}
+          const isPercent = attrs.discount_type === 'percent'
 
           return {
-            id: item.id ?? item._id ?? item.code ?? Math.random().toString(36).slice(2),
-            name: item.name || item.code || 'Nomaʼlum kupon',
-            description: item.description || item.desc || '',
-            amount: rawAmount,
+            id: item.id,
+            code: attrs.code || '',
+            name: attrs.title || attrs.code || 'Nomaʼlum kupon',
+            description: attrs.description || '',
+            subtitle: attrs.subtitle || '',
+            discountValue: attrs.discount_value || 0,
+            discountDisplay: attrs.discount_display || '',
             isPercent: isPercent,
-            isCritical: isCritical,
+            validFrom: attrs.valid_from,
+            validTo: attrs.valid_to,
+            isActive: attrs.is_active,
+            isFeatured: attrs.is_featured,
+            category: attrs.category,
           }
         })
 
@@ -56,7 +50,7 @@ export default function Promokodlar() {
         setError(err)
         setCoupons([])
       } finally {
-        active && setLoading(false)
+        if (active) setLoading(false)
       }
     }
 
@@ -94,35 +88,56 @@ export default function Promokodlar() {
           {coupons.map(coupon => (
             <div
               key={coupon.id}
-              className="card p-4 w-[220px] flex flex-col justify-between"
+              className={`card p-4 w-[260px] flex flex-col justify-between ${!coupon.isActive ? 'opacity-60' : ''}`}
+              style={{ borderLeft: coupon.category?.color ? `4px solid ${coupon.category.color}` : undefined }}
             >
               <div>
-                <strong className="block mb-2">
-                  {coupon.name}
-                </strong>
-
-                <p className="text-sm text-gray-600 mb-2">
-                  {coupon.description}
-                </p>
-
-                {coupon.isCritical && (
-                  <span className="inline-block bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded mb-2">
-                    Kritik
+                {coupon.isFeatured && (
+                  <span className="inline-block bg-yellow-100 text-yellow-700 text-xs px-2 py-0.5 rounded mb-2">
+                    ⭐ Tavsiya etilgan
                   </span>
                 )}
-                <div className="font-medium text-green-600">
-                  {coupon.isPercent
-                    ? `${coupon.amount}% chegirma`
-                    : `${coupon.amount.toLocaleString('uz-UZ')} so'm chegirma`
-                  }
+
+                <strong className="block mb-1 text-lg">
+                  {coupon.code}
+                </strong>
+
+                <p className="text-sm text-gray-500 mb-2">
+                  {coupon.name}
+                </p>
+
+                {coupon.description && (
+                  <p className="text-sm text-gray-600 mb-2">
+                    {coupon.description}
+                  </p>
+                )}
+
+                {coupon.category && (
+                  <span
+                    className="inline-block text-xs px-2 py-0.5 rounded mb-2"
+                    style={{
+                      backgroundColor: coupon.category.color + '20',
+                      color: coupon.category.color
+                    }}
+                  >
+                    {coupon.category.name}
+                  </span>
+                )}
+
+                <div className="font-bold text-xl text-green-600 mt-2">
+                  {coupon.discountDisplay} chegirma
                 </div>
+
+                {!coupon.isActive && (
+                  <span className="inline-block bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded mt-2">
+                    Faol emas
+                  </span>
+                )}
               </div>
 
               <button
                 className="btn mt-3"
-                onClick={() =>
-                  navigator.clipboard?.writeText(coupon.name)
-                }
+                onClick={() => navigator.clipboard?.writeText(coupon.code)}
               >
                 Nusxa olish
               </button>

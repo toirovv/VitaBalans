@@ -164,25 +164,25 @@ function Checkout() {
     let finalDiscount = discountAmount
     try {
       if (appliedCoupon) {
-        const res = await import('../lib/api').then(m => m.apiFetch('/coupons'))
+        const res = await fetch('/vita-api/api/v1/payments/promotions/')
         if (res.ok) {
-          const list = await res.json()
-          const found = (Array.isArray(list) ? list : []).find(c => {
-            const a = String(c.id || c.name || c.code || '').toLowerCase()
-            const b = String(appliedCoupon.id || appliedCoupon.name || appliedCoupon.code || '').toLowerCase()
+          const json = await res.json()
+          const list = json.data || []
+          const found = list.find(item => {
+            const attrs = item.attributes || {}
+            const a = (attrs.code || '').toLowerCase()
+            const b = (appliedCoupon.code || appliedCoupon.name || '').toLowerCase()
             return a === b
           })
           if (found) {
-            // API amount qiymatiga qarab isPercent belgilanadi
-            const amt = Number(found.amount) || 0
-            const isPercent = amt <= 100
-            finalCoupon = { ...found, amount: amt, isPercent }
-            // Foiz yoki qat'iy summa asosida chegirma
+            const attrs = found.attributes || {}
+            const isPercent = attrs.discount_type === 'percent'
+            const amt = attrs.discount_value || 0
+            finalCoupon = { id: found.id, code: attrs.code, name: attrs.title, amount: amt, isPercent }
             finalDiscount = isPercent ? Math.round(subtotal * amt / 100) : amt
-            setAppliedCoupon({ ...found, amount: amt, isPercent })
+            setAppliedCoupon(finalCoupon)
             setCouponError(null)
           } else {
-            // coupon no longer valid — remove it and continue
             finalCoupon = null
             finalDiscount = 0
             setAppliedCoupon(null)
@@ -242,18 +242,28 @@ function Checkout() {
     setApplyingCoupon(true)
     setCouponError(null)
     try {
-      const res = await import('../lib/api').then(m => m.apiFetch('/coupons'))
+      const res = await fetch('/vita-api/api/v1/payments/promotions/')
       if (!res.ok) throw new Error('API error')
-      const list = await res.json()
-      const found = (Array.isArray(list) ? list : []).find(c => (c.name || c.code || '').toLowerCase() === code.toLowerCase())
+      const json = await res.json()
+      const list = json.data || []
+      const found = list.find(item => {
+        const attrs = item.attributes || {}
+        return (attrs.code || '').toLowerCase() === code.toLowerCase()
+      })
       if (!found) {
         setAppliedCoupon(null)
         setCouponError('Kupon topilmadi')
       } else {
-        // API amount qiymatiga qarab isPercent belgilanadi
-        const amt = Number(found.amount) || 0
-        const isPercent = amt <= 100
-        setAppliedCoupon({ ...found, amount: amt, isPercent })
+        const attrs = found.attributes || {}
+        const isPercent = attrs.discount_type === 'percent'
+        setAppliedCoupon({
+          id: found.id,
+          code: attrs.code,
+          name: attrs.title || attrs.code,
+          amount: attrs.discount_value || 0,
+          discountDisplay: attrs.discount_display || '',
+          isPercent: isPercent
+        })
         setCouponError(null)
       }
     } catch (e) {

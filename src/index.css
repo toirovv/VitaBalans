@@ -1,8 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
 
-/* ===== CSS Variables ===== */
 :root {
-  /* Primary Colors - Green Theme matching logo */
   --primary-50: #ecfdf5;
   --primary-100: #d1fae5;
   --primary-200: #a7f3d0;
@@ -14,12 +12,10 @@
   --primary-800: #065f46;
   --primary-900: #064e3b;
 
-  /* Accent - Teal */
   --accent: #0ea5a3;
   --accent-light: #14b8a6;
   --accent-dark: #0d9488;
 
-  /* Neutral Colors */
   --bg: #ffffff;
   --bg-secondary: #f8fafc;
   --bg-tertiary: #f1f5f9;
@@ -29,16 +25,16 @@
   --border: #e2e8f0;
   --border-light: #f1f5f9;
 
-  /* Gradient */
   --gradient-primary: linear-gradient(135deg, #10b981 0%, #0ea5a3 100%);
-  --gradient-hero: linear-gradient(135deg,
-      #ecfdf5 0%,
-      #f0fdfa 50%,
-      #ffffff 100%);
+  --gradient-hero: linear-gradient(
+    135deg,
+    #ecfdf5 0%,
+    #f0fdfa 50%,
+    #ffffff 100%
+  );
 
   .cta-banner {
     padding: 12px 0 18px;
-    /* Make the banner appear as a centered rounded card on phones */
     background: linear-gradient(135deg, #0dd054 0%, #1d9605 100%) !important;
     border-radius: 14px;
     max-width: 100%;
@@ -46,42 +42,39 @@
     box-shadow: 0 8px 30px rgba(3, 190, 66, 0.12);
   }
 
-  /* Limit CTA banner width on mobile only */
   @media (max-width: 768px) {
     .cta-banner {
       max-width: 380px;
     }
   }
 
-  --gradient-card: linear-gradient(180deg,
+  --gradient-card: linear-gradient(
+    180deg,
     rgba(255, 255, 255, 0.95) 0%,
-    rgba(248, 250, 252, 0.98) 100%);
+    rgba(248, 250, 252, 0.98) 100%
+  );
 
-  /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-  0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    0 2px 4px -2px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-  0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    0 4px 6px -4px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-  0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    0 8px 10px -6px rgba(0, 0, 0, 0.1);
   --shadow-card: 0 4px 20px rgba(16, 185, 129, 0.08);
   --shadow-card-hover: 0 12px 40px rgba(16, 185, 129, 0.15);
 
-  /* Border Radius */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 24px;
   --radius-full: 9999px;
 
-  /* Transitions */
   --transition-fast: 150ms ease;
   --transition-base: 250ms ease;
   --transition-slow: 350ms ease;
 }
 
-/* ===== Reset & Base ===== */
 *,
 *::before,
 *::after {
@@ -92,7 +85,6 @@
 
 html {
   scroll-behavior: smooth;
-  /* Slightly smaller responsive root font so content fits better on small screens */
   font-size: clamp(13px, 0.85rem + 0.45vw, 16px);
   overflow-x: hidden;
   width: 100%;
@@ -134,15 +126,12 @@ ul,
 ol {
   list-style: none;
 }
-
-/* ===== Layout ===== */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 24px;
 }
 
-/* ===== Typography ===== */
 h1,
 h2,
 h3,
@@ -178,8 +167,6 @@ h4 {
   color: var(--text-secondary);
 }
 
-/* ===== Responsive text utilities ===== */
-/* Use these to make text smaller on tight screens */
 .text-sm {
   font-size: clamp(0.75rem, 0.9rem, 0.95rem);
 }
@@ -193,7 +180,6 @@ h4 {
   line-height: 1.4;
 }
 
-/* ===== Header ===== */
 .site-header {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
@@ -207,7 +193,6 @@ h4 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* Increased vertical padding for an open header */
   padding: 28px 0;
   gap: 20px;
 }
@@ -221,7 +206,6 @@ h4 {
 }
 
 .logo {
-  /* Slightly larger logo for clearer branding */
   height: 44px;
   width: 44px;
   object-fit: contain;
@@ -230,7 +214,6 @@ h4 {
 }
 
 .brand-text {
-  /* Slightly smaller, aligned with nav sizing */
   font-size: 1rem;
   font-weight: 700;
   background: var(--gradient-primary);
@@ -248,7 +231,6 @@ h4 {
 }
 
 .main-nav a {
-  /* Unified nav/link sizing in header */
   padding: 10px 16px;
   border-radius: var(--radius-full);
   color: var(--text-secondary);
@@ -266,10 +248,6 @@ h4 {
   max-height: 420px;
 }
 
-/* Staggered menu link entrance */
-/* (staggered entrance is scoped to mobile media query to avoid hiding desktop links) */
-
-/* Nav backdrop */
 .nav-backdrop {
   position: fixed;
   inset: 0;
@@ -286,7 +264,6 @@ h4 {
   }
 }
 
-/* Card badges and chips */
 .chip {
   display: inline-block;
   background: var(--bg-secondary);
@@ -306,7 +283,6 @@ h4 {
   font-weight: 700;
 }
 
-/* Top action inside card */
 .top-action {
   position: absolute;
   right: 12px;
@@ -326,7 +302,6 @@ h4 {
   position: relative;
 }
 
-/* Fly-to-cart animation cloned image */
 .fly-img {
   border-radius: 10px;
   pointer-events: none;
@@ -334,9 +309,8 @@ h4 {
   box-shadow: 0 12px 30px rgba(16, 185, 129, 0.18);
 }
 
-/* Cart bounce effect */
 .cart-bounce {
-  animation: cartPop 520ms cubic-bezier(.2, .9, .2, 1);
+  animation: cartPop 520ms cubic-bezier(0.2, 0.9, 0.2, 1);
 }
 
 @keyframes cartPop {
@@ -357,7 +331,6 @@ h4 {
   }
 }
 
-/* Add to cart button click animation */
 .product-card .btn:active {
   transform: scale(0.95);
   transition: transform 0.1s ease;
@@ -372,7 +345,6 @@ h4 {
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
-/* Button pulse animation class */
 .btn-pulse {
   animation: btnPulse 0.4s ease-out;
 }
@@ -394,7 +366,6 @@ h4 {
   }
 }
 
-/* Spinner loading animation */
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -409,7 +380,6 @@ h4 {
   display: inline-block;
 }
 
-/* ===== Product Card Styles ===== */
 .product-card {
   width: 300px;
   min-width: 300px;
@@ -418,7 +388,8 @@ h4 {
   background: white;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  transition: transform var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
 .product-card:hover {
@@ -426,7 +397,6 @@ h4 {
   box-shadow: var(--shadow-card-hover);
 }
 
-/* Compact styles for Toplam (smaller, responsive product cards) */
 .toplam-grid {
   gap: 12px;
 }
@@ -445,7 +415,6 @@ h4 {
   padding: 8px 6px;
 }
 
-/* Responsive cards for mobile */
 @media (max-width: 768px) {
   .product-card {
     width: 175px !important;
@@ -518,7 +487,6 @@ h4 {
 }
 
 .icon {
-  /* Larger header action buttons for easier tapping */
   width: 52px;
   height: 52px;
   display: flex;
@@ -557,7 +525,6 @@ h4 {
   display: none;
 }
 
-/* ===== Responsive Header & Menu ===== */
 @media (max-width: 900px) {
   .header-inner {
     gap: 12px;
@@ -614,7 +581,6 @@ h4 {
     display: flex;
   }
 
-  /* Reduce header actions space on mobile */
   .header-actions {
     gap: 8px;
   }
@@ -624,33 +590,26 @@ h4 {
     height: 44px;
   }
 
-  /* On small screens show logo, mobile menu, and profile/brands icons */
-  .header-actions> :not(.mobile-menu):not(.show-mobile-only) {
+  .header-actions > :not(.mobile-menu):not(.show-mobile-only) {
     display: none !important;
   }
 
-  /* keep only the logo (hide brand text) to save space */
   .brand-text {
     display: none !important;
   }
 
-  /* increase logo slightly on small screens for visibility */
   .logo {
     height: 56px;
     width: 56px;
   }
-
-  /* Utility to show elements only on small screens */
   .show-mobile-only {
     display: inline-flex !important;
   }
 
-  /* Utility to show elements only on small screens */
   .show-mobile-only {
     display: inline-flex !important;
   }
 
-  /* Utility to hide elements on small screens */
   .hide-mobile {
     display: none !important;
   }
@@ -667,8 +626,6 @@ h4 {
 }
 
 @media (max-width: 900px) {
-
-  /* Hide left branding panel on small screens and make form full width */
   .auth-left {
     display: none !important;
   }
@@ -687,8 +644,6 @@ h4 {
     display: none;
   }
 
-
-  /* Allow homepage grid to auto-fit varying card counts on small screens */
   .home .grid {
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 14px;
@@ -696,8 +651,6 @@ h4 {
   }
 
   .main-nav {
-
-    /* Hide logos only on the Login page (keeps Register and others unaffected) */
     .auth-page.no-logo .auth-logo,
     .auth-page.no-logo .mobile-logo {
       display: none !important;
@@ -713,7 +666,6 @@ h4 {
   color: white !important;
 }
 
-/* ===== Search Form ===== */
 .search-form {
   display: flex;
   align-items: center;
@@ -724,7 +676,6 @@ h4 {
   border: 1px solid var(--border);
   transition: all var(--transition-base);
   position: relative;
-  /* allow placing an icon inside */
 }
 
 .search-form:focus-within {
@@ -736,20 +687,17 @@ h4 {
   border: none;
   background: transparent;
   padding: 12px 16px 12px 52px;
-  /* leave space for icon */
   font-size: 1.05rem;
   width: 100%;
   max-width: 100%;
   outline: none;
 }
 
-/* Slightly different style for homepage search to make it more prominent */
 .home-search .home-search-input {
   font-size: 1.1rem;
   padding: 14px 18px 14px 56px;
 }
 
-/* Ensure space between search and hero when search is placed above hero */
 .home-search {
   margin-bottom: 18px;
 }
@@ -781,12 +729,9 @@ h4 {
   justify-content: center;
 }
 
-/* ===== Hero Section ===== */
 .hero {
   background: var(--gradient-hero);
   padding: clamp(6px, 1vw, 12px) 0;
-  /* compact vertical padding for banner style */
-  /* Banner height tuned to match example: wide, not overly tall */
   min-height: clamp(260px, 36vh, 420px);
   display: flex;
   align-items: center;
@@ -801,13 +746,14 @@ h4 {
   right: -20%;
   width: 80%;
   height: 200%;
-  background: radial-gradient(circle,
-      rgba(16, 185, 129, 0.06) 0%,
-      transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(16, 185, 129, 0.06) 0%,
+    transparent 70%
+  );
   pointer-events: none;
 }
 
-/* Light Banner Default */
 .hero-inner {
   background: var(--gradient-hero);
   border-radius: 20px;
@@ -819,13 +765,16 @@ h4 {
   width: 100%;
 }
 
-/* Make hero-inner background lighter and less saturated to reduce visual noise */
 .hero-inner {
-  background: linear-gradient(135deg, rgba(236, 253, 245, 0.75) 0%, rgba(240, 253, 250, 0.75) 50%, rgba(255, 255, 255, 0.9) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(236, 253, 245, 0.75) 0%,
+    rgba(240, 253, 250, 0.75) 50%,
+    rgba(255, 255, 255, 0.9) 100%
+  );
 }
 
 .hero {
-  /* outer section spacing only; background comes from .hero-inner */
   padding: 20px 0;
   min-height: auto;
 }
@@ -851,7 +800,6 @@ h4 {
   font-size: 0.8rem;
 }
 
-/* Hero responsive - smaller buttons and aligned text */
 @media (max-width: 768px) {
   .hero-title {
     font-size: 1.1rem !important;
@@ -883,10 +831,8 @@ h4 {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0;
-  /* avoid adding padding on top of .container padding to prevent overflow */
 }
 
-/* Ensure slider doesn't cause horizontal overflow and adapts height to content */
 .hero-slider {
   overflow: hidden;
 }
@@ -896,19 +842,15 @@ h4 {
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  /* reduced gap so columns stay within container */
   padding: 0;
-  /* remove extra horizontal padding */
   transition: all 0.45s ease;
   box-sizing: border-box;
 }
 
-/* Make slides full-width and stack on small screens */
 .slide {
   width: 100%;
 }
 
-/* Wrapper for custom JS slider: show slides in a row and translate the wrapper */
 .slides-wrapper {
   display: flex;
   width: 100%;
@@ -919,7 +861,6 @@ h4 {
   flex: 0 0 100%;
 }
 
-/* Swiper slide override: keep slides flow in the layout rather than absolute stacking */
 .hero-slider .swiper-slide {
   position: relative;
   display: flex;
@@ -928,7 +869,6 @@ h4 {
   padding: 0 24px;
 }
 
-/* Hide swiper navigation arrows to use dots-only pagination */
 .swiper-button-next,
 .swiper-button-prev {
   display: none !important;
@@ -938,7 +878,6 @@ h4 {
   margin-bottom: 30px;
 }
 
-/* Pagination (dots) styling for hero — compact blue dots like example */
 .hero .swiper-pagination {
   position: absolute;
   bottom: 22px;
@@ -953,7 +892,6 @@ h4 {
   width: 8px;
   height: 8px;
   background: rgba(3, 102, 255, 0.65);
-  /* blue */
   opacity: 1 !important;
   border-radius: 9999px;
   transition: all 200ms var(--transition-base);
@@ -972,31 +910,25 @@ h4 {
   height: auto;
 }
 
-/* Slide layout: text on left, image on right */
 .slide {
   display: flex;
   align-items: center;
   gap: 32px;
   justify-content: space-between;
-  /* ensure text and image spread apart */
   width: 100%;
 }
 
 .slide-text {
   flex: 0 0 calc(50% - 12px);
-  /* ensure two columns fit within 100% */
   max-width: calc(50% - 12px);
   padding-right: 12px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  /* vertical centering */
   align-items: flex-end;
-  /* keep right alignment on desktop */
   text-align: right;
 }
 
-/* Title/description styling inside slides */
 .slide .hero-title {
   font-size: clamp(1.6rem, 2.2rem + 1vw, 2.8rem);
   color: white;
@@ -1039,7 +971,6 @@ h4 {
   height: auto;
 }
 
-/* Responsive adjustments for Swiper hero slides */
 @media (max-width: 900px) {
   .slide {
     flex-direction: column;
@@ -1175,7 +1106,6 @@ h4 {
     color: var(--text-secondary);
     margin-bottom: 8px !important;
     max-width: 95%;
-    /* prevent too wide text */
   }
 
   .hero-actions {
@@ -1191,14 +1121,12 @@ h4 {
     font-size: 0.9rem !important;
     width: auto !important;
     height: 44px;
-    /* easier to tap */
   }
 
   .hero .swiper-pagination {
     bottom: 4px;
   }
 
-  /* Mobile adjustments: hide pagination dots, enlarge image and tighten spacing */
   .hero .swiper-pagination {
     display: none !important;
   }
@@ -1223,12 +1151,10 @@ h4 {
   }
 }
 
-/* Cap hero/slider height on smaller viewports to avoid very tall slides */
 @media (max-width: 900px) {
   .hero {
     padding: 20px 0;
     min-height: 180px;
-    /* lower min height for tablets and phones */
   }
 
   .hero-slider {
@@ -1256,7 +1182,6 @@ h4 {
   .hero {
     padding: 14px 0;
     min-height: 140px;
-    /* compact on small phones */
   }
 
   .slide .hero-image {
@@ -1286,20 +1211,17 @@ h4 {
   background-clip: unset;
 }
 
-/* Hero layout: side-by-side on desktop, stacked on small screens */
 .hero-inner {
   display: flex;
   align-items: center;
   gap: 24px;
   padding: 0;
-  /* remove vertical breathing for a compact banner */
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
 }
 
-/* Align hero-inner with container spacing to avoid overflow */
-.hero .container>.hero-inner,
+.hero .container > .hero-inner,
 .hero-inner {
   padding-inline: 12px;
   box-sizing: border-box;
@@ -1321,7 +1243,6 @@ h4 {
   margin-bottom: 20px;
 }
 
-/* Ensure hero media image is compact and doesn't stretch text */
 .hero-media {
   flex: 0 0 60%;
   display: flex;
@@ -1342,7 +1263,6 @@ h4 {
 
 .hero-content h1 {
   font-weight: 900;
-  /* make title bolder */
   color: var(--text-primary) !important;
   background: none !important;
   -webkit-background-clip: unset !important;
@@ -1350,13 +1270,11 @@ h4 {
   background-clip: unset !important;
 }
 
-/* Align hero action buttons to the left and ensure left-aligned text */
 .hero-actions {
   justify-content: flex-start;
   align-items: flex-start;
 }
 
-/* Keep left alignment on smaller screens as requested */
 @media (max-width: 900px) {
   .hero-content {
     text-align: left !important;
@@ -1395,8 +1313,6 @@ h4 {
 }
 
 @media (max-width: 480px) {
-
-  /* Reduce hero height and make banner phone-friendly */
   .hero {
     min-height: auto !important;
     padding: 2px 0 !important;
@@ -1423,28 +1339,21 @@ h4 {
     margin-bottom: 4px !important;
   }
 
-  /* Phone Layout - Compact Dark Banner Style (matching reference) */
   .hero {
     padding: 6px 0 !important;
     background: white;
-    /* Outer background white */
   }
 
   .hero-inner {
     background: var(--gradient-hero);
-    /* Light gradient */
     border-radius: 12px;
-    /* Slightly smaller radius for small internal */
     padding: 8px 10px !important;
-    /* Very tight mobile padding */
     position: relative;
     overflow: hidden;
     width: 100% !important;
     max-width: 380px !important;
     margin: 0 auto 0 0 !important;
   }
-
-  /* Decorative elements (green bloor or sparks could go here, keeping simple for now) */
 
   .slide {
     display: flex !important;
@@ -1459,14 +1368,12 @@ h4 {
 
   .slide-image {
     order: 2 !important;
-    /* Image on Right */
     flex: 0 0 40% !important;
     max-width: 40% !important;
     height: auto !important;
     display: flex !important;
     align-items: center !important;
     justify-content: flex-end !important;
-    /* Align image right */
     margin: 0 !important;
   }
 
@@ -1474,7 +1381,6 @@ h4 {
     width: 100% !important;
     height: auto !important;
     max-height: 90px !important;
-    /* Tiny image height as requested */
     object-fit: contain !important;
     border-radius: 4px !important;
     margin: 0 !important;
@@ -1482,7 +1388,6 @@ h4 {
 
   .slide-text {
     order: 1 !important;
-    /* Text on Left (First) */
     flex: 1 !important;
     max-width: 60% !important;
     padding: 0 !important;
@@ -1491,8 +1396,6 @@ h4 {
     flex-direction: column !important;
     justify-content: center !important;
   }
-
-  /* Text colors for dark banner */
   .hero-content h1,
   .slide .hero-title {
     font-size: 1.1rem !important;
@@ -1505,7 +1408,6 @@ h4 {
     font-size: 0.75rem !important;
     margin-bottom: 10px !important;
     color: #9ca3af !important;
-    /* Grayish text */
     display: -webkit-box;
     -webkit-line-clamp: 2;
     line-clamp: 2;
@@ -1515,7 +1417,6 @@ h4 {
 
   .hero-chip {
     display: none !important;
-    /* Hide chip to save space and match simple reference */
   }
 
   .hero-actions {
@@ -1533,12 +1434,10 @@ h4 {
     padding: 6px 14px !important;
     font-size: 0.85rem !important;
     background: #10b981 !important;
-    /* Green button */
     color: white !important;
     border-radius: 20px !important;
   }
 
-  /* Hide secondary button to match single button reference */
   .hero-actions .btn.secondary {
     display: none !important;
   }
@@ -1550,7 +1449,6 @@ h4 {
     font-size: 0.75rem !important;
   }
 
-  /* Compact search layout for phone remains */
   .home-search.compact {
     flex-direction: row !important;
     gap: 8px !important;
@@ -1598,13 +1496,11 @@ h4 {
   }
 }
 
-/* Ensure full visibility at 430px width: image fits, text stacks, no overflow */
 @media (max-width: 430px) {
   .hero {
     padding: 12px 8px !important;
     min-height: auto !important;
 
-    /* Allow homepage grid to auto-fit for very small phones */
     .home .grid {
       grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
       gap: 10px;
@@ -1655,7 +1551,6 @@ h4 {
   }
 }
 
-/* Mobile positioning: ensure banner elements stack and center on phones */
 @media (max-width: 480px) {
   .hero-inner {
     flex-direction: column !important;
@@ -1728,14 +1623,12 @@ h4 {
     margin: 0 auto 4px !important;
   }
 
-  /* reduce any overflow from large fonts or images */
   .hero {
     min-height: auto !important;
     overflow: visible !important;
   }
 }
 
-/* Phone-dark variant: keep original hero background (no black), text/buttons left and image on the right for narrow screens */
 @media (max-width: 420px) {
   .hero.phone-dark {
     background: var(--gradient-hero) !important;
@@ -1802,7 +1695,6 @@ h4 {
   .hero.phone-dark .hero-actions {
     justify-content: flex-start !important;
     align-items: center !important;
-    /* center vertically */
     gap: 8px !important;
     margin-top: 6px !important;
   }
@@ -1810,7 +1702,6 @@ h4 {
   .hero.phone-dark .hero-actions .btn {
     width: auto !important;
     padding: 6px 10px !important;
-    /* slightly smaller buttons */
     font-size: 0.9rem !important;
   }
 }
@@ -1822,7 +1713,6 @@ h4 {
   }
 }
 
-/* Header layout: center nav on desktop while keeping brand/actions fixed */
 .header-inner .main-nav {
   flex: 1;
   justify-content: center;
@@ -1849,14 +1739,12 @@ h4 {
   flex-wrap: wrap;
 }
 
-/* Make hero buttons stack and fit on medium screens */
 @media (max-width: 900px) {
   .hero-actions {
     flex-direction: column;
     align-items: stretch;
   }
 
-  /* Make hero buttons shorter and centered on narrow screens */
   .hero-actions .btn {
     width: auto;
     max-width: 280px;
@@ -1873,9 +1761,11 @@ h4 {
   height: min(52vh, 520px);
   object-fit: cover;
   border-radius: var(--radius-xl);
-  background: linear-gradient(180deg,
-      rgba(255, 255, 255, 0.85),
-      rgba(248, 250, 252, 0.6));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.85),
+    rgba(248, 250, 252, 0.6)
+  );
   padding: 8px;
   box-shadow: var(--shadow-xl);
   animation: float 6s ease-in-out infinite;
@@ -1883,7 +1773,6 @@ h4 {
 }
 
 @keyframes float {
-
   0%,
   100% {
     transform: translateY(0);
@@ -1894,7 +1783,6 @@ h4 {
   }
 }
 
-/* Toast / notification used by product card */
 .vb-toast {
   position: fixed;
   top: 24px;
@@ -1936,18 +1824,15 @@ h4 {
   }
 }
 
-/* When used inside a product card: constrain and use pale yellow background */
 .product-card {
   position: relative;
   overflow: hidden;
 }
 
 .product-card .vb-toast.in-card {
-  /* Hide in-card notifications to avoid popups under product cards */
   display: none !important;
 }
 
-/* Global top notification used on mobile when user is not logged in */
 .vb-toast.at-top {
   position: fixed !important;
   top: 24px !important;
@@ -1985,7 +1870,6 @@ h4 {
   margin: 0 auto;
 }
 
-/* Feature cards: on small screens make them stack vertically and become full-width (long) */
 @media (max-width: 900px) {
   .feature-card {
     flex-direction: column !important;
@@ -1994,7 +1878,7 @@ h4 {
     padding: 20px !important;
   }
 
-  .feature-card>div:first-child {
+  .feature-card > div:first-child {
     margin-bottom: 12px;
     width: 64px;
     height: 64px;
@@ -2002,7 +1886,6 @@ h4 {
   }
 }
 
-/* Compact features grid: make cards smaller and 2-per-row on narrow screens */
 .features-grid {
   gap: 18px;
 }
@@ -2023,7 +1906,7 @@ h4 {
     gap: 8px !important;
   }
 
-  .features-grid .feature-card>div:first-child {
+  .features-grid .feature-card > div:first-child {
     width: 48px !important;
     height: 48px !important;
     font-size: 1.15rem !important;
@@ -2041,7 +1924,6 @@ h4 {
   }
 }
 
-/* Hero Dots */
 .hero-dots {
   display: flex;
   justify-content: center;
@@ -2062,15 +1944,11 @@ h4 {
   width: 32px;
   background: var(--gradient-primary);
 }
-
-/* Custom hero/banner overrides: clearer text colors and stronger mobile stacking */
 :root {
   --hero-title-color: #064e3b;
-  /* dark green, change if you prefer another color */
   --hero-desc-color: rgba(6, 78, 59, 0.9);
 }
 
-/* Apply hero text colors (desktop and mobile) */
 .slide .hero-title,
 .hero-content h1,
 .hero .hero-title {
@@ -2083,7 +1961,6 @@ h4 {
   color: var(--hero-desc-color) !important;
 }
 
-/* Ensure slides stack cleanly on smaller viewports */
 @media (max-width: 900px) {
   .slide {
     flex-wrap: wrap !important;
@@ -2123,7 +2000,6 @@ h4 {
   }
 }
 
-/* Final responsive polish: ensure clean fit on phones and small tablets */
 @media (max-width: 900px) {
   .hero {
     padding-inline: 12px !important;
@@ -2180,7 +2056,6 @@ h4 {
     font-size: 0.96rem !important;
   }
 
-  /* Images scale and never overflow; use contain to avoid cropping content */
   .slide-image .hero-image,
   .hero-media .hero-image,
   .hero-image {
@@ -2193,7 +2068,6 @@ h4 {
     margin: 0 auto !important;
   }
 
-  /* Buttons: two-column on small, stack on very small screens */
   .hero-actions {
     display: flex !important;
     flex-wrap: wrap !important;
@@ -2233,14 +2107,11 @@ h4 {
   }
 }
 
-/* Make hero images and hero buttons smaller for tighter layout */
 :root {
   --hero-img-max-desktop: 420px;
   --hero-img-max-tablet: 300px;
   --hero-img-max-mobile: 180px;
-  /* smaller mobile image */
   --hero-btn-padding: 6px 10px;
-  /* tighter buttons */
   --hero-btn-font: 0.9rem;
 }
 
@@ -2255,7 +2126,6 @@ h4 {
 }
 
 @media (max-width: 900px) {
-
   .hero-image,
   .slide-image .hero-image,
   .hero-media .hero-image {
@@ -2275,7 +2145,6 @@ h4 {
 }
 
 @media (max-width: 480px) {
-
   .hero-image,
   .slide-image .hero-image,
   .hero-media .hero-image {
@@ -2298,32 +2167,24 @@ h4 {
   }
 }
 
-/* ===== Product Grid & Card ===== */
 .grid {
   display: grid;
-  /* Default to 2 columns for a clean responsive look (two cards per row)
-     Larger screens will override this to allow more columns. */
   grid-template-columns: repeat(2, 1fr);
   gap: 28px;
-  /* increased gap for more breathing room */
   justify-content: center;
-  /* center columns when row isn't full */
 }
 
-/* Make grid rows equal height so cards remain uniform */
 .grid {
   grid-auto-rows: 1fr;
   align-items: stretch;
 }
 
-/* Ensure each card fills its grid cell and uses column layout so footers align */
-.grid>* {
+.grid > * {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
-/* Product card image area: fixed heights for consistent card size */
 .product-card .card-image-wrapper {
   flex: 0 0 220px;
   height: 220px;
@@ -2343,7 +2204,6 @@ h4 {
   }
 }
 
-/* Homepage-specific larger catalog layout */
 .home .grid {
   grid-template-columns: repeat(auto-fit, minmax(260px, 300px));
   gap: 36px;
@@ -2352,11 +2212,9 @@ h4 {
 
 .home .card {
   width: 280px;
-  /* slightly larger cards on homepage */
   min-height: 360px;
 }
 
-/* Add horizontal breathing room so cards don't touch viewport edges */
 .grid {
   padding-inline: 0;
   box-sizing: border-box;
@@ -2374,7 +2232,6 @@ h4 {
     height: 200px;
   }
 
-  /* Slightly smaller images and tighter cards on medium screens */
   .card-image-wrapper {
     height: 110px;
     padding: 6px;
@@ -2396,15 +2253,11 @@ h4 {
     box-shadow var(--transition-base);
   color: inherit;
   min-height: 320px;
-  /* ensure consistent card heights for grid rows */
   width: 240px;
-  /* fixed width to match grid column width */
 }
 
-/* Product-card specific style to match provided design */
 .card.product-card {
   border: 2px solid #f3f4f6;
-  /* light neutral border */
   border-radius: 12px;
   background: white;
   padding: 8px;
@@ -2423,7 +2276,6 @@ h4 {
   top: 10px;
   left: 10px;
   background: #ef4444;
-  /* red sale */
   color: white;
   padding: 6px 10px;
   border-radius: 999px;
@@ -2457,7 +2309,6 @@ h4 {
 
 .product-card .availability {
   color: #10b981;
-  /* green */
   font-weight: 700;
   margin-left: 6px;
   font-size: 0.8rem;
@@ -2936,7 +2787,6 @@ button,
 
 /* Tighter button sizing on small screens to ensure everything fits */
 @media (max-width: 600px) {
-
   .btn,
   button {
     padding: 6px 10px !important;
@@ -2977,7 +2827,6 @@ button,
 }
 
 @media (max-width: 900px) {
-
   /* on small screens make the input take more space, catalog button smaller */
   .home-search.compact {
     flex-direction: row;
@@ -3334,9 +3183,11 @@ button[disabled] {
   position: absolute;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle,
-      rgba(16, 185, 129, 0.15) 0%,
-      transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(16, 185, 129, 0.15) 0%,
+    transparent 70%
+  );
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -3916,7 +3767,7 @@ label {
   gap: 12px;
 }
 
-.form-row>* {
+.form-row > * {
   flex: 1;
 }
 
@@ -4208,7 +4059,6 @@ label {
 
 /* Force header to be compact on small screens and defer navigation to bottom nav */
 @media (max-width: 900px) {
-
   /* Hide the main nav and burger on small screens so header only shows logo */
   .main-nav {
     display: none !important;
@@ -4266,7 +4116,7 @@ label {
     align-items: center;
   }
 
-  .feature-card>div:first-child {
+  .feature-card > div:first-child {
     margin-bottom: 12px;
     width: 64px;
     height: 64px;
@@ -4449,7 +4299,7 @@ label {
 }
 
 /* Make product-following sections' headings smaller and sections a bit taller */
-.products+section {
+.products + section {
   padding-top: 60px;
 }
 
@@ -4489,7 +4339,6 @@ label {
 }
 
 @media (max-width: 768px) {
-
   /* Make banner taller / portrait-like on small screens */
   .hero-image {
     height: 80vh;
@@ -4556,7 +4405,6 @@ label {
   .slide-text {
     justify-content: flex-start !important;
 
-
     /* ===== Button size adjustments (global smaller buttons) ===== */
     .btn {
       padding: 8px 12px;
@@ -4583,7 +4431,8 @@ label {
     }
 
     /* Global smaller button sizes and helper class */
-    .btn {}
+    .btn {
+    }
 
     padding-top: 8px !important;
   }

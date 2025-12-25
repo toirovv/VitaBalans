@@ -30,11 +30,24 @@ function Profile() {
 
   useEffect(() => {
     let mounted = true
-    import('../lib/api').then(m => m.apiFetch('/coupons'))
+    fetch('/vita-api/api/v1/payments/promotions/')
       .then(res => res.json())
-      .then(data => {
+      .then(json => {
         if (!mounted) return
-        setCoupons(Array.isArray(data) ? data : [])
+        const list = json.data || []
+        const normalized = list.map(item => {
+          const attrs = item.attributes || {}
+          return {
+            id: item.id,
+            code: attrs.code || '',
+            name: attrs.title || attrs.code || '',
+            description: attrs.description || '',
+            amount: attrs.discount_value || 0,
+            discountDisplay: attrs.discount_display || '',
+            isPercent: attrs.discount_type === 'percent',
+          }
+        })
+        setCoupons(normalized)
       })
       .catch(err => {
         if (!mounted) return
@@ -292,7 +305,7 @@ function Profile() {
                             fontWeight: '600',
                             color: '#059669'
                           }}>
-                            {c.name || c.code || c.id}
+                            {c.code || c.name || c.id}
                           </div>
                           {c.description && (
                             <div style={{ color: '#94a3b8', fontSize: '0.75rem' }}>{c.description}</div>
@@ -307,10 +320,7 @@ function Profile() {
                         fontWeight: '600',
                         fontSize: '0.8rem'
                       }}>
-                        {(Number(c.amount) || 0) <= 100
-                          ? `${c.amount}% chegirma`
-                          : `-${Number(c.amount || 0).toLocaleString()} so'm`
-                        }
+                        {c.discountDisplay} chegirma
                       </div>
                     </div>
                   ))}

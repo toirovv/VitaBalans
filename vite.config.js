@@ -14,6 +14,13 @@ export default defineConfig({
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
+      // Proxy for vita-backend promotions API
+      '/vita-api': {
+        target: 'https://vita-backend.jprq.live',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/vita-api/, ''),
+      },
     },
   },
 })

@@ -37,18 +37,28 @@ function Cart() {
       return
     }
     try {
-      const res = await import('../lib/api').then(m => m.apiFetch('/coupons'))
+      const res = await fetch('/vita-api/api/v1/payments/promotions/')
       if (!res.ok) throw new Error('API error')
-      const list = await res.json()
-      const found = (Array.isArray(list) ? list : []).find(c => (c.name || c.code || '').toLowerCase() === cc.toLowerCase())
+      const json = await res.json()
+      const list = json.data || []
+      const found = list.find(item => {
+        const attrs = item.attributes || {}
+        return (attrs.code || '').toLowerCase() === cc.toLowerCase()
+      })
       if (!found) {
         setPromoError('Noto\'g\'ri promo kod')
         setApplied(null)
       } else {
-        // Kupon topildi - API amount qiymatiga qarab isPercent belgilanadi
-        const amt = Number(found.amount) || 0
-        const isPercent = amt <= 100
-        setApplied({ ...found, amount: amt, isPercent })
+        const attrs = found.attributes || {}
+        const isPercent = attrs.discount_type === 'percent'
+        setApplied({
+          id: found.id,
+          code: attrs.code,
+          name: attrs.title || attrs.code,
+          amount: attrs.discount_value || 0,
+          discountDisplay: attrs.discount_display || '',
+          isPercent: isPercent
+        })
         setPromoError('')
       }
     } catch (e) {
