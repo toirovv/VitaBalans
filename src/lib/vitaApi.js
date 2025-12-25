@@ -4,61 +4,49 @@ const isDev = import.meta.env.DEV
 // Backend API URL
 const BACKEND_URL = 'https://vita-backend.jprq.live'
 
-// CORS proxy URLs - birinchisi ishlamasa ikkinchisidan foydalanish
-const CORS_PROXIES = [
-    'https://corsproxy.io/?',
-    'https://api.allorigins.win/raw?url='
-]
-
-// Dev: Vite proxy, Prod: CORS proxy orqali
-export function vitaApiUrl(path, proxyIndex = 0) {
+// Dev: Vite proxy, Prod: to'g'ridan-to'g'ri API
+export function vitaApiUrl(path) {
     if (isDev) {
         return `/vita-api${path}`
     }
-    // Production: CORS proxy ishlatamiz
-    const proxy = CORS_PROXIES[proxyIndex] || CORS_PROXIES[0]
-    return `${proxy}${encodeURIComponent(BACKEND_URL + path)}`
+    // Production: to'g'ridan-to'g'ri API + allorigins proxy
+    return `https://api.allorigins.win/get?url=${encodeURIComponent(BACKEND_URL + path)}`
 }
 
-// Fetch wrapper - xato bo'lsa fallback qaytaradi
+// Fetch wrapper
 export async function vitaFetch(path) {
-    // Production da bir nechta proxy sinab ko'rish
-    if (!isDev) {
-        for (let i = 0; i < CORS_PROXIES.length; i++) {
-            try {
-                const url = vitaApiUrl(path, i)
-                const res = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/vnd.api+json, application/json',
-                    },
-                })
+    const url = vitaApiUrl(path)
 
-                if (res.ok) {
-                    return await res.json()
-                }
+    try {
+        const res = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+            },
+        })
+
+        if (!res.ok) {
+            console.warn('API xato:', res.status)
+            return getFallbackData(path)
+        }
+
+        const data = await res.json()
+
+        // allorigins proxy "contents" ichida JSON string qaytaradi
+        if (!isDev && data.contents) {
+            try {
+                return JSON.parse(data.contents)
             } catch (e) {
-                console.warn(`Proxy ${i} failed:`, e.message)
+                console.warn('JSON parse xato:', e)
+                return getFallbackData(path)
             }
         }
-        // Barcha proxy ishlamasa fallback qaytarish
+
+        return data
+    } catch (error) {
+        console.warn('Fetch xato:', error.message)
         return getFallbackData(path)
     }
-
-    // Dev rejim
-    const url = vitaApiUrl(path)
-    const res = await fetch(url, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/vnd.api+json, application/json',
-        },
-    })
-
-    if (!res.ok) {
-        throw new Error(`Server xato: ${res.status}`)
-    }
-
-    return await res.json()
 }
 
 // Fallback ma'lumotlar
@@ -85,13 +73,27 @@ function getFallbackData(path) {
                     attributes: {
                         code: 'YANGI2024',
                         title: '15% chegirma',
-                        description: 'Yangi mijozlar uchun',
+                        description: 'Yangi mijozlar uchun maxsus taklif',
                         discount_type: 'percent',
                         discount_value: 15,
                         discount_display: '15%',
                         is_active: true,
                         is_featured: false,
                         category: { id: 2, name: 'Yangi', color: '#3b82f6' }
+                    }
+                },
+                {
+                    id: '3',
+                    attributes: {
+                        code: 'SALOMATLIK',
+                        title: '20% chegirma',
+                        description: 'Salomatlik uchun vitamin komplekslari',
+                        discount_type: 'percent',
+                        discount_value: 20,
+                        discount_display: '20%',
+                        is_active: true,
+                        is_featured: true,
+                        category: { id: 1, name: 'Chegirma', color: '#10b981' }
                     }
                 }
             ]
@@ -106,7 +108,7 @@ function getFallbackData(path) {
                         translations: {
                             en: {
                                 title: 'Vitaminlar haqida muhim ma\'lumotlar',
-                                description: 'Vitaminlar organizmimiz uchun juda muhim.'
+                                description: 'Vitaminlar organizmimiz uchun juda muhim. Bu maqolada vitaminlarning turlari va foydalari haqida bilib olasiz.'
                             }
                         },
                         thumbnail: '/assets/images/VitaBalansLogo.jpg',
@@ -119,13 +121,27 @@ function getFallbackData(path) {
                     attributes: {
                         translations: {
                             en: {
-                                title: 'Immunitetni mustahkamlash',
-                                description: 'Immunitet tizimini qanday kuchaytirish mumkin?'
+                                title: 'Immunitetni mustahkamlash yo\'llari',
+                                description: 'Immunitet tizimini qanday kuchaytirish mumkin? Foydali maslahatlar.'
                             }
                         },
                         thumbnail: '/assets/images/VitaBalansLogo.jpg',
                         date: '2024-12-18',
                         category: [{ id: 2, name: 'Maslahatlar', translations: { en: { name: 'Maslahatlar' } } }]
+                    }
+                },
+                {
+                    id: '3',
+                    attributes: {
+                        translations: {
+                            en: {
+                                title: 'Qishda sog\'lom qolish sirlari',
+                                description: 'Sovuq kunlarda organizmni qanday himoya qilish kerak?'
+                            }
+                        },
+                        thumbnail: '/assets/images/VitaBalansLogo.jpg',
+                        date: '2024-12-15',
+                        category: [{ id: 1, name: 'Salomatlik', translations: { en: { name: 'Salomatlik' } } }]
                     }
                 }
             ]
