@@ -11,11 +11,14 @@ export default function Promokodlar() {
 
     async function loadCoupons() {
       try {
+        console.log('Loading promotions...')
         const json = await vitaFetch('/api/v1/payments/promotions/')
+        console.log('Promotions API response:', json)
 
         if (!active) return
 
         const list = json.data || []
+        console.log('Promotions list:', list)
 
         const normalized = list.map(item => {
           const attrs = item.attributes || {}
