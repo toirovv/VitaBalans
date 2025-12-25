@@ -1,11 +1,84 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import blogs, { blogCategories } from '../data/blogs'
-import { FaSearch, FaClock, FaTag } from 'react-icons/fa'
+import { FaSearch, FaClock } from 'react-icons/fa'
 
 export default function Blog() {
+    const [blogs, setBlogs] = useState([])
+    const [categories, setCategories] = useState([{ id: 'all', name: 'Barchasi' }])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
     const [selectedCategory, setSelectedCategory] = useState('all')
     const [searchQuery, setSearchQuery] = useState('')
+
+    useEffect(() => {
+        let active = true
+
+        async function loadBlogs() {
+            try {
+                const res = await fetch('/vita-api/api/v1/articles/')
+
+                if (!res.ok) {
+                    throw new Error(`Server xato: ${res.status}`)
+                }
+
+                const json = await res.json()
+
+                if (!active) return
+
+                const list = json.data || []
+
+                // Extract unique categories
+                const catSet = new Map()
+                catSet.set('all', { id: 'all', name: 'Barchasi' })
+
+                list.forEach(item => {
+                    const attrs = item.attributes || {}
+                    if (attrs.category && Array.isArray(attrs.category)) {
+                        attrs.category.forEach(cat => {
+                            if (cat.id && !catSet.has(cat.id)) {
+                                const catName = cat.translations?.en?.name || cat.name || 'Nomaʼlum'
+                                catSet.set(cat.id, { id: cat.id, name: catName })
+                            }
+                        })
+                    }
+                })
+                setCategories(Array.from(catSet.values()))
+
+                const normalized = list.map(item => {
+                    const attrs = item.attributes || {}
+                    const trans = attrs.translations?.en || {}
+                    const firstCategory = attrs.category?.[0]
+
+                    return {
+                        id: item.id,
+                        title: trans.title || 'Nomaʼlum maqola',
+                        subtitle: trans.description?.slice(0, 150) + '...' || '',
+                        description: trans.description || '',
+                        image: attrs.thumbnail || '/assets/images/VitaBalansLogo.jpg',
+                        date: attrs.date || new Date().toISOString().split('T')[0],
+                        category: firstCategory?.translations?.en?.name || firstCategory?.name || 'Umumiy',
+                        categoryId: firstCategory?.id || 'all',
+                        tags: attrs.tags || []
+                    }
+                })
+
+                setBlogs(normalized)
+                setError(null)
+            } catch (err) {
+                if (!active) return
+                setError(err)
+                setBlogs([])
+            } finally {
+                if (active) setLoading(false)
+            }
+        }
+
+        loadBlogs()
+
+        return () => {
+            active = false
+        }
+    }, [])
 
     const filteredBlogs = useMemo(() => {
         let result = [...blogs]
@@ -20,11 +93,11 @@ export default function Blog() {
 
         // Filter by category
         if (selectedCategory !== 'all') {
-            result = result.filter(b => b.category === selectedCategory)
+            result = result.filter(b => b.categoryId === selectedCategory)
         }
 
         return result
-    }, [searchQuery, selectedCategory])
+    }, [blogs, searchQuery, selectedCategory])
 
     const formatDate = (dateStr) => {
         const date = new Date(dateStr)
@@ -115,7 +188,7 @@ export default function Blog() {
                     gap: '10px',
                     marginBottom: '24px'
                 }}>
-                    {blogCategories.map(cat => (
+                    {categories.map(cat => (
                         <button
                             key={cat.id}
                             onClick={() => setSelectedCategory(cat.id)}
@@ -141,133 +214,154 @@ export default function Blog() {
 
             {/* Blog Grid */}
             <div className="container" style={{ padding: '0 24px 80px' }}>
-                <p style={{ color: '#64748b', marginBottom: '20px' }}>
-                    <strong style={{ color: '#0f172a' }}>{filteredBlogs.length}</strong> ta maqola topildi
-                </p>
-
-                {filteredBlogs.length === 0 ? (
+                {loading ? (
+                    <div style={{ textAlign: 'center', padding: '60px' }}>
+                        <div className="spinner"></div>
+                        <p style={{ color: '#64748b', marginTop: '16px' }}>Yuklanmoqda...</p>
+                    </div>
+                ) : error ? (
                     <div style={{
                         textAlign: 'center',
-                        padding: '80px 20px',
+                        padding: '60px 20px',
                         background: 'white',
                         borderRadius: '20px',
                         boxShadow: '0 4px 20px rgba(0,0,0,0.05)'
                     }}>
-                        <div style={{ fontSize: '4rem', marginBottom: '20px' }}>📝</div>
-                        <h3 style={{ marginBottom: '12px' }}>Maqola topilmadi</h3>
-                        <p style={{ color: '#64748b', marginBottom: '24px' }}>
-                            Boshqa qidiruv so'zi yoki kategoriya tanlang
-                        </p>
-                        <button
-                            className="btn primary"
-                            onClick={() => { setSearchQuery(''); setSelectedCategory('all') }}
-                        >
-                            Barcha maqolalarni ko'rish
-                        </button>
+                        <div style={{ fontSize: '4rem', marginBottom: '20px' }}>⚠️</div>
+                        <h3 style={{ marginBottom: '12px', color: '#ef4444' }}>Xatolik yuz berdi</h3>
+                        <p style={{ color: '#64748b' }}>{error.message}</p>
                     </div>
                 ) : (
-                    <div className="blog-grid">
-                        {filteredBlogs.map(blog => (
-                            <Link
-                                key={blog.id}
-                                to={`/blog/${blog.id}`}
-                                style={{ textDecoration: 'none' }}
-                            >
-                                <div className="card blog-card" style={{
-                                    overflow: 'hidden',
-                                    borderRadius: '16px',
-                                    transition: 'all 0.3s ease',
-                                    cursor: 'pointer',
-                                    height: '100%',
-                                    display: 'flex',
-                                    flexDirection: 'column'
-                                }}>
-                                    {/* Image */}
-                                    <div className="card-image" style={{
-                                        position: 'relative',
-                                        paddingTop: '65%',
-                                        overflow: 'hidden'
-                                    }}>
-                                        <img
-                                            src={blog.image}
-                                            alt={blog.title}
-                                            style={{
-                                                position: 'absolute',
-                                                top: 0,
-                                                left: 0,
-                                                width: '100%',
-                                                height: '100%',
-                                                objectFit: 'cover',
-                                                transition: 'transform 0.3s ease'
-                                            }}
-                                            onError={(e) => {
-                                                e.target.src = '/assets/images/VitaBalansLogo.jpg'
-                                            }}
-                                        />
-                                        {/* Category Badge */}
-                                        <div className="category-badge" style={{
-                                            position: 'absolute',
-                                            top: '10px',
-                                            left: '10px',
-                                            background: 'rgba(245, 158, 11, 0.9)',
-                                            color: 'white',
-                                            padding: '6px 12px',
-                                            borderRadius: '20px',
-                                            fontSize: '0.8rem',
-                                            fontWeight: '600'
-                                        }}>
-                                            {blog.category}
-                                        </div>
-                                    </div>
+                    <>
+                        <p style={{ color: '#64748b', marginBottom: '20px' }}>
+                            <strong style={{ color: '#0f172a' }}>{filteredBlogs.length}</strong> ta maqola topildi
+                        </p>
 
-                                    {/* Content */}
-                                    <div className="card-content" style={{
-                                        padding: '16px',
-                                        flex: 1,
-                                        display: 'flex',
-                                        flexDirection: 'column'
-                                    }}>
-                                        <h3 className="card-title" style={{
-                                            fontSize: '1rem',
-                                            fontWeight: '700',
-                                            color: '#0f172a',
-                                            marginBottom: '6px',
-                                            lineHeight: '1.3',
-                                            display: '-webkit-box',
-                                            WebkitLineClamp: 2,
-                                            WebkitBoxOrient: 'vertical',
-                                            overflow: 'hidden'
-                                        }}>
-                                            {blog.title}
-                                        </h3>
-                                        <p className="card-subtitle" style={{
-                                            fontSize: '0.85rem',
-                                            color: '#64748b',
-                                            marginBottom: '12px',
-                                            lineHeight: '1.4',
-                                            display: '-webkit-box',
-                                            WebkitLineClamp: 2,
-                                            WebkitBoxOrient: 'vertical',
+                        {filteredBlogs.length === 0 ? (
+                            <div style={{
+                                textAlign: 'center',
+                                padding: '80px 20px',
+                                background: 'white',
+                                borderRadius: '20px',
+                                boxShadow: '0 4px 20px rgba(0,0,0,0.05)'
+                            }}>
+                                <div style={{ fontSize: '4rem', marginBottom: '20px' }}>📝</div>
+                                <h3 style={{ marginBottom: '12px' }}>Maqola topilmadi</h3>
+                                <p style={{ color: '#64748b', marginBottom: '24px' }}>
+                                    Boshqa qidiruv so'zi yoki kategoriya tanlang
+                                </p>
+                                <button
+                                    className="btn primary"
+                                    onClick={() => { setSearchQuery(''); setSelectedCategory('all') }}
+                                >
+                                    Barcha maqolalarni ko'rish
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="blog-grid">
+                                {filteredBlogs.map(blog => (
+                                    <Link
+                                        key={blog.id}
+                                        to={`/blog/${blog.id}`}
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <div className="card blog-card" style={{
                                             overflow: 'hidden',
-                                            flex: 1
-                                        }}>
-                                            {blog.subtitle}
-                                        </p>
-                                        <div className="card-date" style={{
+                                            borderRadius: '16px',
+                                            transition: 'all 0.3s ease',
+                                            cursor: 'pointer',
+                                            height: '100%',
                                             display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '6px',
-                                            color: '#94a3b8',
-                                            fontSize: '0.8rem'
+                                            flexDirection: 'column'
                                         }}>
-                                            <FaClock />
-                                            <span>{formatDate(blog.date)}</span>
+                                            {/* Image */}
+                                            <div className="card-image" style={{
+                                                position: 'relative',
+                                                paddingTop: '65%',
+                                                overflow: 'hidden'
+                                            }}>
+                                                <img
+                                                    src={blog.image}
+                                                    alt={blog.title}
+                                                    style={{
+                                                        position: 'absolute',
+                                                        top: 0,
+                                                        left: 0,
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        objectFit: 'cover',
+                                                        transition: 'transform 0.3s ease'
+                                                    }}
+                                                    onError={(e) => {
+                                                        e.target.src = '/assets/images/VitaBalansLogo.jpg'
+                                                    }}
+                                                />
+                                                {/* Category Badge */}
+                                                <div className="category-badge" style={{
+                                                    position: 'absolute',
+                                                    top: '10px',
+                                                    left: '10px',
+                                                    background: 'rgba(245, 158, 11, 0.9)',
+                                                    color: 'white',
+                                                    padding: '6px 12px',
+                                                    borderRadius: '20px',
+                                                    fontSize: '0.8rem',
+                                                    fontWeight: '600'
+                                                }}>
+                                                    {blog.category}
+                                                </div>
+                                            </div>
+
+                                            {/* Content */}
+                                            <div className="card-content" style={{
+                                                padding: '16px',
+                                                flex: 1,
+                                                display: 'flex',
+                                                flexDirection: 'column'
+                                            }}>
+                                                <h3 className="card-title" style={{
+                                                    fontSize: '1rem',
+                                                    fontWeight: '700',
+                                                    color: '#0f172a',
+                                                    marginBottom: '6px',
+                                                    lineHeight: '1.3',
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: 2,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden'
+                                                }}>
+                                                    {blog.title}
+                                                </h3>
+                                                <p className="card-subtitle" style={{
+                                                    fontSize: '0.85rem',
+                                                    color: '#64748b',
+                                                    marginBottom: '12px',
+                                                    lineHeight: '1.4',
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: 2,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden',
+                                                    flex: 1
+                                                }}>
+                                                    {blog.subtitle}
+                                                </p>
+                                                <div className="card-date" style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '6px',
+                                                    color: '#94a3b8',
+                                                    fontSize: '0.8rem'
+                                                }}>
+                                                    <FaClock />
+                                                    <span>{formatDate(blog.date)}</span>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
 

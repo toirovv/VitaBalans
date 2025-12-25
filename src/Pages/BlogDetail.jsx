@@ -1,15 +1,95 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import blogs from '../data/blogs'
-import { FaArrowLeft, FaClock, FaTag, FaPlus, FaMinus, FaBookmark } from 'react-icons/fa'
+import { FaArrowLeft, FaClock, FaTag, FaBookmark } from 'react-icons/fa'
 
 export default function BlogDetail() {
     const { id } = useParams()
-    const [expandedSections, setExpandedSections] = useState({})
+    const [blog, setBlog] = useState(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
 
-    const blog = useMemo(() => {
-        return blogs.find(b => b.id === id)
+    useEffect(() => {
+        let active = true
+
+        async function loadBlog() {
+            try {
+                const res = await fetch('/vita-api/api/v1/articles/')
+
+                if (!res.ok) {
+                    throw new Error(`Server xato: ${res.status}`)
+                }
+
+                const json = await res.json()
+
+                if (!active) return
+
+                const list = json.data || []
+                const found = list.find(item => item.id === id)
+
+                if (found) {
+                    const attrs = found.attributes || {}
+                    const trans = attrs.translations?.en || {}
+                    const firstCategory = attrs.category?.[0]
+
+                    setBlog({
+                        id: found.id,
+                        title: trans.title || 'Nomaʼlum maqola',
+                        subtitle: trans.description?.slice(0, 150) + '...' || '',
+                        content: trans.description || '',
+                        image: attrs.thumbnail || '/assets/images/VitaBalansLogo.jpg',
+                        date: attrs.date || new Date().toISOString().split('T')[0],
+                        category: firstCategory?.translations?.en?.name || firstCategory?.name || 'Umumiy',
+                        tags: attrs.tags || []
+                    })
+                } else {
+                    setBlog(null)
+                }
+
+                setError(null)
+            } catch (err) {
+                if (!active) return
+                setError(err)
+                setBlog(null)
+            } finally {
+                if (active) setLoading(false)
+            }
+        }
+
+        loadBlog()
+
+        return () => {
+            active = false
+        }
     }, [id])
+
+    const formatDate = (dateStr) => {
+        const date = new Date(dateStr)
+        const day = date.getDate()
+        const months = ['yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun', 'iyul', 'avgust', 'sentyabr', 'oktyabr', 'noyabr', 'dekabr']
+        return `${day}-${months[date.getMonth()]}-${date.getFullYear()}`
+    }
+
+    if (loading) {
+        return (
+            <div className="container" style={{ padding: '80px 24px', textAlign: 'center' }}>
+                <div className="spinner"></div>
+                <p style={{ color: '#64748b', marginTop: '16px' }}>Yuklanmoqda...</p>
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+            <div className="container" style={{ padding: '80px 24px', textAlign: 'center' }}>
+                <div style={{ fontSize: '4rem', marginBottom: '20px' }}>⚠️</div>
+                <h2 style={{ color: '#ef4444', marginBottom: '12px' }}>Xatolik yuz berdi</h2>
+                <p style={{ color: '#64748b', marginBottom: '24px' }}>{error.message}</p>
+                <Link to="/blog" className="btn primary">
+                    Blogga qaytish
+                </Link>
+            </div>
+        )
+    }
 
     if (!blog) {
         return (
@@ -18,76 +98,6 @@ export default function BlogDetail() {
                 <Link to="/blog" className="btn primary" style={{ marginTop: '20px' }}>
                     Blogga qaytish
                 </Link>
-            </div>
-        )
-    }
-
-    const formatDate = (dateStr) => {
-        const date = new Date(dateStr)
-        const day = date.getDate()
-        const months = ['yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun', 'iyul', 'avgust', 'sentyabr', 'oktyabr', 'noyabr', 'dekabr']
-        const hours = date.getHours().toString().padStart(2, '0')
-        const minutes = date.getMinutes().toString().padStart(2, '0')
-        return `${hours}:${minutes}, ${day}-${months[date.getMonth()]}-${date.getFullYear()}`
-    }
-
-    const toggleSection = (section) => {
-        setExpandedSections(prev => ({
-            ...prev,
-            [section]: !prev[section]
-        }))
-    }
-
-    const AccordionSection = ({ title, items, sectionKey }) => {
-        if (!items || items.length === 0) return null
-        const isExpanded = expandedSections[sectionKey]
-
-        return (
-            <div style={{
-                border: '2px solid #e2e8f0',
-                borderRadius: '12px',
-                marginBottom: '12px',
-                overflow: 'hidden'
-            }}>
-                <button
-                    onClick={() => toggleSection(sectionKey)}
-                    style={{
-                        width: '100%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        padding: '16px 20px',
-                        background: 'white',
-                        border: 'none',
-                        cursor: 'pointer',
-                        fontSize: '1rem',
-                        fontWeight: '600',
-                        color: '#0f172a',
-                        textAlign: 'left'
-                    }}
-                >
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        {isExpanded ? <FaMinus style={{ color: '#10b981' }} /> : <FaPlus style={{ color: '#10b981' }} />}
-                        {title}
-                    </span>
-                </button>
-                {isExpanded && (
-                    <div style={{
-                        padding: '0 20px 20px',
-                        background: '#f8fafc'
-                    }}>
-                        <ul style={{
-                            margin: 0,
-                            paddingLeft: '20px',
-                            color: '#475569',
-                            lineHeight: '1.8'
-                        }}>
-                            {items.map((item, index) => (
-                                <li key={index}>{item}</li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
             </div>
         )
     }
@@ -113,7 +123,7 @@ export default function BlogDetail() {
                         }}
                     >
                         <FaArrowLeft />
-                        Naverx
+                        Orqaga
                     </Link>
                     <button
                         style={{
@@ -130,7 +140,7 @@ export default function BlogDetail() {
                         }}
                     >
                         <FaBookmark />
-                        V izbrannye
+                        Saqlash
                     </button>
                 </div>
             </div>
@@ -173,22 +183,11 @@ export default function BlogDetail() {
                         fontSize: '1.8rem',
                         fontWeight: '700',
                         color: '#0f172a',
-                        marginBottom: '12px',
+                        marginBottom: '24px',
                         lineHeight: '1.3'
                     }}>
                         {blog.title}
                     </h1>
-
-                    {/* Subtitle */}
-                    <h2 style={{
-                        fontSize: '1.1rem',
-                        fontWeight: '600',
-                        color: '#475569',
-                        marginBottom: '24px',
-                        lineHeight: '1.4'
-                    }}>
-                        {blog.subtitle}
-                    </h2>
 
                     {/* Category Tag */}
                     <div style={{
@@ -221,25 +220,6 @@ export default function BlogDetail() {
                         ))}
                     </div>
 
-                    {/* Accordion Sections */}
-                    <div style={{ marginTop: '32px' }}>
-                        <AccordionSection
-                            title="Foydalanish bo'yicha tavsiyalar"
-                            items={blog.recommendations}
-                            sectionKey="recommendations"
-                        />
-                        <AccordionSection
-                            title="Ingredientlar"
-                            items={blog.ingredients}
-                            sectionKey="ingredients"
-                        />
-                        <AccordionSection
-                            title="Ogohlantirishlar"
-                            items={blog.warnings}
-                            sectionKey="warnings"
-                        />
-                    </div>
-
                     {/* Date */}
                     <div style={{
                         display: 'flex',
@@ -252,7 +232,7 @@ export default function BlogDetail() {
                         borderTop: '1px solid #e2e8f0'
                     }}>
                         <FaClock />
-                        <span>Qo'shilgan {formatDate(blog.date)}</span>
+                        <span>Qo'shilgan: {formatDate(blog.date)}</span>
                     </div>
                 </div>
 

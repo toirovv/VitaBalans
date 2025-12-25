@@ -21,6 +21,8 @@ export default function Breadcrumb() {
       if (seg === 'toplam') name = "To'plamlar"
       if (seg === 'product') name = 'Mahsulot'
       if (seg === 'profile') name = 'Profil'
+      if (seg === 'blog') name = 'Blog'
+      if (seg === 'promokodlar') name = 'Promokodlar'
 
       if (idx > 0 && seg && seg === segs[idx] && segs[idx - 1] === 'toplam') {
         const cat = categories.find(c => c.id === seg)
@@ -30,8 +32,12 @@ export default function Breadcrumb() {
         const prod = products.find(p => String(p.id) === seg || p.id === seg)
         if (prod) name = prod.title
       }
+      // Blog detail - UUID ni yashirish va "Maqola" ko'rsatish
+      if (idx > 0 && segs[idx - 1] === 'blog') {
+        name = 'Maqola'
+      }
 
-      if (!['Katalog', "To'plamlar", 'Mahsulot', 'Profil'].includes(name)) {
+      if (!['Katalog', "To'plamlar", 'Mahsulot', 'Profil', 'Blog', 'Promokodlar', 'Maqola'].includes(name)) {
         name = decodeURIComponent(name).replace(/[-_]/g, ' ')
         name = name.charAt(0).toUpperCase() + name.slice(1)
       }
