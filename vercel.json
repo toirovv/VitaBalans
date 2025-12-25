@@ -1,9 +1,8 @@
 {
-  "version": 2,
   "rewrites": [
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "source": "/vita-api/:path*",
+      "destination": "https://vita-backend.jprq.live/:path*"
     }
   ]
 }
