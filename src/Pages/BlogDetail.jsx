@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { FaArrowLeft, FaClock, FaTag, FaBookmark } from 'react-icons/fa'
+import { vitaFetch } from '../lib/vitaApi'
 
 export default function BlogDetail() {
     const { id } = useParams()
@@ -13,13 +14,7 @@ export default function BlogDetail() {
 
         async function loadBlog() {
             try {
-                const res = await fetch('/vita-api/api/v1/articles/')
-
-                if (!res.ok) {
-                    throw new Error(`Server xato: ${res.status}`)
-                }
-
-                const json = await res.json()
+                const json = await vitaFetch('/api/v1/articles/')
 
                 if (!active) return
 

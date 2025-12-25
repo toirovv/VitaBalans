@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { vitaFetch } from '../lib/vitaApi'
 
 export default function Promokodlar() {
   const [coupons, setCoupons] = useState([])
@@ -10,13 +11,7 @@ export default function Promokodlar() {
 
     async function loadCoupons() {
       try {
-        const res = await fetch('/vita-api/api/v1/payments/promotions/')
-
-        if (!res.ok) {
-          throw new Error(`Server xato: ${res.status}`)
-        }
-
-        const json = await res.json()
+        const json = await vitaFetch('/api/v1/payments/promotions/')
 
         if (!active) return
 
