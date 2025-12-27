@@ -26,7 +26,7 @@ export default function Promokodlar() {
 
           return {
             id: item.id,
-            code: attrs.code || '',
+              code: attrs.code || '',
             name: attrs.title || attrs.code || 'Nomaʼlum kupon',
             description: attrs.description || '',
             subtitle: attrs.subtitle || '',
