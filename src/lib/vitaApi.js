@@ -1,13 +1,11 @@
-// API helper - dev va production uchun
 const isDev = import.meta.env.DEV
 
 // Backend API URL (direct backend)
 const BACKEND_URL = 'https://vita-backend.jprq.live'
 
-// Always use the real backend URL so responses (promotions/discounts)
-// come directly from the source: https://vita-backend.jprq.live
 export function vitaApiUrl(path) {
-    return `${BACKEND_URL}${path}`
+    if (isDev) return `/vita-api${path}` // Vite dev proxy
+    return `${BACKEND_URL}${path}` // Production: direct backend
 }
 
 // Fetch wrapper
@@ -23,15 +21,23 @@ export async function vitaFetch(path) {
         })
 
         if (!res.ok) {
-            console.warn('API xato:', res.status)
-            return getFallbackData(path)
+            const txt = await res.text().catch(() => '')
+            let msg = `HTTP ${res.status}`
+            try {
+                const j = JSON.parse(txt)
+                msg = j?.detail || j?.message || JSON.stringify(j)
+            } catch (e) {
+                if (txt) msg = txt
+            }
+            console.warn('API error:', res.status, msg)
+            throw new Error(msg)
         }
 
         const data = await res.json()
         return data
     } catch (error) {
-        console.warn('Fetch xato:', error.message)
-        return getFallbackData(path)
+        console.warn('Fetch error:', error.message)
+        throw error
     }
 }
 

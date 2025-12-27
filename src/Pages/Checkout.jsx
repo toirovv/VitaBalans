@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { vitaFetch } from '../lib/vitaApi'
 import { useLocation } from 'react-router-dom'
 import { CartContext } from '../contexts/CartContext'
 import { AuthContext } from '../contexts/AuthContext'
@@ -164,9 +165,8 @@ function Checkout() {
     let finalDiscount = discountAmount
     try {
       if (appliedCoupon) {
-        const res = await fetch('/vita-api/api/v1/payments/promotions/')
-        if (res.ok) {
-          const json = await res.json()
+        try {
+          const json = await vitaFetch('/api/v1/payments/promotions/')
           const list = json.data || []
           const found = list.find(item => {
             const attrs = item.attributes || {}
@@ -188,10 +188,11 @@ function Checkout() {
             setAppliedCoupon(null)
             setCouponError('Kupon yaroqsiz yoki ishlatilgan')
           }
+        } catch (e) {
+          console.warn('coupon validate error', e)
         }
       }
     } catch (e) {
-      // if validation fails, keep earlier applied coupon (best-effort)
       console.warn('coupon validate error', e)
     }
 
@@ -242,9 +243,7 @@ function Checkout() {
     setApplyingCoupon(true)
     setCouponError(null)
     try {
-      const res = await fetch('/vita-api/api/v1/payments/promotions/')
-      if (!res.ok) throw new Error('API error')
-      const json = await res.json()
+      const json = await vitaFetch('/api/v1/payments/promotions/')
       const list = json.data || []
       const found = list.find(item => {
         const attrs = item.attributes || {}

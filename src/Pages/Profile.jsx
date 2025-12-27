@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { vitaFetch } from '../lib/vitaApi'
 import { Link, useNavigate } from 'react-router-dom'
 import { AuthContext } from '../contexts/AuthContext'
 import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaShoppingBag, FaTag, FaSignOutAlt } from 'react-icons/fa'
@@ -30,9 +31,9 @@ function Profile() {
 
   useEffect(() => {
     let mounted = true
-    fetch('/vita-api/api/v1/payments/promotions/')
-      .then(res => res.json())
-      .then(json => {
+    async function loadCoupons() {
+      try {
+        const json = await vitaFetch('/api/v1/payments/promotions/')
         if (!mounted) return
         const list = json.data || []
         const normalized = list.map(item => {
@@ -48,14 +49,15 @@ function Profile() {
           }
         })
         setCoupons(normalized)
-      })
-      .catch(err => {
+      } catch (err) {
         if (!mounted) return
         setCoupons([])
         setCouponsError(err)
-      })
-      .finally(() => mounted && setLoadingCoupons(false))
-
+      } finally {
+        mounted && setLoadingCoupons(false)
+      }
+    }
+    loadCoupons()
     return () => { mounted = false }
   }, [])
 

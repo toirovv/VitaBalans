@@ -1,7 +1,9 @@
 import React, { useContext, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+// using native fetch in this file for promotions
 import { CartContext } from '../contexts/CartContext'
 import { AuthContext } from '../contexts/AuthContext'
+import { vitaApiUrl } from '../lib/vitaApi'
 import { FaTrash, FaPlus, FaMinus, FaTag, FaArrowRight, FaShoppingBag, FaTruck, FaShieldAlt, FaUndo } from 'react-icons/fa'
 
 // Coupons are provided by backend API; apply as percent (5% or 10%)
@@ -11,7 +13,101 @@ function Cart() {
   const { user } = useContext(AuthContext)
   const [code, setCode] = useState('')
   const [applied, setApplied] = useState(null) // will hold coupon object from API
+  const [loadingPromo, setLoadingPromo] = useState(false)
+  const promoCache = React.useRef({})
   const [promoError, setPromoError] = useState('')
+  // Robust fetch using native fetch: try code filter first with retries, fall back to full list search
+  const fetchPromotionByCode = async (cc) => {
+    if (!cc) return null
+    const maxAttempts = 2
+    const cacheKey = cc.toLowerCase()
+    if (promoCache.current[cacheKey]) return promoCache.current[cacheKey]
+
+    const tryNativeFetch = async (url) => {
+      let attempt = 0
+      let lastErr = null
+      while (attempt < maxAttempts) {
+        try {
+          const res = await fetch(url, {
+            method: 'GET',
+            headers: {
+              // some backends require JSON:API media type or a permissive Accept header
+              Accept: 'application/vnd.api+json, application/json, text/plain, */*'
+            }
+          })
+          if (!res.ok) {
+            const txt = await res.text().catch(() => '')
+            let msg = `HTTP ${res.status}`
+            try {
+              const j = JSON.parse(txt)
+              msg = j?.detail || j?.message || JSON.stringify(j)
+            } catch {
+              if (txt) msg = txt
+            }
+            // give a specific hint for 406 errors
+            if (res.status === 406) {
+              throw new Error(msg + ' — Server refused Accept header.');
+            }
+            throw new Error(msg)
+          }
+          const json = await res.json()
+          return json
+        } catch (err) {
+          lastErr = err
+          attempt += 1
+          if (attempt < maxAttempts) await new Promise(r => setTimeout(r, 200 * attempt))
+        }
+      }
+      throw lastErr
+    }
+
+    // 1) Try filter by code (use vitaApiUrl to allow dev proxy and avoid CORS)
+    try {
+      const url = vitaApiUrl(`/api/v1/payments/promotions/?code=${encodeURIComponent(cc)}`)
+      const json = await tryNativeFetch(url)
+      const list = json?.data || []
+      if (list.length) {
+        const found = list[0]
+        const attrs = found.attributes || {}
+        const isPercent = String(attrs.discount_type || '').toLowerCase() === 'percent'
+        const rawVal = Number(attrs.discount_value || 0)
+        const promo = {
+          id: found.id,
+          code: (attrs.code || '').toUpperCase(),
+          name: attrs.title || attrs.code,
+          amount: isNaN(rawVal) ? 0 : rawVal,
+          discountDisplay: attrs.discount_display || '',
+          isPercent
+        }
+        promoCache.current[cacheKey] = promo
+        return promo
+      }
+    } catch (e) {
+      console.warn('Filter-by-code failed, falling back:', e?.message || e)
+    }
+
+    // 2) Fallback to full list
+    const urlAll = vitaApiUrl('/api/v1/payments/promotions/')
+    const jsonAll = await tryNativeFetch(urlAll)
+    const listAll = jsonAll?.data || []
+    const found = listAll.find(item => ((item.attributes || {}).code || '').toLowerCase() === cc.toLowerCase())
+    if (found) {
+      const attrs = found.attributes || {}
+      const isPercent = String(attrs.discount_type || '').toLowerCase() === 'percent'
+      const rawVal = Number(attrs.discount_value || 0)
+      const promo = {
+        id: found.id,
+        code: (attrs.code || '').toUpperCase(),
+        name: attrs.title || attrs.code,
+        amount: isNaN(rawVal) ? 0 : rawVal,
+        discountDisplay: attrs.discount_display || '',
+        isPercent
+      }
+      promoCache.current[cacheKey] = promo
+      return promo
+    }
+    return null
+  }
   const [showNotification, setShowNotification] = useState(false)
 
   const subtotal = items.reduce((s, p) => s + p.price * p.qty, 0)
@@ -19,12 +115,11 @@ function Cart() {
   const discount = React.useMemo(() => {
     if (!applied) return 0
     const amt = Number(applied.amount) || 0
-    if (amt <= 100) {
-      // Foiz sifatida
+    if (applied.isPercent) {
       return Math.round(subtotal * amt / 100)
     }
-    // So'm sifatida
-    return amt
+    // absolute amount (so'm)
+    return Math.min(Math.round(amt), subtotal)
   }, [applied, subtotal])
   // Shipping logic adjusted for so'm amounts: free over 500,000 so'm, otherwise 15,000 so'm
   const shipping = subtotal > 500000 ? 0 : 15000
@@ -36,34 +131,27 @@ function Cart() {
       setPromoError('Promo kod kiriting')
       return
     }
+    setPromoError('')
+    setLoadingPromo(true)
     try {
-      const res = await fetch('/vita-api/api/v1/payments/promotions/')
-      if (!res.ok) throw new Error('API error')
-      const json = await res.json()
-      const list = json.data || []
-      const found = list.find(item => {
-        const attrs = item.attributes || {}
-        return (attrs.code || '').toLowerCase() === cc.toLowerCase()
-      })
-      if (!found) {
+      const promo = await fetchPromotionByCode(cc)
+      if (!promo) {
         setPromoError('Noto\'g\'ri promo kod')
         setApplied(null)
       } else {
-        const attrs = found.attributes || {}
-        const isPercent = attrs.discount_type === 'percent'
-        setApplied({
-          id: found.id,
-          code: attrs.code,
-          name: attrs.title || attrs.code,
-          amount: attrs.discount_value || 0,
-          discountDisplay: attrs.discount_display || '',
-          isPercent: isPercent
-        })
+        setApplied(promo)
         setPromoError('')
       }
     } catch (e) {
       console.error('Coupon apply error', e)
-      setPromoError(e?.message || 'Kuponni tekshirishda xatolik')
+      const msg = (e && e.message) || ''
+      if (msg.toLowerCase().includes('failed to fetch') || e instanceof TypeError) {
+        setPromoError('Tarmoq xatosi: serverga ulanishda muammo. Iltimos internet yoki proxyni tekshiring.')
+      } else {
+        setPromoError(msg || 'Kuponni tekshirishda xatolik')
+      }
+    } finally {
+      setLoadingPromo(false)
     }
   }
 
@@ -75,8 +163,17 @@ function Cart() {
       setTimeout(() => setShowNotification(false), 3000)
       return
     }
-    // Pass applied coupon to Checkout so it can initialize with it
-    navigate('/checkout', { state: { items, coupon: applied } })
+    // Pass applied coupon and computed discount to Checkout so it can initialize with it
+    navigate('/checkout', {
+      state: {
+        items,
+        coupon: applied,
+        discountAmount: discount,
+        subtotal,
+        shipping,
+        total
+      }
+    })
   }
 
   if (items.length === 0) {
@@ -324,8 +421,13 @@ function Cart() {
                 }}
               />
             </div>
-            <button className="btn secondary" onClick={apply} style={{ padding: '14px 20px' }}>
-              Qo'llash
+            <button
+              className="btn secondary"
+              onClick={apply}
+              style={{ padding: '14px 20px' }}
+              disabled={loadingPromo}
+            >
+              {loadingPromo ? 'Tekshirilmoqda...' : "Qo'llash"}
             </button>
           </div>
 
