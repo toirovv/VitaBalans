@@ -20,7 +20,8 @@ function Cart() {
     try {
       const raw = localStorage.getItem('vb_promo_cache')
       if (raw) promoCache.current = JSON.parse(raw)
-    } catch (e) {
+    } catch (err) {
+      console.warn('Failed to read promo cache', err)
       promoCache.current = {}
     }
   }, [])
@@ -35,18 +36,15 @@ function Cart() {
       return promoCache.current[cacheKey]
     }
 
-    const tryNativeFetch = async (url) => {
+    const tryNativeFetch = async (url, timeoutMs = 2500) => {
       let attempt = 0
       let lastErr = null
       while (attempt < maxAttempts) {
+        const controller = new AbortController()
+        const timer = setTimeout(() => controller.abort(), timeoutMs)
         try {
-          const res = await fetch(url, {
-            method: 'GET',
-            headers: {
-              // some backends require JSON:API media type or a permissive Accept header
-              Accept: 'application/vnd.api+json, application/json, text/plain, */*'
-            }
-          })
+          const res = await fetch(url, { method: 'GET', headers: { Accept: 'application/json' }, signal: controller.signal })
+          clearTimeout(timer)
           if (!res.ok) {
             const txt = await res.text().catch(() => '')
             let msg = `HTTP ${res.status}`
@@ -56,18 +54,16 @@ function Cart() {
             } catch {
               if (txt) msg = txt
             }
-            // give a specific hint for 406 errors
-            if (res.status === 406) {
-              throw new Error(msg + ' — Server refused Accept header.');
-            }
+            if (res.status === 406) throw new Error(msg + ' — Server refused Accept header.')
             throw new Error(msg)
           }
           const json = await res.json()
           return json
         } catch (err) {
+          clearTimeout(timer)
           lastErr = err
           attempt += 1
-          if (attempt < maxAttempts) await new Promise(r => setTimeout(r, 200 * attempt))
+          if (attempt < maxAttempts) await new Promise(r => setTimeout(r, 150 * attempt))
         }
       }
       throw lastErr
@@ -92,7 +88,7 @@ function Cart() {
           isPercent
         }
         promoCache.current[cacheKey] = promo
-        try { localStorage.setItem('vb_promo_cache', JSON.stringify(promoCache.current)) } catch (e) {}
+        try { localStorage.setItem('vb_promo_cache', JSON.stringify(promoCache.current)) } catch (err) { console.warn('Could not persist promo cache', err) }
         return promo
       }
     } catch (e) {
@@ -117,12 +113,12 @@ function Cart() {
         isPercent
       }
         promoCache.current[cacheKey] = promo
-        try { localStorage.setItem('vb_promo_cache', JSON.stringify(promoCache.current)) } catch (e) {}
+        try { localStorage.setItem('vb_promo_cache', JSON.stringify(promoCache.current)) } catch (err) { console.warn('Could not persist promo cache', err) }
         return promo
     }
       // cache not-found as null to avoid re-checks
       promoCache.current[cacheKey] = null
-      try { localStorage.setItem('vb_promo_cache', JSON.stringify(promoCache.current)) } catch (e) {}
+      try { localStorage.setItem('vb_promo_cache', JSON.stringify(promoCache.current)) } catch (err) { console.warn('Could not persist promo cache', err) }
       return null
   }
   const [showNotification, setShowNotification] = useState(false)
@@ -153,7 +149,7 @@ function Cart() {
     try {
       const promo = await fetchPromotionByCode(cc)
       if (!promo) {
-        setPromoError('Noto\'g\'ri promo kod')
+        setPromoError("Noto'g'ri promo kod")
         setApplied(null)
       } else {
         setApplied(promo)

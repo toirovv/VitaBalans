@@ -97,6 +97,8 @@ function ProductCard({ product, fixedSize = false, compact = false }) {
     }
   }
 
+  const compactStyle = compact || isMobile
+
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth <= 480)
     window.addEventListener('resize', onResize)
@@ -107,15 +109,7 @@ function ProductCard({ product, fixedSize = false, compact = false }) {
 
   return (
     <>
-      <Link
-        to={`/product/${product.id}`}
-        className={`card product-card ${compact ? 'compact' : ''}`}
-        style={{
-          textDecoration: 'none',
-          display: 'flex',
-          flexDirection: 'column'
-        }}
-      >
+      <div className={`card product-card ${compact ? 'compact' : ''}`} style={{ display: 'flex', flexDirection: 'column' }}>
         {/* Notification (in-card) */}
         {showNotification && (
           <div className={`vb-toast in-card ${notificationInCard ? 'in-place' : 'at-top'}`} role="status">
@@ -136,8 +130,8 @@ function ProductCard({ product, fixedSize = false, compact = false }) {
           <div className="badge-sale">-{product.discountPercent}%</div>
         )}
 
-        {/* Product Image */}
-        <div className="card-image-wrapper product-image" style={{ padding: compact ? 6 : 8 }}>
+        {/* Product Image (clickable) */}
+        <Link to={`/product/${product.id}`} className="card-image-wrapper product-image" style={{ padding: compact ? 6 : 8, textDecoration: 'none' }}>
           <img
             id={`prod-img-${product.id}`}
             src={!imgError && product.image ? product.image : '/assets/images/VitaBalansLogo.jpg'}
@@ -151,12 +145,14 @@ function ProductCard({ product, fixedSize = false, compact = false }) {
               display: 'block',
             }}
           />
-        </div>
+        </Link>
 
         {/* Product Info */}
         <div className="card-body">
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between' }}>
-            <h3 className="card-title" style={compact ? { fontSize: '0.95rem', marginBottom: 6 } : {}}>{product.title}</h3>
+            <Link to={`/product/${product.id}`} style={{ textDecoration: 'none', color: 'inherit', flex: 1 }}>
+              <h3 className="card-title" style={compact ? { fontSize: '0.95rem', marginBottom: 6 } : {}}>{product.title}</h3>
+            </Link>
           </div>
 
           <p className="card-description" style={{
@@ -189,23 +185,25 @@ function ProductCard({ product, fixedSize = false, compact = false }) {
           <div className="card-footer">
             {inCart ? (
               <div style={{ display: 'flex', gap: 8, alignItems: 'center', justifyContent: 'space-between' }}>
-                <button
-                  onClick={handleDec}
-                  className="btn outline"
-                  style={compact ? { padding: '6px 8px', minWidth: 36 } : { padding: '8px 10px', minWidth: 40 }}
-                >
-                  -
-                </button>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <button
+                    onClick={handleDec}
+                    className="btn outline quantity-btn"
+                    style={compactStyle ? { padding: '6px 8px', minWidth: 32, fontSize: '0.9rem' } : { padding: '8px 10px', minWidth: 40 }}
+                  >
+                    -
+                  </button>
 
-                <div style={{ minWidth: 48, textAlign: 'center', fontWeight: 700 }}>{qty}</div>
+                  <div style={{ minWidth: 40, textAlign: 'center', fontWeight: 700 }}>{qty}</div>
 
-                <button
-                  onClick={handleInc}
-                  className="btn primary"
-                  style={compact ? { padding: '6px 8px', minWidth: 36 } : { padding: '8px 12px', minWidth: 40 }}
-                >
-                  +
-                </button>
+                  <button
+                    onClick={handleInc}
+                    className="btn primary quantity-btn"
+                    style={compactStyle ? { padding: '6px 8px', minWidth: 32, fontSize: '0.9rem' } : { padding: '8px 12px', minWidth: 40 }}
+                  >
+                    +
+                  </button>
+                </div>
               </div>
             ) : (
               <button
@@ -219,7 +217,7 @@ function ProductCard({ product, fixedSize = false, compact = false }) {
             )}
           </div>
         </div>
-      </Link>
+      </div>
 
       {/* Inline animation removed to prevent in-card popups */}
     </>
