@@ -1,14 +1,17 @@
 const isDev = import.meta.env.DEV
 
-// Backend API URL (direct backend)
+// Backend API URL (direct backend host used by proxy)
 const BACKEND_URL = 'https://vita-backend.jprq.live'
 
+// Build URL used by frontend. In dev we use Vite proxy prefix; in production
+// we call relative paths so a server-side proxy (Vercel function) can forward
+// the request and avoid CORS issues.
 export function vitaApiUrl(path) {
     if (isDev) return `/vita-api${path}` // Vite dev proxy
-    return `${BACKEND_URL}${path}` // Production: direct backend
+    return path // production: call relative path (expect serverless proxy at /api/...)
 }
 
-// Fetch wrapper
+// Fetch wrapper that sends a permissive Accept header and returns parsed JSON
 export async function vitaFetch(path) {
     const url = vitaApiUrl(path)
 
@@ -16,7 +19,7 @@ export async function vitaFetch(path) {
         const res = await fetch(url, {
             method: 'GET',
             headers: {
-                'Accept': 'application/json',
+                'Accept': 'application/vnd.api+json, application/json, text/plain, */*',
             },
         })
 
@@ -36,7 +39,7 @@ export async function vitaFetch(path) {
         const data = await res.json()
         return data
     } catch (error) {
-        console.warn('Fetch error:', error.message)
+        console.warn('Fetch error:', error?.message || error)
         throw error
     }
 }
