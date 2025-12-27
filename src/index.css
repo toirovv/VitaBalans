@@ -401,6 +401,14 @@ h4 {
   gap: 12px;
 }
 
+/* Grid used by catalog, related products and product lists */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  justify-items: center;
+}
+
 .product-card.compact {
   padding: 10px;
   box-shadow: var(--shadow-sm);
@@ -464,6 +472,19 @@ h4 {
 
   .product-card .card-body {
     padding: 6px !important;
+  }
+}
+
+/* Slightly reduce typography on narrow screens to keep layout compact */
+@media (max-width: 900px) {
+  .product-card .card-title {
+    font-size: 0.95rem !important;
+  }
+  .product-card .card-description {
+    font-size: 0.8rem !important;
+  }
+  .product-card .price {
+    font-size: 0.9rem !important;
   }
 }
 

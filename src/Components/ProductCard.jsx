@@ -10,7 +10,7 @@ function ProductCard({ product, fixedSize = false, compact = false }) {
   const [notificationInCard, setNotificationInCard] = useState(false)
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 480 : false)
   const [imgError, setImgError] = useState(false)
-  const { add } = useContext(CartContext)
+  const { add, items, updateQty, remove } = useContext(CartContext)
   const { user } = useContext(AuthContext)
   // Prices in `products.js` are stored in so'm (integer). Display as localized UZS.
 
@@ -69,6 +69,31 @@ function ProductCard({ product, fixedSize = false, compact = false }) {
     } catch (err) {
       // fail silently
       console.error(err)
+    }
+  }
+
+  const inCart = items.find(p => p.id === product.id)
+  const qty = inCart ? inCart.qty : 0
+
+  const handleInc = (e) => {
+    e.preventDefault(); e.stopPropagation()
+    if (!user) {
+      setNotificationMsg('Xarid qilish uchun avval platformaga kiring!')
+      setNotificationInCard(true)
+      setShowNotification(true)
+      setTimeout(() => setShowNotification(false), 3000)
+      return
+    }
+    add(product)
+  }
+
+  const handleDec = (e) => {
+    e.preventDefault(); e.stopPropagation()
+    if (!inCart) return
+    if (inCart.qty <= 1) {
+      remove(product.id)
+    } else {
+      updateQty(product.id, Math.max(1, inCart.qty - 1))
     }
   }
 
@@ -162,14 +187,36 @@ function ProductCard({ product, fixedSize = false, compact = false }) {
           <div className="price" style={compact ? { fontSize: '0.95rem', marginTop: 6 } : {}}>{Math.round(product.price).toLocaleString('uz-UZ')} so'm</div>
 
           <div className="card-footer">
-            <button
-              className={`btn primary full-width ${product.available ? '' : 'disabled'}`}
-              onClick={handleAdd}
-              style={compact ? { padding: '7px 10px', fontSize: '0.83rem' } : { padding: '8px 12px', fontSize: '0.85rem' }}
-              disabled={!product.available}
-            >
-              {product.available ? "Savatga qo'shish" : 'Mavjud emas'}
-            </button>
+            {inCart ? (
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center', justifyContent: 'space-between' }}>
+                <button
+                  onClick={handleDec}
+                  className="btn outline"
+                  style={compact ? { padding: '6px 8px', minWidth: 36 } : { padding: '8px 10px', minWidth: 40 }}
+                >
+                  -
+                </button>
+
+                <div style={{ minWidth: 48, textAlign: 'center', fontWeight: 700 }}>{qty}</div>
+
+                <button
+                  onClick={handleInc}
+                  className="btn primary"
+                  style={compact ? { padding: '6px 8px', minWidth: 36 } : { padding: '8px 12px', minWidth: 40 }}
+                >
+                  +
+                </button>
+              </div>
+            ) : (
+              <button
+                className={`btn primary full-width ${product.available ? '' : 'disabled'}`}
+                onClick={handleAdd}
+                style={compact ? { padding: '7px 10px', fontSize: '0.83rem' } : { padding: '8px 12px', fontSize: '0.85rem' }}
+                disabled={!product.available}
+              >
+                {product.available ? "Savatga qo'shish" : 'Mavjud emas'}
+              </button>
+            )}
           </div>
         </div>
       </Link>

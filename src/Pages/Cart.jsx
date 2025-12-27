@@ -15,13 +15,25 @@ function Cart() {
   const [applied, setApplied] = useState(null) // will hold coupon object from API
   const [loadingPromo, setLoadingPromo] = useState(false)
   const promoCache = React.useRef({})
+  // hydrate promo cache from localStorage so codes aren't checked repeatedly
+  React.useEffect(() => {
+    try {
+      const raw = localStorage.getItem('vb_promo_cache')
+      if (raw) promoCache.current = JSON.parse(raw)
+    } catch (e) {
+      promoCache.current = {}
+    }
+  }, [])
   const [promoError, setPromoError] = useState('')
   // Robust fetch using native fetch: try code filter first with retries, fall back to full list search
   const fetchPromotionByCode = async (cc) => {
     if (!cc) return null
     const maxAttempts = 2
     const cacheKey = cc.toLowerCase()
-    if (promoCache.current[cacheKey]) return promoCache.current[cacheKey]
+    // if we have any cached result (including null for not-found), return it
+    if (Object.prototype.hasOwnProperty.call(promoCache.current, cacheKey)) {
+      return promoCache.current[cacheKey]
+    }
 
     const tryNativeFetch = async (url) => {
       let attempt = 0
@@ -80,6 +92,7 @@ function Cart() {
           isPercent
         }
         promoCache.current[cacheKey] = promo
+        try { localStorage.setItem('vb_promo_cache', JSON.stringify(promoCache.current)) } catch (e) {}
         return promo
       }
     } catch (e) {
@@ -103,10 +116,14 @@ function Cart() {
         discountDisplay: attrs.discount_display || '',
         isPercent
       }
-      promoCache.current[cacheKey] = promo
-      return promo
+        promoCache.current[cacheKey] = promo
+        try { localStorage.setItem('vb_promo_cache', JSON.stringify(promoCache.current)) } catch (e) {}
+        return promo
     }
-    return null
+      // cache not-found as null to avoid re-checks
+      promoCache.current[cacheKey] = null
+      try { localStorage.setItem('vb_promo_cache', JSON.stringify(promoCache.current)) } catch (e) {}
+      return null
   }
   const [showNotification, setShowNotification] = useState(false)
 

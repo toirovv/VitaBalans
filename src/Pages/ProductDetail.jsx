@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { FaShoppingCart, FaArrowLeft, FaHeart, FaShare } from 'react-icons/fa'
+import { Star } from 'lucide-react'
 import useProducts from '../hooks/useProducts'
 import { CartContext } from '../contexts/CartContext'
 import { AuthContext } from '../contexts/AuthContext'
@@ -27,6 +28,18 @@ function ProductDetail() {
             setReviews([])
         }
     }, [id])
+
+    // Check whether user purchased this product. We expect an array of purchased ids
+    // stored in localStorage under `vb_purchased`. This is a simple client-side
+    // gate; replace with server-side verification if you have orders.
+    const hasPurchased = React.useMemo(() => {
+        try {
+            const bought = JSON.parse(localStorage.getItem('vb_purchased') || '[]')
+            return Array.isArray(bought) && bought.includes(id)
+        } catch {
+            return false
+        }
+    }, [id, reviews])
 
     if (loading) {
         return (
@@ -58,6 +71,17 @@ function ProductDetail() {
     }
 
     const submitReview = () => {
+        if (!user) {
+            setShowNotification(true)
+            setTimeout(() => setShowNotification(false), 3000)
+            return
+        }
+        if (!hasPurchased) {
+            // Inform user they must purchase first
+            setShowNotification(true)
+            setTimeout(() => setShowNotification(false), 3000)
+            return
+        }
         if (!reviewText.trim()) return
         const all = JSON.parse(localStorage.getItem('vb_reviews') || '{}')
         const list = all[id] || []
@@ -285,29 +309,36 @@ function ProductDetail() {
                     marginBottom: '32px'
                 }}>
                     <h4 style={{ marginBottom: '16px' }}>Sharh qoldiring</h4>
-                    <div style={{ display: 'flex', gap: '4px', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', alignItems: 'center' }}>
                         {[1, 2, 3, 4, 5].map(s => (
                             <button
                                 key={s}
-                                onClick={() => setRating(s)}
+                                onClick={() => hasPurchased && setRating(s)}
+                                aria-label={`${s} star`}
                                 style={{
-                                    width: '40px',
-                                    height: '40px',
-                                    borderRadius: '8px',
-                                    border: '1px solid #e2e8f0',
-                                    background: s <= rating ? '#fef3c7' : 'white',
-                                    fontSize: '1.2rem',
-                                    cursor: 'pointer'
+                                    background: 'transparent',
+                                    border: 'none',
+                                    padding: 6,
+                                    cursor: hasPurchased ? 'pointer' : 'not-allowed'
                                 }}
                             >
-                                {s <= rating ? '★' : '☆'}
+                                <Star
+                                    size={28}
+                                    color={s <= rating ? '#f59e0b' : '#cbd5e1'}
+                                    fill={s <= rating ? '#f59e0b' : 'none'}
+                                />
                             </button>
                         ))}
+                        {!hasPurchased && (
+                            <div style={{ color: '#64748b', fontSize: '0.9rem' }}>
+                                Mahsulotni sotib olgandan keyin baho va sharh qoldirishingiz mumkin.
+                            </div>
+                        )}
                     </div>
                     <textarea
                         value={reviewText}
                         onChange={e => setReviewText(e.target.value)}
-                        placeholder="Fikringizni yozing..."
+                        placeholder={hasPurchased ? "Fikringizni yozing..." : "Sharh qoldirish uchun mahsulotni sotib oling"}
                         style={{
                             width: '100%',
                             minHeight: '100px',
@@ -318,10 +349,18 @@ function ProductDetail() {
                             marginBottom: '16px',
                             resize: 'vertical'
                         }}
+                        disabled={!hasPurchased}
                     />
-                    <button className="btn primary" onClick={submitReview}>
-                        Yuborish
-                    </button>
+                    <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                        <button className="btn primary" onClick={submitReview} disabled={!hasPurchased}>
+                            Yuborish
+                        </button>
+                        {!hasPurchased && (
+                            <button className="btn outline" onClick={handleAddToCart}>
+                                Xarid qilish
+                            </button>
+                        )}
+                    </div>
                 </div>
 
                 {/* Reviews List */}

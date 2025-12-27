@@ -1,4 +1,6 @@
-export const API_BASE = import.meta.env.VITE_API_BASE || 'https://fastapi-backend-production-d38d.up.railway.app'
+const isDev = import.meta.env.DEV
+// In dev use the Vite proxy prefix '/api' (vite.config.js proxy maps /api -> api.vita-balans.uz)
+export const API_BASE = isDev ? (import.meta.env.VITE_API_BASE || '/api') : (import.meta.env.VITE_API_BASE || 'https://fastapi-backend-production-d38d.up.railway.app')
 
 export async function apiFetch(path, opts) {
   const url = /^https?:\/\//i.test(path)
@@ -6,7 +8,9 @@ export async function apiFetch(path, opts) {
     : `${API_BASE.replace(/\/$/, '')}/${path.replace(/^\//, '')}`
   let res
   try {
-    res = await fetch(url, opts)
+    // Ensure a permissive Accept header by default to avoid backend rejecting requests
+    const headers = Object.assign({ Accept: 'application/json, application/vnd.api+json, text/plain, */*' }, opts && opts.headers)
+    res = await fetch(url, Object.assign({}, opts || {}, { headers }))
   } catch (e) {
     const err = new Error(`Network error fetching ${url}: ${e.message}. Is the backend running and accessible? Check VITE_API_BASE and CORS.`)
     err.cause = e
